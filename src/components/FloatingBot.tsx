@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fxbotIcon from '@/assets/fxbot-icon.jpg';
+import fxbotCharacter from '@/assets/fxbot-character.png';
 
 const FloatingBot = () => {
   const navigate = useNavigate();
@@ -53,15 +54,22 @@ const FloatingBot = () => {
         {/* Glow effect */}
         <div className="absolute inset-0 rounded-full bg-gradient-brand opacity-50 blur-xl animate-pulse-glow" />
         
-        {/* Bot icon */}
+        {/* Bot icon - default state */}
         <img
           src={fxbotIcon}
           alt="FX Bot"
-          className="relative w-20 h-20 rounded-full shadow-glow transform group-hover:scale-110 transition-transform duration-300"
+          className="relative w-20 h-20 rounded-full shadow-glow transform transition-all duration-300 group-hover:opacity-0 group-hover:scale-90"
+        />
+        
+        {/* Bot character - hover state */}
+        <img
+          src={fxbotCharacter}
+          alt="FX Bot Character"
+          className="absolute inset-0 w-20 h-20 object-contain opacity-0 scale-90 transform transition-all duration-300 group-hover:opacity-100 group-hover:scale-110"
         />
         
         {/* Hover tooltip */}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-card rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-card rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
           <p className="text-sm font-medium text-foreground">FX Bot Assistant</p>
         </div>
       </div>

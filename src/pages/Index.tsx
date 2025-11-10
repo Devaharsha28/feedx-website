@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import FXBotSection from '@/components/FXBotSection';
+import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
 import FloatingBot from '@/components/FloatingBot';
 
@@ -13,6 +14,7 @@ const Index = () => {
       <HeroSection />
       <FeaturesSection />
       <FXBotSection />
+      <AboutSection />
       <Footer />
     </div>
   );
