@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# FeedX Portal - Anonymous Student Feedback System
 
-## Project info
+A modern, responsive web application for anonymous student feedback with AI-powered chatbot integration.
 
-**URL**: https://lovable.dev/projects/72007871-40e4-4970-9b04-2b17a4a85fb9
+## Features
 
-## How can I edit this code?
+- **Anonymous Feedback Submission**: Secure, anonymous feedback system
+- **AI-Powered FX Bot**: WhatsApp chatbot for instant responses
+- **Real-time Issue Tracking**: Track feedback status with unique IDs
+- **Responsive Design**: Works seamlessly on all devices
+- **User Authentication**: Secure sign-in and registration system
+- **Smooth Animations**: Engaging UI with custom animations
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Shadcn UI
+- **Backend**: Node.js, Express, JWT Authentication
+- **Database**: File-based JSON storage (easily replaceable with SQLite/PostgreSQL)
+- **Build Tool**: Vite
+- **Icons**: Lucide React
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/72007871-40e4-4970-9b04-2b17a4a85fb9) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v16 or higher)
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd feedx-nexus
+```
 
-Follow these steps:
+2. Install dependencies:
+```bash
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Start the backend server:
+```bash
+npm run server
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. In another terminal, start the frontend:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+5. For full development (both frontend and backend):
+```bash
+npm run dev:full
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application will be available at `http://localhost:8080` and the API at `http://localhost:3001`.
 
-**Use GitHub Codespaces**
+## Available Scripts
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `npm run dev` - Start frontend development server
+- `npm run server` - Start backend API server
+- `npm run dev:full` - Start both frontend and backend concurrently
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with:
+```
+feedx-nexus/
+├── server/                 # Backend API
+│   └── index.js           # Express server with auth routes
+├── src/
+│   ├── components/        # Reusable UI components
+│   ├── contexts/          # React contexts (Auth)
+│   ├── hooks/             # Custom React hooks
+│   ├── pages/             # Page components
+│   ├── assets/            # Static assets
+│   └── lib/               # Utility functions
+├── public/                # Public assets
+└── package.json
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## API Endpoints
 
-## How can I deploy this project?
+- `POST /api/register` - User registration
+- `POST /api/login` - User login
+- `GET /api/profile` - Get user profile (authenticated)
 
-Simply open [Lovable](https://lovable.dev/projects/72007871-40e4-4970-9b04-2b17a4a85fb9) and click on Share -> Publish.
+## Contributing
 
-## Can I connect a custom domain to my Lovable project?
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-Yes, you can!
+## License
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is licensed under the MIT License.
