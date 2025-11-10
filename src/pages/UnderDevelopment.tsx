@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Construction, Rocket, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import fxbotIcon from '@/assets/fxbot-icon.jpg';
+import fxbotIcon from '@/assets/fxbot-icon.svg';
 
 const UnderDevelopment = () => {
   return (
