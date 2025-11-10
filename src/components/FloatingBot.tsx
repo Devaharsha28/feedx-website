@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import fxbotIcon from '@/assets/fxbot-icon.jpg';
 
 const FloatingBot = () => {
+  const navigate = useNavigate();
   const [position, setPosition] = useState({ x: window.innerWidth - 120, y: 100 });
   const [isMoving, setIsMoving] = useState(false);
   const [targetPosition, setTargetPosition] = useState({ x: 0, y: 0 });
@@ -40,6 +42,7 @@ const FloatingBot = () => {
   return (
     <div
       className="fixed z-50 cursor-pointer group"
+      onClick={() => navigate('/fxbot')}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
