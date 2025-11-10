@@ -66,9 +66,11 @@ const UnderDevelopment = () => {
                 Back to Home
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="hover-lift">
-              Notify Me When Ready
-            </Button>
+            <Link to="/subscribe">
+              <Button size="lg" variant="outline" className="hover-lift">
+                Notify Me When Ready
+              </Button>
+            </Link>
           </div>
 
           {/* Progress Indicator */}
