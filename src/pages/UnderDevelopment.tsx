@@ -2,16 +2,18 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Construction, Rocket, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import fxbotIcon from '@/assets/fxbot-icon.svg';
+import Navbar from '@/components/Navbar';
 
 const UnderDevelopment = () => {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <Navbar />
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
 
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center px-4 py-8 relative z-10">
         <div className="max-w-2xl mx-auto text-center">
           {/* FXBot Icon */}
           <div className="flex justify-center mb-8 animate-scale-in">
@@ -82,6 +84,7 @@ const UnderDevelopment = () => {
             <p className="text-xs text-muted-foreground mt-2">75% Complete</p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

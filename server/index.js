@@ -36,7 +36,12 @@ if (!fs.existsSync(USERS_FILE)) {
 }
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8080', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
@@ -141,6 +146,112 @@ app.get('/api/profile', authenticateToken, (req, res) => {
   }
   const { password, ...userWithoutPassword } = user;
   res.json({ user: userWithoutPassword });
+});
+
+// Proxy route for SBTET Telangana attendance API
+app.get('/api/attendance', async (req, res) => {
+  try {
+    const { pin } = req.query;
+
+    if (!pin) {
+      return res.status(400).json({ error: 'PIN parameter is required' });
+    }
+
+    // For testing purposes, return mock data if pin is 'test'
+    if (pin === 'test') {
+      return res.json({
+        studentName: "Test Student",
+        pin: pin,
+        totalSubjects: 5,
+        overallAttendance: 85.5,
+        status: "Active",
+        message: "Mock data for testing"
+      });
+    }
+
+    // Fetch data from SBTET Telangana API
+    const apiUrl = `https://www.sbtet.telangana.gov.in/api/api/PreExamination/getAttendanceReport?Pin=${encodeURIComponent(pin)}`;
+
+    console.log('Fetching from:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; FeedX-Proxy/1.0)'
+      }
+    });
+
+    console.log('External API response status:', response.status);
+    console.log('External API response headers:', Object.fromEntries(response.headers.entries()));
+
+    if (!response.ok) {
+      console.error('API Response not ok:', response.status, response.statusText);
+      let errorDetails = `Failed to fetch attendance data: ${response.statusText}`;
+
+      try {
+        const contentType = response.headers.get('content-type');
+        console.log('Error response content-type:', contentType);
+
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          console.log('Error response JSON:', errorData);
+          errorDetails = errorData.message || errorData.error || errorDetails;
+        } else {
+          const textResponse = await response.text();
+          console.log('Error response text (first 500 chars):', textResponse.substring(0, 500));
+          if (textResponse) {
+            errorDetails = `API Error (${response.status}): ${textResponse.substring(0, 200)}`;
+          }
+        }
+      } catch (parseError) {
+        console.error('Could not parse error response:', parseError);
+      }
+
+      return res.status(response.status).json({
+        error: errorDetails
+      });
+    }
+
+    // Check if response has content
+    const contentLength = response.headers.get('content-length');
+    console.log('Response content-length:', contentLength);
+
+    if (contentLength === '0') {
+      console.log('Response has no content');
+      return res.status(404).json({
+        error: 'No attendance data found for this PIN'
+      });
+    }
+
+    let data;
+    try {
+      const responseText = await response.text();
+      console.log('Raw response (first 500 chars):', responseText.substring(0, 500));
+
+      if (!responseText.trim()) {
+        return res.status(404).json({
+          error: 'Empty response from attendance API'
+        });
+      }
+
+      data = JSON.parse(responseText);
+      console.log('Parsed JSON successfully');
+    } catch (jsonError) {
+      console.error('JSON parsing error:', jsonError);
+      return res.status(500).json({
+        error: 'Invalid JSON response from attendance API',
+        details: jsonError.message
+      });
+    }
+
+    console.log('API Response received successfully');
+    res.json(data);
+
+  } catch (error) {
+    console.error('Error fetching attendance data:', error);
+    res.status(500).json({ error: 'Internal server error while fetching attendance data' });
+  }
 });
 
 app.listen(PORT, () => {

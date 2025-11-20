@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import feedxLogo from '@/assets/feedx-logo.png';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 // Email validation schema
 const subscribeSchema = z.object({
@@ -89,13 +91,14 @@ const Subscribe = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <Navbar />
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10 mt-20" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
 
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center px-4 py-8 relative z-10">
         <div className="max-w-md mx-auto">
           {/* Back Button */}
           <Link to="/fxbot" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-smooth mb-8">
@@ -224,6 +227,7 @@ const Subscribe = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import feedxLogo from '@/assets/feedx-logo.png';
+import ContactForm from './ContactForm';
 
 const Footer = () => {
   return (
@@ -47,14 +48,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact Us */}
           <div>
-            <h4 className="font-semibold mb-4">Get in Touch</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>feedx_official</li>
-              <li>WhatsApp: FX Bot</li>
-              <li>FEEDX POLYTECHNIC</li>
-            </ul>
+            <h4 className="font-semibold mb-4">Contact Us</h4>
+            <ContactForm />
           </div>
         </div>
 

@@ -18,7 +18,7 @@ const FXBotSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
           {/* Left Content */}
           <div className={`space-y-6 ${isInView ? 'animate-slide-up' : ''}`}>
-            <div className="inline-flex items-center space-x-2 bg-card border border-border rounded-full px-4 py-2 animate-bounce-in">
+            <div className="inline-flex items-center space-x-2 bg-card border border-border rounded-full px-4 py-2 animate-bounce-in glow-primary-soft">
               <Bot className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium">Powered by AI</span>
             </div>
@@ -35,8 +35,8 @@ const FXBotSection = () => {
             </p>
 
             <div className="space-y-4">
-              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300" style={{ animationDelay: '0.2s' }}>
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300 hover-glow-primary" style={{ animationDelay: '0.2s' }}>
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110 glow-breath-primary">
                   <MessageCircle className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div>
@@ -47,8 +47,8 @@ const FXBotSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300" style={{ animationDelay: '0.4s' }}>
-                <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-secondary/20 group-hover:scale-110">
+              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300 hover-glow-secondary" style={{ animationDelay: '0.4s' }}>
+                <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-secondary/20 group-hover:scale-110 glow-breath-secondary">
                   <Shield className="w-5 h-5 text-secondary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div>
@@ -59,8 +59,8 @@ const FXBotSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300" style={{ animationDelay: '0.6s' }}>
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+              <div className="flex items-start space-x-3 animate-slide-up group hover:bg-card/50 rounded-lg p-3 transition-all duration-300 hover-glow-accent" style={{ animationDelay: '0.6s' }}>
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110 glow-breath-accent">
                   <Zap className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div>
@@ -73,11 +73,11 @@ const FXBotSection = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <Button className="bg-gradient-brand hover:opacity-90 hover:scale-105 transition-all duration-300 group w-full sm:w-auto">
+              <Button className="bg-gradient-brand hover:opacity-90 hover:scale-105 transition-all duration-300 group w-full sm:w-auto hover-glow-primary glow-primary-soft">
                 Start Chatting with FX Bot
                 <MessageCircle className="ml-2 w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
               </Button>
-              <Button variant="outline" className="hover-lift hover:scale-105 transition-all duration-300 w-full sm:w-auto">
+              <Button variant="outline" className="hover-lift hover:scale-105 transition-all duration-300 w-full sm:w-auto hover-glow-secondary">
                 Watch Demo
               </Button>
             </div>
@@ -85,15 +85,15 @@ const FXBotSection = () => {
 
           {/* Right Content - Bot Showcase */}
           <div className={`relative ${isInView ? 'animate-slide-up' : ''}`} style={{ animationDelay: '0.5s' }}>
-            <div className="relative z-10 bg-card border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-glow">
+            <div className="relative z-10 bg-card border border-border rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-glow hover-glow-primary transition-all duration-300">
               {/* Bot Icon */}
               <div className="flex justify-center mb-4 sm:mb-6">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-brand rounded-full blur-2xl opacity-50 animate-pulse-glow" />
+                  <div className="absolute inset-0 bg-gradient-brand rounded-full blur-2xl opacity-50 animate-pulse-glow glow-pulse-primary" />
                   <img
                     src={fxbotIcon}
                     alt="FX Bot"
-                    className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full shadow-lg"
+                    className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -106,22 +106,22 @@ const FXBotSection = () => {
 
               {/* Quick Actions */}
               <div className="space-y-2 sm:space-y-3">
-                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group">
+                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-primary">
                   <div className="font-medium mb-1 text-sm sm:text-base">Registration</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Create your anonymous account</div>
                 </button>
 
-                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group">
+                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-secondary">
                   <div className="font-medium mb-1 text-sm sm:text-base">Anonymous Submission</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Submit feedback securely</div>
                 </button>
 
-                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group">
+                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-accent">
                   <div className="font-medium mb-1 text-sm sm:text-base">ID Tracking</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Track your submission status</div>
                 </button>
 
-                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group">
+                <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-primary">
                   <div className="font-medium mb-1 text-sm sm:text-base">Action / Updates</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">View resolution progress</div>
                 </button>
@@ -129,7 +129,7 @@ const FXBotSection = () => {
 
               {/* Pilot Badge */}
               <div className="mt-6 text-center">
-                <span className="inline-block bg-gradient-brand text-white text-sm font-semibold px-4 py-2 rounded-full">
+                <span className="inline-block bg-gradient-brand text-white text-sm font-semibold px-4 py-2 rounded-full glow-breath-primary hover-glow-primary transition-all duration-300">
                   PILOT VERSION
                 </span>
               </div>

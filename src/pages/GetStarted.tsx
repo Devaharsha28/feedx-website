@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const GetStarted = () => {
   const [formData, setFormData] = useState({
@@ -75,8 +77,10 @@ const GetStarted = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="flex items-center justify-center px-4 py-8 pt-20">
+        <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Get Started</CardTitle>
           <CardDescription className="text-center">
@@ -187,6 +191,8 @@ const GetStarted = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
+      <Footer />
     </div>
   );
 };

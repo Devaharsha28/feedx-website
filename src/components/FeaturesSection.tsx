@@ -43,13 +43,13 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className={`relative group bg-card border border-border rounded-2xl p-8 hover-lift ${
-                feature.highlight ? 'ring-2 ring-primary/20' : ''
+              className={`relative group bg-card border border-border rounded-2xl p-8 hover-lift hover-glow-primary transition-all duration-300 ${
+                feature.highlight ? 'ring-2 ring-primary/20 glow-primary-soft' : ''
               }`}
             >
               {feature.highlight && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-gradient-brand text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  <span className="bg-gradient-brand text-white text-xs font-semibold px-3 py-1 rounded-full glow-breath-primary">
                     Popular
                   </span>
                 </div>
@@ -57,7 +57,7 @@ const FeaturesSection = () => {
               
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-gradient-brand rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-brand rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 glow-breath-primary">
                     <Check className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -77,20 +77,20 @@ const FeaturesSection = () => {
 
         {/* Stats */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gradient mb-2">100%</div>
+          <div className="text-center group hover-glow-primary transition-all duration-300">
+            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-primary">100%</div>
             <div className="text-sm text-muted-foreground">Anonymous</div>
           </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gradient mb-2">24/7</div>
+          <div className="text-center group hover-glow-secondary transition-all duration-300">
+            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-secondary">24/7</div>
             <div className="text-sm text-muted-foreground">Available</div>
           </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gradient mb-2">Instant</div>
+          <div className="text-center group hover-glow-accent transition-all duration-300">
+            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-accent">Instant</div>
             <div className="text-sm text-muted-foreground">Tracking</div>
           </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gradient mb-2">Secure</div>
+          <div className="text-center group hover-glow-primary transition-all duration-300">
+            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-primary">Secure</div>
             <div className="text-sm text-muted-foreground">Platform</div>
           </div>
         </div>

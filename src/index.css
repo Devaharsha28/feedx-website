@@ -145,8 +145,8 @@ All colors MUST be HSL.
     animation: pulseGlow 2s ease-in-out infinite;
   }
   
-  .animate-bounce-in {
-    animation: bounceIn 0.8s ease-out forwards;
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
   }
   
   .animate-typing {
@@ -158,6 +158,79 @@ All colors MUST be HSL.
   
   .animate-idle-bounce {
     animation: idleBounce 3s ease-in-out infinite;
+  }
+
+  /* Glassmorphism utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-heavy {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Enhanced hover effects */
+  .hover-glass {
+    transition: all 0.3s ease;
+  }
+
+  .hover-glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Floating animation variants */
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-fast {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(221, 83%, 53%, 0.3);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 20px hsl(174, 72%, 56%, 0.3);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(262, 83%, 58%, 0.3);
+  }
+
+  /* Enhanced gradients */
+  .bg-gradient-mesh {
+    background:
+      radial-gradient(circle at 20% 50%, hsl(221, 83%, 53%, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(174, 72%, 56%, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, hsl(262, 83%, 58%, 0.1) 0%, transparent 50%);
+  }
+
+  .bg-gradient-flow {
+    background:
+      linear-gradient(45deg, hsl(221, 83%, 53%, 0.05) 0%, transparent 50%),
+      linear-gradient(-45deg, hsl(174, 72%, 56%, 0.05) 0%, transparent 50%);
   }
 }
 
@@ -191,11 +264,9 @@ All colors MUST be HSL.
   50% { opacity: 1; }
 }
 
-@keyframes bounceIn {
-  0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.05); }
-  70% { transform: scale(0.9); }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes typing {
