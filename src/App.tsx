@@ -19,7 +19,7 @@ import Projects from "./pages/Projects";
 import Resources from "./pages/Resources";
 import Jobs from "./pages/Jobs";
 import AttendanceCalculator from "./pages/AttendanceCalculator";
-import Gallery from "./pages/Gallery";
+import Spotlight from "./pages/Spotlight";
 import Join from "./pages/Join";
 
 const queryClient = new QueryClient();
@@ -38,10 +38,10 @@ const App = () => (
             <Route path="/projects" element={<Projects />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/jobs" element={<Jobs />} />
-            <Route path="/attendance-calculator" element={<AttendanceCalculator />} />
-            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/attendance" element={<AttendanceCalculator />} />
+            <Route path="/spotlight" element={<Spotlight />} />
             <Route path="/join" element={<Join />} />
-            <Route path="/fxbot" element={<FXBot />} />
+            <Route path="/fxbot" element={<UnderDevelopment />} />
             <Route path="/subscribe" element={<Subscribe />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/get-started" element={<GetStarted />} />

@@ -103,7 +103,7 @@ const AttendanceCalculator = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up">
-              Attendance <span className="text-gradient">Calculator</span>
+              Attendance
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
               Calculate your attendance percentage and check your examination eligibility

@@ -10,8 +10,8 @@ const FXBotSection = () => {
     <section ref={sectionRef} id="fxbot" className="py-16 sm:py-20 lg:py-24 bg-background relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-xl" />
       </div>
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">

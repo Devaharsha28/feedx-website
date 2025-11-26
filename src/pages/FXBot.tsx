@@ -102,7 +102,7 @@ const FXBot = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pt-20">
       <Navbar />
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-lg border-b border-border sticky top-0 z-10">

@@ -8,48 +8,49 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 25% 15%;
+    /* Softer, premium light theme palette */
+    --background: 210 20% 96%; /* very soft off-white */
+    --foreground: 215 14% 18%; /* muted dark text for less contrast */
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card: 210 22% 99%;
+    --card-foreground: 215 14% 18%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 15%;
 
-    /* Primary: Deep Blue */
-    --primary: 221 83% 53%;
+    /* Primary: Muted, premium indigo-blue */
+    --primary: 217 48% 42%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary: Teal */
-    --secondary: 174 72% 56%;
+    /* Secondary: Muted teal */
+    --secondary: 186 52% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 18% 96.5%;
+    --muted-foreground: 215 18% 52%;
 
-    --accent: 174 72% 56%;
+    --accent: 275 60% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border: 215 30% 92%;
+    --input: 215 30% 92%;
+    --ring: 217 48% 42%;
 
     --radius: 0.75rem;
 
     /* Brand gradients */
-    --gradient-brand: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(174, 72%, 56%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(210, 40%, 98%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(217, 48%, 42%) 0%, hsl(186, 52%, 45%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(210, 20%, 98%) 0%, hsl(210, 18%, 96%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 10px 40px -10px hsl(221, 83%, 53%, 0.15);
-    --shadow-glow: 0 0 60px hsl(174, 72%, 56%, 0.3);
+    --shadow-soft: 0 10px 40px -10px hsl(217, 48%, 42%, 0.08);
+    --shadow-glow: 0 0 60px hsl(186, 52%, 45%, 0.12);
     
     /* Animations */
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
     --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
@@ -83,8 +84,8 @@ All colors MUST be HSL.
     --ring: 221 83% 63%;
     
     --gradient-brand: linear-gradient(135deg, hsl(221, 83%, 63%) 0%, hsl(174, 72%, 56%) 100%);
-    --shadow-soft: 0 10px 40px -10px hsl(221, 83%, 63%, 0.4);
-    --shadow-glow: 0 0 60px hsl(174, 72%, 56%, 0.5);
+    --shadow-soft: 0 6px 24px -12px hsl(221, 83%, 63%, 0.25);
+    --shadow-glow: 0 0 24px hsl(174, 72%, 56%, 0.2);
   }
 }
 
@@ -96,6 +97,15 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -126,11 +136,11 @@ All colors MUST be HSL.
   }
   
   .animate-slide-up {
-    animation: slideUp 0.8s ease-out forwards;
+    animation: slideUp 0.8s cubic-bezier(0, -0.02, 0.4, 1.25) forwards;
   }
   
   .animate-slide-down {
-    animation: slideDown 0.8s ease-out forwards;
+    animation: slideDown 0.8s cubic-bezier(0, -0.02, 0.4, 1.25) forwards;
   }
   
   .animate-fade-in {
@@ -138,7 +148,7 @@ All colors MUST be HSL.
   }
   
   .animate-scale-in {
-    animation: scaleIn 0.6s ease-out forwards;
+    animation: scaleIn 0.6s cubic-bezier(0, -0.02, 0.35, 1.17) forwards;
   }
   
   .animate-pulse-glow {
@@ -146,7 +156,7 @@ All colors MUST be HSL.
   }
   
   .animate-slide-in {
-    animation: slideIn 0.5s ease-out forwards;
+    animation: slideIn 0.5s cubic-bezier(0, -0.02, 0.4, 1.25) forwards;
   }
   
   .animate-typing {
@@ -159,29 +169,54 @@ All colors MUST be HSL.
   .animate-idle-bounce {
     animation: idleBounce 3s ease-in-out infinite;
   }
+  
+  .animate-cloud-drift {
+    animation: cloudDrift 20s ease-in-out infinite;
+  }
+  
+  .animate-star-twinkle {
+    animation: starTwinkle 3s ease-in-out infinite;
+  }
 
-  /* Glassmorphism utilities */
+  /* Glassmorphism utilities - theme aware */
   .glass {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  }
+  
+  .dark .glass-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   .glass-heavy {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  }
+  
+  .dark .glass-heavy {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 
   /* Enhanced hover effects */
@@ -190,11 +225,16 @@ All colors MUST be HSL.
   }
 
   .hover-glass:hover {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .hover-glass:hover {
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   }
 
   /* Floating animation variants */
@@ -217,6 +257,19 @@ All colors MUST be HSL.
 
   .glow-accent {
     box-shadow: 0 0 20px hsl(262, 83%, 58%, 0.3);
+  }
+
+  /* Reduce glow strength in dark mode */
+  .dark .glow-primary {
+    box-shadow: 0 0 12px hsl(221, 83%, 63%, 0.18);
+  }
+
+  .dark .glow-secondary {
+    box-shadow: 0 0 12px hsl(174, 72%, 56%, 0.18);
+  }
+
+  .dark .glow-accent {
+    box-shadow: 0 0 12px hsl(262, 83%, 58%, 0.18);
   }
 
   /* Enhanced gradients */
@@ -284,4 +337,14 @@ All colors MUST be HSL.
   25% { transform: translateY(-5px) rotate(1deg); }
   50% { transform: translateY(0px) rotate(0deg); }
   75% { transform: translateY(-3px) rotate(-1deg); }
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0px) translateY(0px); }
+  50% { transform: translateX(30px) translateY(-10px); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }

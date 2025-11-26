@@ -1,5 +1,7 @@
 import feedxLogo from '@/assets/feedx-logo.png';
 import ContactForm from './ContactForm';
+import { MessageCircle, Users, Instagram } from 'lucide-react';
+import { SOCIAL_LINKS } from '@/lib/socialLinks';
 
 const Footer = () => {
   return (
@@ -55,9 +57,41 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>© 2024 FeedX Portal. All rights reserved. Listen • Respond • Resolve</p>
+        {/* Bottom Bar with Socials */}
+        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+          <p className="text-muted-foreground text-center md:text-left">© 2024 FeedX Portal. All rights reserved. Listen • Respond • Resolve</p>
+          <div className="flex items-center gap-3">
+            <a
+              href={SOCIAL_LINKS.whatsappChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              aria-label="WhatsApp Channel"
+            >
+              <MessageCircle className="w-5 h-5 text-green-600" />
+              <span className="hidden sm:inline">WhatsApp Channel</span>
+            </a>
+            <a
+              href={SOCIAL_LINKS.whatsappCommunity}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              aria-label="WhatsApp Community"
+            >
+              <Users className="w-5 h-5 text-emerald-600" />
+              <span className="hidden sm:inline">WhatsApp Community</span>
+            </a>
+            <a
+              href={SOCIAL_LINKS.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              aria-label="Instagram Page"
+            >
+              <Instagram className="w-5 h-5 text-pink-600" />
+              <span className="hidden sm:inline">Instagram Page</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>

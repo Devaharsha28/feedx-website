@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { ArrowRight, MessageSquare, Shield, TrendingUp } from 'lucide-react';
+import { NotificationsPanel } from '@/components/NotificationsPanel';
 
 const HeroSection = () => {
   return (
@@ -8,12 +10,14 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
       
       {/* Animated circles */}
-      <div className="absolute top-20 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-primary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '0s' }} />
-      <div className="absolute bottom-20 right-10 w-96 h-96 sm:w-[32rem] sm:h-[32rem] bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-20 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-primary/20 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '0s' }} />
+      <div className="absolute bottom-20 right-10 w-96 h-96 sm:w-[32rem] sm:h-[32rem] bg-secondary/20 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 bg-accent/10 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '2s' }} />
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Main Content - Left/Center */}
+          <div className="lg:col-span-7 text-center lg:text-left">
           {/* Badge */}
           <div className="inline-flex items-center space-x-2 bg-card border border-border rounded-full px-3 py-1.5 sm:px-4 sm:py-2 mb-6 sm:mb-8 animate-slide-down">
             <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
@@ -28,17 +32,19 @@ const HeroSection = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4 animate-fade-in">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl animate-fade-in">
             FeedX Portal empowers students to share feedback, report issues, and drive positive change 
             while maintaining complete anonymity with our AI-powered FX Bot.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 animate-scale-in px-4">
-            <Button size="lg" className="bg-gradient-brand hover:opacity-90 transition-smooth group w-full sm:w-auto">
-              Submit Feedback
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+          <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 animate-scale-in px-4">
+            <Link to="/fxbot">
+              <Button size="lg" className="bg-gradient-brand hover:opacity-90 transition-smooth group w-full sm:w-auto">
+                Submit Feedback
+                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
             <Button size="lg" variant="outline" className="hover-lift w-full sm:w-auto">
               Learn More
             </Button>
@@ -77,7 +83,13 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
+
+        {/* Notifications Panel - Right Side */}
+        <div className="lg:col-span-5 flex justify-center lg:justify-end animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <NotificationsPanel />
+        </div>
       </div>
+    </div>
     </section>
   );
 };

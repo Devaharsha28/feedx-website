@@ -60,9 +60,9 @@ const GlassmorphismBackground = ({
   intensity = 'medium'
 }: GlassmorphismBackgroundProps) => {
   const blurIntensity = {
-    light: 'backdrop-blur-sm',
-    medium: 'backdrop-blur-md',
-    heavy: 'backdrop-blur-xl'
+    light: '',
+    medium: '',
+    heavy: ''
   };
 
   const opacityIntensity = {
@@ -72,29 +72,17 @@ const GlassmorphismBackground = ({
   };
 
   const lights = [
-    // Primary blue lights
-    { color: 'hsl(221, 83%, 53%)', size: 200, duration: 20, delay: 0, blur: 40 },
-    { color: 'hsl(221, 83%, 53%)', size: 150, duration: 25, delay: 5, blur: 35 },
-    { color: 'hsl(221, 83%, 53%)', size: 100, duration: 18, delay: 10, blur: 30 },
-
-    // Secondary teal lights
-    { color: 'hsl(174, 72%, 56%)', size: 180, duration: 22, delay: 2, blur: 38 },
-    { color: 'hsl(174, 72%, 56%)', size: 120, duration: 28, delay: 7, blur: 32 },
-    { color: 'hsl(174, 72%, 56%)', size: 90, duration: 16, delay: 12, blur: 28 },
-
-    // Accent purple lights
-    { color: 'hsl(262, 83%, 58%)', size: 160, duration: 24, delay: 3, blur: 36 },
-    { color: 'hsl(262, 83%, 58%)', size: 110, duration: 19, delay: 8, blur: 31 },
-
-    // Pink accent lights
-    { color: 'hsl(322, 84%, 60%)', size: 140, duration: 21, delay: 4, blur: 34 },
-    { color: 'hsl(322, 84%, 60%)', size: 85, duration: 17, delay: 9, blur: 29 },
+    // Reduced set of lights for performance
+    { color: 'hsl(221, 83%, 53%)', size: 180, duration: 20, delay: 0, blur: 28 },
+    { color: 'hsl(174, 72%, 56%)', size: 160, duration: 22, delay: 4, blur: 26 },
+    { color: 'hsl(262, 83%, 58%)', size: 140, duration: 24, delay: 8, blur: 24 },
+    { color: 'hsl(186, 52%, 45%)', size: 120, duration: 26, delay: 12, blur: 22 },
   ];
 
   return (
-    <div className={`relative min-h-screen overflow-hidden ${className}`}>
-      {/* Animated background lights */}
-      <div className="fixed inset-0 pointer-events-none">
+    <div className={`relative min-h-screen overflow-hidden pt-20 ${className}`}>
+      {/* Animated background lights (only on xl screens) */}
+      <div className="fixed inset-0 pointer-events-none hidden xl:block">
         {lights.map((light, index) => (
           <FloatingLight
             key={index}
@@ -107,8 +95,8 @@ const GlassmorphismBackground = ({
         ))}
       </div>
 
-      {/* Glassmorphism overlay */}
-      <div className={`fixed inset-0 ${blurIntensity[intensity]} ${opacityIntensity[intensity]} border border-white/20`} />
+      {/* Subtle overlay without backdrop blur for performance */}
+      <div className={`fixed inset-0 ${opacityIntensity[intensity]}`} />
 
       {/* Gradient mesh overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />

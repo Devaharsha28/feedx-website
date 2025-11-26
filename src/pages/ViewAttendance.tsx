@@ -11,104 +11,166 @@ import Footer from '@/components/Footer';
 
 const ViewAttendance = () => {
   const [pin, setPin] = useState('');
-  const [attendanceData, setAttendanceData] = useState(null);
+  const [attendanceData, setAttendanceData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!pin || pin.trim() === '') {
+      setError('Please enter a valid PIN');
+      return;
+    }
+
     setIsLoading(true);
     setError('');
     setAttendanceData(null);
 
-    // Simulate API call delay
-    setTimeout(() => {
-      // Mock attendance data for demonstration
-      const mockData = {
-        studentInfo: {
-          name: "John Doe",
-          rollNo: pin || "24054-CPS-011",
-          semester: "4th Semester",
-          branch: "Computer Science & Engineering",
-          section: "A",
-          academicYear: "2024-2025"
-        },
-        overallAttendance: {
-          totalClasses: 120,
-          attendedClasses: 95,
-          percentage: 79.17,
-          status: "Good"
-        },
-        subjectWiseAttendance: [
-          {
-            subjectCode: "CSE401",
-            subjectName: "Data Structures & Algorithms",
-            totalClasses: 25,
-            attendedClasses: 22,
-            percentage: 88,
-            status: "Excellent"
-          },
-          {
-            subjectCode: "CSE402",
-            subjectName: "Database Management Systems",
-            totalClasses: 25,
-            attendedClasses: 20,
-            percentage: 80,
-            status: "Good"
-          },
-          {
-            subjectCode: "CSE403",
-            subjectName: "Operating Systems",
-            totalClasses: 25,
-            attendedClasses: 18,
-            percentage: 72,
-            status: "Average"
-          },
-          {
-            subjectCode: "CSE404",
-            subjectName: "Computer Networks",
-            totalClasses: 25,
-            attendedClasses: 21,
-            percentage: 84,
-            status: "Good"
-          },
-          {
-            subjectCode: "CSE405",
-            subjectName: "Software Engineering",
-            totalClasses: 20,
-            attendedClasses: 14,
-            percentage: 70,
-            status: "Average"
+    try {
+      // Try to call the Flask backend API
+      // Use relative path to avoid ad blocker issues
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/attendance?pin=${encodeURIComponent(pin)}`, {
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Failed to fetch attendance data' }));
+          const errorMessage = errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+          console.error('API Error Response:', errorData);
+          
+          // For 404, it means data not found (not a server issue)
+          if (response.status === 404) {
+            const notFoundError: any = new Error(errorMessage);
+            notFoundError.isNotFound = true;
+            throw notFoundError;
           }
-        ],
-        recentAttendance: [
-          { date: "2025-01-15", subject: "Data Structures", status: "Present", time: "10:00 AM" },
-          { date: "2025-01-14", subject: "Database Systems", status: "Present", time: "11:00 AM" },
-          { date: "2025-01-13", subject: "Operating Systems", status: "Absent", time: "2:00 PM" },
-          { date: "2025-01-12", subject: "Computer Networks", status: "Present", time: "10:00 AM" },
-          { date: "2025-01-11", subject: "Software Engineering", status: "Present", time: "11:00 AM" },
-          { date: "2025-01-10", subject: "Data Structures", status: "Present", time: "2:00 PM" },
-          { date: "2025-01-09", subject: "Database Systems", status: "Absent", time: "10:00 AM" }
-        ]
-      };
+          throw new Error(errorMessage);
+        }
 
-      setAttendanceData(mockData);
+        const data = await response.json();
+        
+        console.log('DEBUG - API Response:', data);
+        console.log('DEBUG - Student Info:', data.studentInfo);
+        console.log('DEBUG - Attendance Records:', data.attendanceRecords);
+        
+        if (!data.success) {
+          const error: any = new Error(data.error || 'Invalid response from server');
+          // If error message suggests data not found, mark it as such
+          if (data.error && data.error.toLowerCase().includes('not found')) {
+            error.isNotFound = true;
+          }
+          throw error;
+        }
+        
+        // Check if studentInfo exists and has data
+        if (!data.studentInfo || Object.keys(data.studentInfo).length === 0) {
+          const notFoundError: any = new Error(data.error || 'No student data found for this PIN. Please verify the PIN is correct and exists in SBTET system.');
+          notFoundError.isNotFound = true;
+          throw notFoundError;
+        }
+
+        // Transform SBTET API response to match our UI format
+        const transformedData = {
+          studentInfo: {
+            name: data.studentInfo.Name || data.studentInfo.StudentName || 'N/A',
+            rollNo: data.studentInfo.Pin || data.studentInfo.Studentid || pin,
+            semester: data.studentInfo.Semester || 'N/A',
+            branch: data.studentInfo.BranchCode || data.studentInfo.Branch || 'N/A',
+            scheme: data.studentInfo.Scheme || 'N/A',
+            attendeeId: data.studentInfo.AttendeeId || data.studentInfo.UAN || 'N/A'
+          },
+          overallAttendance: {
+            totalClasses: parseInt(data.studentInfo.WorkingDays || data.studentInfo.TotalDays || '0') || 0,
+            attendedClasses: parseInt(data.studentInfo.NumberOfDaysPresent || data.studentInfo.PresentDays || '0') || 0,
+            percentage: parseFloat(data.studentInfo.Percentage || data.studentInfo.AttendancePercentage || '0') || 0,
+            status: getAttendanceStatus(parseFloat(data.studentInfo.Percentage || data.studentInfo.AttendancePercentage || '0') || 0)
+          },
+          dailyAttendance: data.attendanceRecords || []
+        };
+        
+        console.log('DEBUG - Transformed Data:', transformedData);
+
+        setAttendanceData(transformedData);
+      } catch (fetchError: any) {
+        const errorMessage = fetchError.message || '';
+        
+        // Check if this is a "data not found" error (not a server issue)
+        if (fetchError.isNotFound) {
+          console.warn('Data not found for PIN:', pin);
+          setError(`❌ Data not found: ${errorMessage}`);
+          setIsLoading(false);
+          return; // Don't show demo data for invalid PINs
+        }
+        
+        // For actual server issues, use mock data as fallback
+        // Check if error is due to ad blocker or browser extension
+        if (errorMessage.includes('ERR_BLOCKED_BY_CLIENT') || errorMessage.includes('blocked') || fetchError.name === 'TypeError') {
+          console.warn('Request blocked (likely by ad blocker). Using demo data.');
+          setError('⚠️ Server issue: Request blocked by browser extension (ad blocker). Showing sample data. Try disabling ad blocker or restart dev server.');
+        } else {
+          console.warn('API unavailable, using demo data:', errorMessage);
+          setError('⚠️ Server issue: Backend server not available. Showing sample data. To use real SBTET data, start the backend server.');
+        }
+        
+        const mockData = {
+          studentInfo: {
+            name: "Demo Student",
+            rollNo: pin,
+            semester: "4",
+            branch: "CPS",
+            scheme: "C16",
+            attendeeId: "DEMO-001"
+          },
+          overallAttendance: {
+            totalClasses: 200,
+            attendedClasses: 171,
+            percentage: 85.5,
+            status: getAttendanceStatus(85.5)
+          },
+          dailyAttendance: [
+            { Date: "2025-11-20T00:00:00", Status: "P", AttendanceMonth: "November" },
+            { Date: "2025-11-19T00:00:00", Status: "P", AttendanceMonth: "November" },
+            { Date: "2025-11-18T00:00:00", Status: "A", AttendanceMonth: "November" },
+            { Date: "2025-11-17T00:00:00", Status: "P", AttendanceMonth: "November" },
+            { Date: "2025-11-16T00:00:00", Status: "W", AttendanceMonth: "November" },
+            { Date: "2025-11-15T00:00:00", Status: "HP", AttendanceMonth: "November" },
+            { Date: "2025-11-14T00:00:00", Status: "P", AttendanceMonth: "November" },
+            { Date: "2025-11-13T00:00:00", Status: "H", AttendanceMonth: "November" },
+            { Date: "2025-11-12T00:00:00", Status: "P", AttendanceMonth: "November" },
+            { Date: "2025-11-11T00:00:00", Status: "E", AttendanceMonth: "November" }
+          ]
+        };
+        
+        setAttendanceData(mockData);
+        // Error message already set above based on error type
+      }
+    } catch (err: any) {
+      console.error('Error fetching attendance:', err);
+      setError(err.message || 'Failed to fetch attendance data. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 2000); // 2 second delay to simulate API call
+    }
+  };
+
+  const getAttendanceStatus = (percentage: number) => {
+    if (percentage >= 85) return 'Excellent';
+    if (percentage >= 75) return 'Good';
+    if (percentage >= 65) return 'Average';
+    return 'Poor';
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Excellent': return 'text-green-600 bg-green-50';
-      case 'Good': return 'text-blue-600 bg-blue-50';
-      case 'Average': return 'text-yellow-600 bg-yellow-50';
-      case 'Poor': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'Excellent': return 'text-green-600 bg-green-50 dark:text-green-100 dark:bg-green-900';
+      case 'Good': return 'text-blue-600 bg-blue-50 dark:text-blue-100 dark:bg-blue-900';
+      case 'Average': return 'text-yellow-600 bg-yellow-50 dark:text-yellow-100 dark:bg-yellow-900';
+      case 'Poor': return 'text-red-600 bg-red-50 dark:text-red-100 dark:bg-red-900';
+      default: return 'text-gray-600 bg-gray-50 dark:text-gray-100 dark:bg-gray-800';
     }
-  };
-
-  const getAttendanceStatusColor = (status: string) => {
-    return status === 'Present' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
   };
 
   const renderStudentInfo = (studentInfo: any) => (
@@ -126,7 +188,7 @@ const ViewAttendance = () => {
             <p className="text-lg font-semibold">{studentInfo.name}</p>
           </div>
           <div>
-            <Label className="text-sm font-medium text-muted-foreground">Roll Number</Label>
+            <Label className="text-sm font-medium text-muted-foreground">PIN / Roll Number</Label>
             <p className="text-lg font-semibold">{studentInfo.rollNo}</p>
           </div>
           <div>
@@ -138,12 +200,12 @@ const ViewAttendance = () => {
             <p className="text-lg font-semibold">{studentInfo.branch}</p>
           </div>
           <div>
-            <Label className="text-sm font-medium text-muted-foreground">Section</Label>
-            <p className="text-lg font-semibold">{studentInfo.section}</p>
+            <Label className="text-sm font-medium text-muted-foreground">Scheme</Label>
+            <p className="text-lg font-semibold">{studentInfo.scheme}</p>
           </div>
           <div>
-            <Label className="text-sm font-medium text-muted-foreground">Academic Year</Label>
-            <p className="text-lg font-semibold">{studentInfo.academicYear}</p>
+            <Label className="text-sm font-medium text-muted-foreground">Attendee ID</Label>
+            <p className="text-lg font-semibold">{studentInfo.attendeeId}</p>
           </div>
         </div>
       </CardContent>
@@ -186,87 +248,89 @@ const ViewAttendance = () => {
   const renderSubjectWiseAttendance = (subjects: any[]) => (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Subject-wise Attendance</CardTitle>
-        <CardDescription>Detailed attendance breakdown by subject</CardDescription>
+        <CardTitle>Daily Attendance Records</CardTitle>
+        <CardDescription>Complete attendance history from SBTET portal</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Subject Code</TableHead>
-              <TableHead>Subject Name</TableHead>
-              <TableHead className="text-center">Total Classes</TableHead>
-              <TableHead className="text-center">Attended</TableHead>
-              <TableHead className="text-center">Percentage</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subjects.map((subject, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{subject.subjectCode}</TableCell>
-                <TableCell>{subject.subjectName}</TableCell>
-                <TableCell className="text-center">{subject.totalClasses}</TableCell>
-                <TableCell className="text-center">{subject.attendedClasses}</TableCell>
-                <TableCell className="text-center font-semibold">{subject.percentage}%</TableCell>
-                <TableCell className="text-center">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(subject.status)}`}>
-                    {subject.status}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-
-  const renderRecentAttendance = (recentAttendance: any[]) => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Attendance History</CardTitle>
-        <CardDescription>Last 7 days attendance record</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead className="text-center">Time</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {recentAttendance.map((record, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">
-                  {new Date(record.date).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
+        {subjects && subjects.length > 0 ? (
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <span className="font-medium">Status Legend:</span>
+              <span className="px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">P=Present</span>
+              <span className="px-2 py-0.5 rounded bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100">A=Absent</span>
+              <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">HP=Half Present</span>
+              <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100">H=Holiday</span>
+              <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100">W=Weekend</span>
+              <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">E=Event</span>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Month</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {subjects.map((record, index) => {
+                    const status = record.Status || record.status || '-';
+                    let statusColor = 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100';
+                    let statusLabel = status;
+                    
+                    if (status === 'P') {
+                      statusColor = 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
+                      statusLabel = 'Present';
+                    } else if (status === 'A') {
+                      statusColor = 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
+                      statusLabel = 'Absent';
+                    } else if (status === 'HP') {
+                      statusColor = 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100';
+                      statusLabel = 'Half Present';
+                    } else if (status === 'H') {
+                      statusColor = 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100';
+                      statusLabel = 'Holiday';
+                    } else if (status === 'W' || status === 'W/P') {
+                      statusColor = 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100';
+                      statusLabel = status === 'W/P' ? 'Weekend/Present' : 'Weekend';
+                    } else if (status === 'E') {
+                      statusColor = 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100';
+                      statusLabel = 'Event';
+                    }
+                    
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          {record.Date ? new Date(record.Date).toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : 'N/A'}
+                        </TableCell>
+                        <TableCell>{record.AttendanceMonth || 'N/A'}</TableCell>
+                        <TableCell className="text-center">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+                            {statusLabel}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    );
                   })}
-                </TableCell>
-                <TableCell>{record.subject}</TableCell>
-                <TableCell className="text-center">{record.time}</TableCell>
-                <TableCell className="text-center">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAttendanceStatusColor(record.status)}`}>
-                    {record.status}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground py-4">No daily attendance records available</p>
+        )}
       </CardContent>
     </Card>
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-20">
       <Navbar />
-      <div className="py-8 pt-20">
+      <div className="py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -313,7 +377,7 @@ const ViewAttendance = () => {
 
           {/* Error Display */}
           {error && (
-            <Alert className="mb-6" variant="destructive">
+            <Alert className="mb-6" variant={error.includes('Demo mode') ? 'default' : 'destructive'}>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -323,8 +387,8 @@ const ViewAttendance = () => {
             <div className="space-y-6">
               {renderStudentInfo(attendanceData.studentInfo)}
               {renderOverallAttendance(attendanceData.overallAttendance)}
-              {renderSubjectWiseAttendance(attendanceData.subjectWiseAttendance)}
-              {renderRecentAttendance(attendanceData.recentAttendance)}
+              {attendanceData.dailyAttendance && attendanceData.dailyAttendance.length > 0 && 
+                renderSubjectWiseAttendance(attendanceData.dailyAttendance)}
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

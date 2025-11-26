@@ -7,11 +7,13 @@ export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: ["https://economies-licence-funeral-fantasy.trycloudflare.com", "characteristic-translate-advert-smile.trycloudflare.com"],
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
+      "/api": {
+        target: "http://localhost:5001",
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path,
       },
     },
   },
