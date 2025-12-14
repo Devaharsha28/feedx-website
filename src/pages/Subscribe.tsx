@@ -94,7 +94,7 @@ const Subscribe = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       <Navbar />
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10 mt-20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
 
@@ -202,29 +202,13 @@ const Subscribe = () => {
                 <p className="text-xs text-muted-foreground text-center mt-6">
                   We respect your privacy. Unsubscribe at any time.
                   <br />
-                  By subscribing, you agree to receive updates about FeedX Portal.
+                  By subscribing, you agree to receive updates about FeedX Polytechnic.
                 </p>
               </>
             )}
           </div>
 
-          {/* Features */}
-          {!isSuccess && (
-            <div className="mt-8 grid grid-cols-3 gap-4 text-center animate-fade-in">
-              <div>
-                <div className="text-2xl font-bold text-gradient mb-1">100%</div>
-                <div className="text-xs text-muted-foreground">Secure</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gradient mb-1">0</div>
-                <div className="text-xs text-muted-foreground">Spam</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gradient mb-1">Early</div>
-                <div className="text-xs text-muted-foreground">Access</div>
-              </div>
-            </div>
-          )}
+          {/* Removed placeholder metrics */}
         </div>
       </div>
       <Footer />

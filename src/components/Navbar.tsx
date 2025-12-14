@@ -1,27 +1,25 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Menu, X, Moon, Sun } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import feedxLogo from '@/assets/feedx-logo.png';
 import fxbotIcon from '@/assets/fxbot-icon.svg';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 glass backdrop-blur-xl border-b border-white/20 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-[hsl(var(--foreground))] shadow-lg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center py-5">
           {/* Logo - Left */}
           <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
-            <img src={feedxLogo} alt="FEEDX Polytechnic Logo" className="h-10 w-10 sm:h-12 sm:w-12" />
+            <img src={feedxLogo} alt="FEEDX Logo" className="h-10 w-10 sm:h-12 sm:w-12" />
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-gradient">FEEDX Polytechnic</h1>
-              <p className="text-xs text-muted-foreground hidden sm:block">Connecting Students, Careers & Growth</p>
+              <h1 className="text-lg sm:text-xl font-bold text-[hsl(var(--foreground))]">FEEDX</h1>
+              <p className="text-[11px] font-bold text-[hsl(var(--foreground))] leading-tight">Listen • Respond • Resolve</p>
             </div>
           </Link>
 
@@ -30,9 +28,9 @@ const Navbar = () => {
             <Link to="/" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               Home
             </Link>
-            <a href="#about" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
+            <Link to="/about" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               About
-            </a>
+            </Link>
             <Link to="/updates" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               Updates
             </Link>
@@ -42,58 +40,32 @@ const Navbar = () => {
             <Link to="/resources" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               Resources
             </Link>
-            <Link to="/jobs" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
-              Jobs
+            <Link to="/institute-profile" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
+              Institute Profile
             </Link>
-            <Link to="/view-attendance" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
-              Attendance
+            <Link to="/student-analytics" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
+              Student Analytics
             </Link>
             <Link to="/spotlight" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               Spotlight
             </Link>
-            <Link to="/join" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
-              Join
-            </Link>
+            {/* Removed Join and Jobs from menu */}
           </div>
 
           {/* Right Side Buttons */}
           <div className="flex items-center space-x-3 flex-shrink-0 ml-auto">
-            {/* Theme Toggle - Animated Sun/Moon */}
-            <button
-              onClick={toggleTheme}
-              className={`relative inline-flex h-5 w-10 items-center rounded-full transition-all duration-500 focus:outline-none focus:ring-1 focus:ring-primary focus:ring-offset-1 shadow-sm ${
-                theme === 'dark' ? 'bg-[hsl(var(--primary))]' : 'bg-[hsl(var(--secondary))]'
-              }`}
-              aria-label="Toggle theme"
-            >
-              {/* Sliding Circle */}
-              <span
-                className={`inline-flex h-4 w-4 items-center justify-center transform rounded-full bg-white shadow-sm transition-all duration-500 ${
-                  theme === 'dark' ? 'translate-x-5' : 'translate-x-0.5'
-                }`}
-              >
-                {theme === 'light' ? (
-                  <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="4" fill="hsl(var(--secondary))" />
-                    <path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42" 
-                      stroke="hsl(var(--secondary))" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                ) : (
-                  <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="hsl(var(--primary))" />
-                    <circle cx="15" cy="8" r="1.2" fill="hsl(var(--muted-foreground))" opacity="0.6" />
-                    <circle cx="18" cy="12" r="0.8" fill="hsl(var(--muted-foreground))" opacity="0.5" />
-                    <circle cx="16" cy="15" r="0.6" fill="hsl(var(--muted-foreground))" opacity="0.4" />
-                  </svg>
-                )}
-              </span>
-            </button>
-
             {/* FX Bot Button - Desktop only */}
             <Link to="/fxbot" className="hidden lg:block">
               <Button size="sm" variant="outline" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-smooth">
                 <img src={fxbotIcon} alt="FX Bot" className="w-4 h-4" />
                 FX Bot
+              </Button>
+            </Link>
+
+            {/* Join Us Button - Desktop */}
+            <Link to="/join" className="hidden lg:block">
+              <Button size="sm" className="bg-gradient-brand text-white hover:opacity-90 transition-smooth">
+                Join Us
               </Button>
             </Link>
 
@@ -108,13 +80,7 @@ const Navbar = () => {
                 </Button>
               </div>
             ) : (
-              <div className="hidden lg:flex items-center space-x-3">
-                <Link to="/join">
-                  <Button size="sm" className="bg-gradient-brand hover:opacity-90 transition-smooth">
-                    Join Community
-                  </Button>
-                </Link>
-              </div>
+              <div className="hidden lg:flex items-center space-x-3"></div>
             )}
 
             {/* Mobile Menu Toggle */}
@@ -132,7 +98,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-white/20">
+          <div className="lg:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-3">
               <Link 
                 to="/" 
@@ -141,13 +107,13 @@ const Navbar = () => {
               >
                 Home
               </Link>
-              <a 
-                href="#about" 
+              <Link 
+                to="/about" 
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 About
-              </a>
+              </Link>
               <Link 
                 to="/updates" 
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
@@ -170,18 +136,18 @@ const Navbar = () => {
                 Resources
               </Link>
               <Link 
-                to="/jobs" 
+                to="/institute-profile" 
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Jobs
+                Institute Profile
               </Link>
               <Link 
-                to="/view-attendance" 
+                to="/student-analytics" 
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Attendance
+                Student Analytics
               </Link>
               <Link 
                 to="/spotlight" 
@@ -190,13 +156,7 @@ const Navbar = () => {
               >
                 Spotlight
               </Link>
-              <Link 
-                to="/join" 
-                className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Join
-              </Link>
+              {/* Removed Join and Jobs from mobile menu */}
               
               {/* Mobile FX Bot */}
               <Link 
@@ -227,11 +187,7 @@ const Navbar = () => {
                   </Button>
                 </>
               ) : (
-                <Link to="/join" onClick={() => setMobileMenuOpen(false)}>
-                  <Button size="sm" className="w-full bg-gradient-brand hover:opacity-90 transition-smooth">
-                    Join Community
-                  </Button>
-                </Link>
+                <div className="px-3 py-2 text-sm text-muted-foreground">Welcome</div>
               )}
             </div>
           </div>

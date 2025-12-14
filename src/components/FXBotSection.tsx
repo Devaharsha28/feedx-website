@@ -26,12 +26,12 @@ const FXBotSection = () => {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
               Meet <span className="text-gradient">FX Bot</span>
               <br />
-              Your Anonymous Assistant
+              Anonymous Student Feedback Platform
             </h2>
 
             <p className="text-base sm:text-lg text-muted-foreground">
-              FX Bot is an AI-powered WhatsApp chatbot that ensures your feedback reaches the right people 
-              while maintaining your complete anonymity. Listen, Respond, and Resolve - that's our promise.
+              FX Bot helps students share issues and suggestions anonymously, with a clear reference ID so progress
+              can be followed up.
             </p>
 
             <div className="space-y-4">
@@ -42,7 +42,7 @@ const FXBotSection = () => {
                 <div>
                   <h4 className="font-semibold mb-1 transition-colors duration-300 group-hover:text-primary">WhatsApp Integration</h4>
                   <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                    Submit feedback directly through WhatsApp for maximum convenience
+                    Planned WhatsApp-first flow for quick feedback submission
                   </p>
                 </div>
               </div>
@@ -54,7 +54,7 @@ const FXBotSection = () => {
                 <div>
                   <h4 className="font-semibold mb-1 transition-colors duration-300 group-hover:text-primary">Complete Privacy</h4>
                   <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                    Advanced encryption ensures your identity remains protected
+                    Designed for anonymous submissions — identity not required
                   </p>
                 </div>
               </div>
@@ -64,9 +64,9 @@ const FXBotSection = () => {
                   <Zap className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-1 transition-colors duration-300 group-hover:text-primary">Instant Response</h4>
+                  <h4 className="font-semibold mb-1 transition-colors duration-300 group-hover:text-primary">Tracking ID</h4>
                   <p className="text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                    Get immediate acknowledgment and tracking ID for your submission
+                    Get a reference ID to track status and updates
                   </p>
                 </div>
               </div>
@@ -74,11 +74,11 @@ const FXBotSection = () => {
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 animate-fade-in" style={{ animationDelay: '0.8s' }}>
               <Button className="bg-gradient-brand hover:opacity-90 hover:scale-105 transition-all duration-300 group w-full sm:w-auto hover-glow-primary glow-primary-soft">
-                Start Chatting with FX Bot
+                Learn about FX Bot
                 <MessageCircle className="ml-2 w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
               </Button>
               <Button variant="outline" className="hover-lift hover:scale-105 transition-all duration-300 w-full sm:w-auto hover-glow-secondary">
-                Watch Demo
+                In progress
               </Button>
             </div>
           </div>
@@ -101,24 +101,24 @@ const FXBotSection = () => {
               {/* Bot Info */}
               <div className="text-center mb-4 sm:mb-6">
                 <h3 className="text-xl sm:text-2xl font-bold mb-2">FX Bot</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">WhatsApp Chatbot Assistant</p>
+                <p className="text-sm sm:text-base text-muted-foreground">Anonymous feedback (pilot)</p>
               </div>
 
               {/* Quick Actions */}
               <div className="space-y-2 sm:space-y-3">
                 <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-primary">
-                  <div className="font-medium mb-1 text-sm sm:text-base">Registration</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Create your anonymous account</div>
+                  <div className="font-medium mb-1 text-sm sm:text-base">Anonymous submission</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Share an issue or suggestion</div>
                 </button>
 
                 <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-secondary">
-                  <div className="font-medium mb-1 text-sm sm:text-base">Anonymous Submission</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Submit feedback securely</div>
+                  <div className="font-medium mb-1 text-sm sm:text-base">Submit Feedback</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">No identity required</div>
                 </button>
 
                 <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-accent">
                   <div className="font-medium mb-1 text-sm sm:text-base">ID Tracking</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Track your submission status</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Track status using reference ID</div>
                 </button>
 
                 <button className="w-full bg-muted hover:bg-muted/80 rounded-lg sm:rounded-xl p-3 sm:p-4 text-left transition-all duration-300 hover-lift hover:scale-[1.02] group hover-glow-primary">

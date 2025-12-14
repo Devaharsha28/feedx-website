@@ -8,46 +8,48 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Softer, premium light theme palette */
-    --background: 210 20% 96%; /* very soft off-white */
-    --foreground: 215 14% 18%; /* muted dark text for less contrast */
+    /* Clean light theme with white base */
+    --background: 0 0% 100%;
+    --foreground: 211 63% 18%; /* deep navy from logo */
 
-    --card: 210 22% 99%;
-    --card-foreground: 215 14% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 211 63% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 211 63% 18%;
 
-    /* Primary: Muted, premium indigo-blue */
-    --primary: 217 48% 42%;
+    /* Primary: brand blue */
+    --primary: 214 76% 47%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary: Muted teal */
-    --secondary: 186 52% 45%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: aqua accent */
+    --secondary: 186 58% 65%;
+    --secondary-foreground: 211 63% 18%;
 
-    --muted: 210 18% 96.5%;
-    --muted-foreground: 215 18% 52%;
+    /* Accent: soft coral for contrast */
+    --accent: 350 65% 72%;
+    --accent-foreground: 211 63% 18%;
 
-    --accent: 275 60% 48%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 210 16% 92%;
+    --muted-foreground: 211 28% 40%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 30% 92%;
-    --input: 215 30% 92%;
-    --ring: 217 48% 42%;
+    --border: 210 18% 85%;
+    --input: 210 18% 85%;
+    --ring: 214 76% 47%;
 
     --radius: 0.75rem;
+    --border-width: 0px;
 
     /* Brand gradients */
-    --gradient-brand: linear-gradient(135deg, hsl(217, 48%, 42%) 0%, hsl(186, 52%, 45%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(210, 20%, 98%) 0%, hsl(210, 18%, 96%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(214, 76%, 47%) 0%, hsl(186, 58%, 65%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(0, 0%, 100%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 10px 40px -10px hsl(217, 48%, 42%, 0.08);
-    --shadow-glow: 0 0 60px hsl(186, 52%, 45%, 0.12);
+    --shadow-soft: 0 10px 40px -10px hsl(214, 76%, 47%, 0.08);
+    --shadow-glow: 0 0 60px hsl(186, 58%, 65%, 0.16);
     
     /* Animations */
     --transition-smooth: all 0.5s cubic-bezier(0, -0.02, 0.4, 1.25);
@@ -56,42 +58,42 @@ All colors MUST be HSL.
 
   .dark {
     --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --foreground: 0 0% 98%;
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 47% 13%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 47% 13%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 221 83% 63%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 214 76% 62%;
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 174 72% 56%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 186 58% 65%;
+    --secondary-foreground: 222 47% 11%;
 
     --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 210 40% 80%;
 
-    --accent: 174 72% 56%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 350 65% 72%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 221 83% 63%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 214 76% 62%;
     
-    --gradient-brand: linear-gradient(135deg, hsl(221, 83%, 63%) 0%, hsl(174, 72%, 56%) 100%);
-    --shadow-soft: 0 6px 24px -12px hsl(221, 83%, 63%, 0.25);
-    --shadow-glow: 0 0 24px hsl(174, 72%, 56%, 0.2);
+    --gradient-brand: linear-gradient(135deg, hsl(214, 76%, 62%) 0%, hsl(186, 58%, 65%) 100%);
+    --shadow-soft: 0 6px 24px -12px hsl(214, 76%, 62%, 0.2);
+    --shadow-glow: 0 0 24px hsl(186, 58%, 65%, 0.18);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-width: var(--border-width);
   }
 
   body {

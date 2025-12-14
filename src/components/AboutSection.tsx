@@ -1,4 +1,4 @@
-import { Users, Target, Heart, Award } from 'lucide-react';
+import { BriefcaseBusiness, BookOpen, GraduationCap, Sparkles } from 'lucide-react';
 import feedxLogo from '@/assets/feedx-logo.png';
 
 const AboutSection = () => {
@@ -14,105 +14,86 @@ const AboutSection = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            About <span className="text-gradient">FeedX Portal</span>
+            About <span className="text-gradient">FeedX Polytechnic</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Building a safer, more transparent community where every voice matters
+            A student community built for Polytechnic learners.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto mb-16">
+        <div className="grid lg:grid-cols-12 gap-10 items-start max-w-6xl mx-auto mb-16">
           {/* Left Content */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <img src={feedxLogo} alt="FeedX Logo" className="h-16 w-16" />
+          <div className="lg:col-span-5 space-y-6">
+            <div className="flex items-center space-x-4">
+              <img src={feedxLogo} alt="FeedX Logo" className="h-14 w-14" />
               <div>
-                <h3 className="text-2xl font-bold">FeedX Polytechnic</h3>
-                <p className="text-muted-foreground">Anonymous Feedback System</p>
+                <h3 className="text-2xl font-bold">FEEDX POLYTECHNIC</h3>
+                <p className="text-sm text-muted-foreground">A student community for Polytechnic learners</p>
               </div>
             </div>
 
-            <p className="text-muted-foreground leading-relaxed">
-              FeedX Portal was created with a simple yet powerful mission: to give every student 
-              a safe, anonymous platform to share their thoughts, concerns, and suggestions without 
-              fear of identification or repercussion.
-            </p>
-
-            <p className="text-muted-foreground leading-relaxed">
-              We believe that transparency and accountability are the foundations of a healthy 
-              educational institution. Through our AI-powered FX Bot and secure tracking system, 
-              we ensure that every voice is heard and every issue is addressed.
-            </p>
-
-            <div className="flex items-center space-x-6 pt-4">
-              <div>
-                <div className="text-3xl font-bold text-gradient">100%</div>
-                <div className="text-sm text-muted-foreground">Anonymous</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gradient">24/7</div>
-                <div className="text-sm text-muted-foreground">Support</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-gradient">Secure</div>
-                <div className="text-sm text-muted-foreground">Platform</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Content - Values */}
-          <div className="space-y-4">
-            <div className="bg-card border border-border rounded-2xl p-6 hover-lift">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-primary" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Community First</h4>
-              <p className="text-sm text-muted-foreground">
-                Every feature is designed with the student community's needs and safety in mind.
+            <div className="space-y-3 text-muted-foreground leading-relaxed">
+              <p>
+                FeedX Polytechnic is built around Skills, Opportunities, and Knowledge — with practical support to help
+                students learn, connect, and move forward.
+              </p>
+              <p>
+                FeedX = Feed + X (Exchange & Exposure).
               </p>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-6 hover-lift">
-              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-secondary" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Transparency</h4>
+            {/* Vision */}
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h4 className="text-lg font-semibold mb-2">FeedX Vision</h4>
               <p className="text-sm text-muted-foreground">
-                Track your submissions in real-time and see how issues are being resolved.
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-6 hover-lift">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <Heart className="w-6 h-6 text-primary" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Privacy Protected</h4>
-              <p className="text-sm text-muted-foreground">
-                Your identity is never shared. We use advanced encryption to keep you safe.
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-6 hover-lift">
-              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
-                <Award className="w-6 h-6 text-secondary" />
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Action-Oriented</h4>
-              <p className="text-sm text-muted-foreground">
-                We don't just collect feedback - we ensure it leads to real, meaningful change.
+                “To transform Polytechnic education into a career-driven journey where every student graduates not
+                just with a diploma, but with the skills, knowledge, and confidence to earn, innovate, and lead.”
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Mission Statement */}
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-brand rounded-3xl p-12 shadow-glow">
-            <h3 className="text-3xl font-bold text-white mb-4">Our Mission</h3>
-            <p className="text-white/90 text-lg leading-relaxed">
-              "To create an educational environment where students feel empowered to speak up, 
-              institutions are held accountable, and positive change happens through open, 
-              anonymous communication. Listen. Respond. Resolve."
-            </p>
+          {/* Right Content */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <h4 className="text-lg font-semibold">Skills • Opportunities • Knowledge</h4>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="rounded-xl bg-muted/60 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <GraduationCap className="w-5 h-5 text-primary" />
+                    <p className="font-semibold text-foreground">S — Skills</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Training, certifications, freelancing, projects.</p>
+                </div>
+                <div className="rounded-xl bg-muted/60 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <BriefcaseBusiness className="w-5 h-5 text-primary" />
+                    <p className="font-semibold text-foreground">O — Opportunities</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Jobs, startups, internships, industrial visits.</p>
+                </div>
+                <div className="rounded-xl bg-muted/60 p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                    <p className="font-semibold text-foreground">K — Knowledge</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Notes, resources, workshops, feedback sharing.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h4 className="text-lg font-semibold mb-3">FeedX Mission</h4>
+              <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+                <li>Prepare every student to become job-ready, entrepreneur-ready, or freelancer-ready by the end of their diploma.</li>
+                <li>Ensure industrial exposure through mandatory visits and collaborations with industries.</li>
+                <li>Make final projects the foundation of career opportunities—turning ideas into jobs, startups, or real-world solutions.</li>
+                <li>Provide continuous academic, mental health, and career support while fostering independence and innovation.</li>
+                <li>Create a unique identity for Polytechnic students, beyond just preparing for ECET or B.Tech.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

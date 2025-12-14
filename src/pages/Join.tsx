@@ -1,12 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Instagram, MessageCircle, Heart, Star, Award } from 'lucide-react';
-import GlassmorphismBackground from '@/components/GlassmorphismBackground';
+import { Users, Instagram, MessageCircle, Heart, Star, Award, Youtube } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { SOCIAL_LINKS as LINKS } from '@/lib/socialLinks';
+import { joinIllustration } from '@/lib/illustrations';
+import { useEffect, useState } from 'react';
 
 const Join = () => {
+  const [links, setLinks] = useState<{ whatsappChannel?: string; whatsappCommunity?: string; instagram?: string }>({});
+  useEffect(() => {
+    fetch('/social-links.json')
+      .then((res) => res.json())
+      .then((data) => setLinks(data))
+      .catch(() => setLinks({}));
+  }, []);
 
   const benefits = [
     {
@@ -34,35 +41,41 @@ const Join = () => {
   const socials = [
     {
       title: 'WhatsApp Channel',
-      href: LINKS.whatsappChannel,
+      href: links.whatsappChannel || '#',
       icon: <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-green-600" />,
     },
     {
       title: 'WhatsApp Community',
-      href: LINKS.whatsappCommunity,
+      href: links.whatsappCommunity || '#',
       icon: <Users className="w-6 h-6 md:w-7 md:h-7 text-emerald-600" />,
     },
     {
       title: 'Instagram Page',
-      href: LINKS.instagram,
+      href: links.instagram || '#',
       icon: <Instagram className="w-6 h-6 md:w-7 md:h-7 text-pink-600" />,
+    },
+    {
+      title: 'YouTube Channel',
+      href: 'https://www.youtube.com/@feedx_official',
+      icon: <Youtube className="w-6 h-6 md:w-7 md:h-7 text-red-600" />,
     },
   ];
 
   return (
-    <GlassmorphismBackground intensity="light" className="bg-gradient-flow">
+    <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-background to-secondary/10 py-20 mt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up">
-              Join <span className="text-gradient">FEEDX</span>
+      <div className="border-b border-border bg-white pt-24 pb-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-3">
+              Join FEEDX
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
+            <p className="text-xl text-muted-foreground max-w-2xl">
               Become part of Telangana's largest polytechnic student community
             </p>
           </div>
+          <img src={joinIllustration} alt="Join FEEDX" className="w-full max-w-md" />
         </div>
       </div>
 
@@ -109,7 +122,7 @@ const Join = () => {
         </div>
       </div>
       <Footer />
-    </GlassmorphismBackground>
+    </div>
   );
 };
 

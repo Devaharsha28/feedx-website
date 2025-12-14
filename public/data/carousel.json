@@ -1,0 +1,30 @@
+[
+  {
+    "id": "carousel-1",
+    "title": "",
+    "description": "",
+    "image": "/placeholder.svg",
+    "alt": "Campus view"
+  },
+  {
+    "id": "carousel-2",
+    "title": "",
+    "description": "",
+    "image": "/placeholder.svg",
+    "alt": "Modern facilities"
+  },
+  {
+    "id": "carousel-3",
+    "title": "",
+    "description": "",
+    "image": "/placeholder.svg",
+    "alt": "Innovation center"
+  },
+  {
+    "id": "carousel-4",
+    "title": "",
+    "description": "",
+    "image": "/placeholder.svg",
+    "alt": "Community events"
+  }
+]

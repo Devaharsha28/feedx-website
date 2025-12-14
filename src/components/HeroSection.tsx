@@ -1,92 +1,99 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, MessageSquare, Shield, TrendingUp } from 'lucide-react';
+import { ArrowRight, BookOpen, BriefcaseBusiness, GraduationCap, Sparkles } from 'lucide-react';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
 
 const HeroSection = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 pb-8 sm:pb-16">
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
-      
-      {/* Animated circles */}
-      <div className="absolute top-20 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-primary/20 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '0s' }} />
-      <div className="absolute bottom-20 right-10 w-96 h-96 sm:w-[32rem] sm:h-[32rem] bg-secondary/20 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 bg-accent/10 rounded-full blur-xl animate-float [will-change:transform] motion-reduce:animate-none" style={{ animationDelay: '2s' }} />
-
+    <section
+      id="home"
+      className="relative pb-12 pt-6 bg-background overflow-hidden"
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-30">
+        <div className="absolute -top-16 -left-10 h-48 w-48 rounded-full bg-gradient-to-br from-primary/15 to-secondary/10 blur-3xl" />
+        <div className="absolute bottom-0 right-[-60px] h-56 w-56 rounded-full bg-gradient-to-tl from-secondary/15 to-primary/10 blur-3xl" />
+      </div>
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Main Content - Left/Center */}
           <div className="lg:col-span-7 text-center lg:text-left">
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-card border border-border rounded-full px-3 py-1.5 sm:px-4 sm:py-2 mb-6 sm:mb-8 animate-slide-down">
-            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-            <span className="text-xs sm:text-sm font-medium">Anonymous & Secure Feedback System</span>
+          <div className="inline-flex items-center space-x-2 bg-card border border-border rounded-full px-3 py-1.5 sm:px-4 sm:py-2 mb-6 sm:mb-8 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[hsl(var(--primary))]" />
+            <span className="text-xs sm:text-sm font-medium">Student-first platform for Polytechnic learners</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 px-2">
-            <span className="animate-typing">Your Voice Matters,</span>
-            <br />
-            <span className="text-gradient animate-bounce-in" style={{ animationDelay: '3.5s' }}>Your Identity Protected</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 px-2 text-foreground">
+            FEEDX POLYTECHNIC
           </h1>
 
           {/* Subheading */}
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl animate-fade-in">
-            FeedX Portal empowers students to share feedback, report issues, and drive positive change 
-            while maintaining complete anonymity with our AI-powered FX Bot.
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
+            A student community that supports Polytechnic learners with Skills, Opportunities, and Knowledge (SOK)
+            through curated resources, guidance, and structured updates.
+          </p>
+
+          {/* Mission */}
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl">
+            <span className="font-semibold text-foreground">Mission:</span> Make student support and growth easier to access,
+            faster to coordinate, and transparent to track.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 mb-12 sm:mb-16 animate-scale-in px-4">
-            <Link to="/fxbot">
+          <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 px-4">
+            <Link to="/resources">
               <Button size="lg" className="bg-gradient-brand hover:opacity-90 transition-smooth group w-full sm:w-auto">
-                Submit Feedback
+                Start learning
                 <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="hover-lift w-full sm:w-auto">
-              Learn More
-            </Button>
+            <Link to="/about" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                About
+              </Button>
+            </Link>
           </div>
 
           {/* Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-16 px-4">
-            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 hover-lift hover:shadow-glow transition-all duration-500 animate-slide-up group" style={{ animationDelay: '0.1s' }}>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:scale-110" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-12 px-4">
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+                <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">Anonymous Submission</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                Submit feedback completely anonymously with auto-generated IDs
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[hsl(var(--primary))]">S — Skills</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Training, certifications, freelancing, and projects.
               </p>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 hover-lift hover:shadow-glow transition-all duration-500 animate-slide-up group" style={{ animationDelay: '0.2s' }}>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:scale-110" />
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+                <BriefcaseBusiness className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">Track Issues</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                Monitor your submissions with unique tracking IDs
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[hsl(var(--primary))]">O — Opportunities</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Jobs, startups, internships, and industrial visits.
               </p>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 hover-lift hover:shadow-glow transition-all duration-500 animate-slide-up group sm:col-span-2 lg:col-span-1" style={{ animationDelay: '0.3s' }}>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform duration-300 group-hover:scale-110" />
+            <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 sm:col-span-2 lg:col-span-1 shadow-sm">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-brand rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
+                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">Real-time Updates</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80">
-                Get instant updates on issue status and resolutions
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[hsl(var(--primary))]">K — Knowledge</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Notes, resources, workshops, and feedback sharing.
               </p>
             </div>
           </div>
         </div>
 
         {/* Notifications Panel - Right Side */}
-        <div className="lg:col-span-5 flex justify-center lg:justify-end animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <NotificationsPanel />
+        <div className="lg:col-span-5 flex justify-center lg:justify-end">
+          <div className="w-full max-w-sm lg:max-w-xs xl:max-w-sm">
+            <NotificationsPanel />
+          </div>
         </div>
       </div>
     </div>

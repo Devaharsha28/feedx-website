@@ -1,68 +1,32 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Bell, AlertTriangle, Info, BookOpen, Award } from 'lucide-react';
-import GlassmorphismBackground from '@/components/GlassmorphismBackground';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { noDataIllustration, updatesIllustration } from '@/lib/illustrations';
+import { updatesAPI, Update } from '@/lib/api';
 
 const Updates = () => {
-  const updates = [
-    {
-      id: 1,
-      type: 'exam',
-      title: 'Semester End Examination Schedule Released',
-      description: 'SBTET has released the examination schedule for all diploma branches. Check your branch-specific dates.',
-      date: '2025-01-15',
-      priority: 'high',
-      category: 'Examinations'
-    },
-    {
-      id: 2,
-      type: 'circular',
-      title: 'New Industrial Training Guidelines',
-      description: 'Updated guidelines for industrial training and internship programs. Mandatory documentation requirements added.',
-      date: '2025-01-12',
-      priority: 'medium',
-      category: 'Training'
-    },
-    {
-      id: 3,
-      type: 'result',
-      title: 'Diploma Results Declared',
-      description: 'Results for 4th semester examinations have been declared. Check your results on the SBTET portal.',
-      date: '2025-01-10',
-      priority: 'high',
-      category: 'Results'
-    },
-    {
-      id: 4,
-      type: 'announcement',
-      title: 'FEEDX Community Meetup',
-      description: 'Join us for our monthly community meetup to discuss projects, share experiences, and network with fellow students.',
-      date: '2025-01-20',
-      priority: 'low',
-      category: 'Community'
-    },
-    {
-      id: 5,
-      type: 'circular',
-      title: 'Scholarship Applications Open',
-      description: 'Merit-based scholarships for diploma students are now open. Last date to apply is February 15, 2025.',
-      date: '2025-01-08',
-      priority: 'medium',
-      category: 'Scholarships'
-    },
-    {
-      id: 6,
-      type: 'exam',
-      title: 'Revaluation Application Window',
-      description: 'Applications for answer sheet revaluation are now open. Submit within 15 days from result declaration.',
-      date: '2025-01-05',
-      priority: 'medium',
-      category: 'Examinations'
-    }
-  ];
+  const navigate = useNavigate();
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUpdates = async () => {
+      try {
+        const data = await updatesAPI.getAll();
+        setUpdates(data);
+      } catch (error) {
+        console.error('Failed to fetch updates:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUpdates();
+  }, []);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -94,24 +58,35 @@ const Updates = () => {
   };
 
   return (
-    <GlassmorphismBackground intensity="light" className="bg-gradient-flow">
+    <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-background to-secondary/10 py-20 mt-20">
+      <div className="border-b border-border bg-white pt-24 pb-10">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up">
-                Latest <span className="text-gradient">Updates</span>
-              </h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
-                Stay informed with the latest announcements, exam schedules, and important notifications
-              </p>
+            <Button
+              variant="outline"
+              onClick={() => navigate(-1)}
+              className="mb-6"
+            >
+              ← Back
+            </Button>
+            <div className="flex flex-col lg:flex-row items-center gap-8">
+              <div className="flex-1 text-center lg:text-left">
+                <h1 className="text-4xl sm:text-5xl font-bold mb-3">
+                  Latest Updates
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-2xl">
+                  Stay informed with the latest announcements, exam schedules, and important notifications
+                </p>
+              </div>
+              <img src={updatesIllustration} alt="Updates" className="w-full max-w-md" />
             </div>
           </div>
         </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Quick Stats */}
+        {updates.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           <Card className="text-center hover-lift">
             <CardContent className="p-6">
@@ -153,11 +128,18 @@ const Updates = () => {
             </CardContent>
           </Card>
         </div>
+        )}
 
         {/* Updates List */}
         <div className="space-y-6">
-          {updates.map((update, index) => (
-            <Card key={update.id} className="glass-card hover-glass animate-fade-in hover-lift" style={{ animationDelay: `${index * 0.1}s` }}>
+          {updates.length === 0 ? (
+            <div className="flex flex-col items-center text-center text-muted-foreground space-y-4">
+              <img src={noDataIllustration} alt="No updates" className="w-full max-w-md" />
+              <p>No updates available.</p>
+            </div>
+          ) : (
+          updates.map((update, index) => (
+            <Card key={update.id} className="border border-border animate-fade-in hover:shadow-md transition-shadow" style={{ animationDelay: `${index * 0.1}s` }}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -198,7 +180,8 @@ const Updates = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ))
+          )}
         </div>
 
         {/* Call to Action */}
@@ -217,7 +200,7 @@ const Updates = () => {
         </div>
       </div>
       <Footer />
-    </GlassmorphismBackground>
+    </div>
   );
 };
 

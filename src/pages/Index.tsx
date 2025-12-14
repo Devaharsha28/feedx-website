@@ -1,27 +1,40 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
+import ImageCarousel from '@/components/ImageCarousel';
 import FeaturesSection from '@/components/FeaturesSection';
-import FXBotSection from '@/components/FXBotSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import EventsSection from '@/components/EventsSection';
 import AboutSection from '@/components/AboutSection';
 import Footer from '@/components/Footer';
-import GlassmorphismBackground from '@/components/GlassmorphismBackground';
+import homeImage from '../../images/image.png';
 
 const Index = () => {
   return (
-    <GlassmorphismBackground intensity="medium" className="bg-gradient-mesh">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="relative mt-20 space-y-12">
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><HeroSection /></div>
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><FeaturesSection /></div>
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><FXBotSection /></div>
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><TestimonialsSection /></div>
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><EventsSection /></div>
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_800px]"><AboutSection /></div>
+      <main className="pt-24 space-y-12">
+        <HeroSection />
+        <ImageCarousel />
+        <FeaturesSection />
+        <section className="bg-background">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="rounded-2xl border border-border bg-white overflow-hidden flex justify-center">
+              <img
+                src={homeImage}
+                alt="FeedX"
+                className="max-w-md h-auto rounded-xl"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </section>
+        <TestimonialsSection />
+        <EventsSection />
+        <AboutSection />
         <Footer />
-      </div>
-    </GlassmorphismBackground>
+      </main>
+    </div>
   );
 };
 

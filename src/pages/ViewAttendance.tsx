@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Download, Printer, Calendar, User } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { attendanceIllustration as attendenceIllustration } from '@/lib/illustrations';
 
 const ViewAttendance = () => {
   const [pin, setPin] = useState('');
@@ -328,20 +329,25 @@ const ViewAttendance = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+      <div className="border-b border-border bg-white pt-24 pb-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-foreground">
               View Attendance
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               Fetch attendance data from SBTET Telangana portal
             </p>
           </div>
+          <img src={attendenceIllustration} alt="Attendance" className="w-full max-w-sm" />
+        </div>
+      </div>
+
+      <div className="py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
 
           {/* Search Form */}
           <Card className="mb-8">
@@ -360,7 +366,7 @@ const ViewAttendance = () => {
                   <Label htmlFor="pin">PIN</Label>
                   <Input
                     id="pin"
-                    placeholder="Enter PIN (e.g., 24054-cps-011)"
+                    placeholder="Enter your student PIN"
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
                     required

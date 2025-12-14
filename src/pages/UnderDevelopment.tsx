@@ -40,24 +40,16 @@ const UnderDevelopment = () => {
           </h1>
 
           <p className="text-xl text-muted-foreground mb-8 animate-fade-in">
-            We're working hard to bring you an amazing AI-powered WhatsApp chatbot experience. 
-            FX Bot will revolutionize how you submit anonymous feedback and track your issues.
+            We're working on FX Bot and related student-support features for FeedX Polytechnic.
+            This will help with knowledge sharing and guidance for students.
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-3 mb-12 animate-scale-in">
-            <span className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-              Anonymous Messaging
-            </span>
-            <span className="bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium">
-              Real-time Tracking
-            </span>
-            <span className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
-              AI-Powered Responses
-            </span>
-            <span className="bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium">
-              WhatsApp Integration
-            </span>
+            <span className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">Knowledge Sharing</span>
+            <span className="bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium">Guidance</span>
+            <span className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">Feedback Sharing</span>
+            <span className="bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium">WhatsApp Integration</span>
           </div>
 
           {/* CTA */}
@@ -75,14 +67,7 @@ const UnderDevelopment = () => {
             </Link>
           </div>
 
-          {/* Progress Indicator */}
-          <div className="mt-12 animate-fade-in">
-            <p className="text-sm text-muted-foreground mb-3">Development Progress</p>
-            <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-              <div className="bg-gradient-brand h-full rounded-full animate-pulse" style={{ width: '75%' }}></div>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">75% Complete</p>
-          </div>
+          {/* Removed placeholder progress percentage */}
         </div>
       </div>
       </div>

@@ -34,7 +34,8 @@ kill_port() {
 # Kill processes on required ports
 echo "Stopping services..."
 kill_port 8080  # Frontend
-kill_port 5001  # Backend API
+kill_port 3001  # Node.js API
+kill_port 5001  # Python Backend API
 
 echo ""
 echo -e "${GREEN}✅ All services stopped${NC}"

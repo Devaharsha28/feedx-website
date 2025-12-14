@@ -110,7 +110,7 @@ const Jobs = () => {
     <GlassmorphismBackground intensity="medium" className="bg-gradient-mesh">
       <Navbar />
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 via-background to-secondary/10 py-20 mt-20">
+      <div className="bg-gradient-to-r from-primary/10 via-background to-secondary/10 py-16 pt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up">

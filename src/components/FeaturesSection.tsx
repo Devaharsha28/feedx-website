@@ -2,39 +2,38 @@ import { Check } from 'lucide-react';
 
 const features = [
   {
-    title: 'Submit Anonymously',
-    description: 'Share feedback, report issues, and make suggestions without revealing your identity.',
+    title: 'S — Skills',
+    description: 'Training, certifications, freelancing, and projects to become job-ready.',
     highlight: true,
   },
   {
-    title: 'Auto-Generated IDs',
-    description: 'Each submission gets a unique tracking ID for easy follow-up and status checks.',
+    title: 'O — Opportunities',
+    description: 'Jobs, startups, internships, and industrial visits to build real exposure.',
     highlight: false,
   },
   {
-    title: 'Track & Escalate',
-    description: 'Monitor pending issues and automatic escalation for critical concerns.',
+    title: 'K — Knowledge',
+    description: 'Notes, resources, workshops, and feedback sharing to learn continuously.',
     highlight: false,
   },
   {
-    title: 'Transparency & Accountability',
-    description: 'Ensure institutional accountability while protecting reporter anonymity.',
+    title: 'X — Exchange & Exposure',
+    description: 'Exchange, exposure, and the X-Factor: limitless growth, innovation, and career possibilities.',
     highlight: true,
   },
 ];
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-gradient-subtle">
+    <section id="features" className="py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            Powerful Features for
-            <span className="text-gradient"> Safe Communication</span>
+            The <span className="text-gradient">SOK Model</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            FX Bot combines advanced AI with robust privacy features to create a trusted feedback ecosystem
+            A career-driven approach for Polytechnic students: Skills, Opportunities, and Knowledge—powered by X.
           </p>
         </div>
 
@@ -75,25 +74,7 @@ const FeaturesSection = () => {
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-          <div className="text-center group hover-glow-primary transition-all duration-300">
-            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-primary">100%</div>
-            <div className="text-sm text-muted-foreground">Anonymous</div>
-          </div>
-          <div className="text-center group hover-glow-secondary transition-all duration-300">
-            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-secondary">24/7</div>
-            <div className="text-sm text-muted-foreground">Available</div>
-          </div>
-          <div className="text-center group hover-glow-accent transition-all duration-300">
-            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-accent">Instant</div>
-            <div className="text-sm text-muted-foreground">Tracking</div>
-          </div>
-          <div className="text-center group hover-glow-primary transition-all duration-300">
-            <div className="text-4xl font-bold text-gradient mb-2 glow-breath-primary">Secure</div>
-            <div className="text-sm text-muted-foreground">Platform</div>
-          </div>
-        </div>
+        {/* Removed placeholder stats */}
       </div>
     </section>
   );

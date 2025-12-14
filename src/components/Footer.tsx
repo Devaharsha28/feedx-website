@@ -1,25 +1,23 @@
 import feedxLogo from '@/assets/feedx-logo.png';
-import ContactForm from './ContactForm';
 import { MessageCircle, Users, Instagram } from 'lucide-react';
 import { SOCIAL_LINKS } from '@/lib/socialLinks';
 
 const Footer = () => {
   return (
-    <footer className="bg-card border-t border-border py-12">
+    <footer className="bg-background border-t border-border py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
               <img src={feedxLogo} alt="FeedX Logo" className="h-12 w-12" />
               <div>
-                <h3 className="text-xl font-bold text-gradient">FeedX Portal</h3>
-                <p className="text-sm text-muted-foreground">Anonymous Feedback</p>
+                <h3 className="text-xl font-bold text-foreground">FeedX Polytechnic</h3>
+                <p className="text-sm text-muted-foreground">Listen • Respond • Resolve</p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Empowering students to share feedback and drive positive change through our secure, 
-              anonymous feedback system powered by FX Bot AI.
+              A student community focused on helping Polytechnic learners grow through Skills, Opportunities, and Knowledge.
             </p>
           </div>
 
@@ -50,16 +48,11 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Us */}
-          <div>
-            <h4 className="font-semibold mb-4">Contact Us</h4>
-            <ContactForm />
-          </div>
         </div>
 
         {/* Bottom Bar with Socials */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-          <p className="text-muted-foreground text-center md:text-left">© 2024 FeedX Portal. All rights reserved. Listen • Respond • Resolve</p>
+          <p className="text-muted-foreground text-center md:text-left">© 2025 FeedX Polytechnic. All rights reserved.</p>
           <div className="flex items-center gap-3">
             <a
               href={SOCIAL_LINKS.whatsappChannel}

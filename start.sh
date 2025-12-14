@@ -27,7 +27,8 @@ kill_port() {
 
 # Check and kill processes on required ports
 kill_port 8080  # Frontend
-kill_port 5001  # Backend API
+kill_port 3001  # Node.js API
+kill_port 5001  # Python Backend API
 
 echo -e "${GREEN}✓ Ports cleared${NC}"
 echo ""
@@ -70,12 +71,29 @@ fi
 # Create log directory
 mkdir -p logs
 
-echo -e "${BLUE}🌐 Starting Backend API (Port 5001)...${NC}"
+echo -e "${BLUE}🌐 Starting Node.js API Server (Port 3001)...${NC}"
+node server/index.js > logs/api.log 2>&1 &
+API_PID=$!
+echo -e "${GREEN}✓ Node API started (PID: $API_PID)${NC}"
+echo ""
+
+# Wait a moment for API to start
+sleep 2
+
+# Check if API started successfully
+if check_port 3001; then
+    echo -e "${GREEN}✓ Node API is running on http://localhost:3001${NC}"
+else
+    echo -e "${RED}❌ Node API failed to start. Check logs/api.log${NC}"
+fi
+echo ""
+
+echo -e "${BLUE}🌐 Starting Python Backend API (Port 5001)...${NC}"
 cd server
 python3 attendance_api.py > ../logs/backend.log 2>&1 &
 BACKEND_PID=$!
 cd ..
-echo -e "${GREEN}✓ Backend started (PID: $BACKEND_PID)${NC}"
+echo -e "${GREEN}✓ Python Backend started (PID: $BACKEND_PID)${NC}"
 echo ""
 
 # Wait a moment for backend to start
@@ -83,9 +101,9 @@ sleep 2
 
 # Check if backend started successfully
 if check_port 5001; then
-    echo -e "${GREEN}✓ Backend API is running on http://localhost:5001${NC}"
+    echo -e "${GREEN}✓ Python Backend API is running on http://localhost:5001${NC}"
 else
-    echo -e "${RED}❌ Backend failed to start. Check logs/backend.log${NC}"
+    echo -e "${YELLOW}⚠️  Python Backend failed to start. Check logs/backend.log${NC}"
 fi
 echo ""
 
@@ -110,17 +128,20 @@ echo "================================================"
 echo -e "${GREEN}✅ FEEDX Polytechnic is now running!${NC}"
 echo ""
 echo -e "${BLUE}📍 Access Points:${NC}"
-echo "   Frontend:  http://localhost:8080"
-echo "   Backend:   http://localhost:5001"
-echo "   Health:    http://localhost:5001/health"
+echo "   Frontend:     http://localhost:8080"
+echo "   Node API:     http://localhost:3001"
+echo "   Python API:   http://localhost:5001"
+echo "   Health:       http://localhost:5001/health"
 echo ""
 echo -e "${BLUE}📊 Process IDs:${NC}"
-echo "   Backend PID:  $BACKEND_PID"
-echo "   Frontend PID: $FRONTEND_PID"
+echo "   Node API PID:      $API_PID"
+echo "   Python Backend PID: $BACKEND_PID"
+echo "   Frontend PID:      $FRONTEND_PID"
 echo ""
 echo -e "${BLUE}📝 Logs:${NC}"
-echo "   Backend:  logs/backend.log"
-echo "   Frontend: logs/frontend.log"
+echo "   Node API:  logs/api.log"
+echo "   Backend:   logs/backend.log"
+echo "   Frontend:  logs/frontend.log"
 echo ""
 echo -e "${YELLOW}💡 Tips:${NC}"
 echo "   • View backend logs:  tail -f logs/backend.log"

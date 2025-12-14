@@ -7,8 +7,46 @@ export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: ["https://economies-licence-funeral-fantasy.trycloudflare.com", "characteristic-translate-advert-smile.trycloudflare.com"],
+    allowedHosts: [
+      "fitting-improved-participated-continues.trycloudflare.com",
+      "characteristic-translate-advert-smile.trycloudflare.com",
+    ],
     proxy: {
+      "/api/auth": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+      "/api/admin": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+      "/api/upload": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+      "/uploads": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/api/login": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+      "/api/register": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
       "/api": {
         target: "http://localhost:5001",
         changeOrigin: true,

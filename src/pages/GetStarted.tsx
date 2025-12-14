@@ -49,7 +49,7 @@ const GetStarted = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const GetStarted = () => {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Get Started</CardTitle>
           <CardDescription className="text-center">
-            Create your account to start using FeedX Portal
+            Create your account to start using FeedX Polytechnic
           </CardDescription>
         </CardHeader>
         <CardContent>
