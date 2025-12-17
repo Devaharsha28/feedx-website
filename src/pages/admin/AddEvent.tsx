@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { eventsAPI, Event } from "@/lib/api";
+import { eventsAPI, Event, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { X, Link as LinkIcon, Plus } from "lucide-react";
+import { X, Upload, Loader2, FileText } from "lucide-react";
 
 export default function AddEvent() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -26,7 +28,8 @@ export default function AddEvent() {
     image: "",
     files: [] as string[],
   });
-  const [currentFileLink, setCurrentFileLink] = useState("");
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth check
   useEffect(() => {
@@ -41,43 +44,52 @@ export default function AddEvent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Convert Google Drive share link to direct viewable link
-  const convertGDriveLink = (url: string): string => {
-    if (!url) return url;
-    
-    // Format: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploadingImage(true);
+    try {
+      const url = await uploadFile(files[0]);
+      setFormData((prev) => ({ ...prev, image: url }));
+      toast({ title: "Image uploaded successfully" });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
     }
-    
-    // Format: https://drive.google.com/open?id=FILE_ID
-    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/uc?id=FILE_ID
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
-    
-    return url;
   };
 
-  const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const link = convertGDriveLink(e.target.value);
-    setFormData((prev) => ({ ...prev, image: link }));
-  };
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-  const handleAddFile = () => {
-    if (currentFileLink.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        files: [...prev.files, currentFileLink.trim()],
-      }));
-      setCurrentFileLink("");
-      toast({ title: "File link added" });
+    setIsUploadingFile(true);
+    try {
+      for (const file of Array.from(files)) {
+        const url = await uploadFile(file);
+        setFormData((prev) => ({
+          ...prev,
+          files: [...prev.files, url],
+        }));
+        toast({ title: "File uploaded successfully" });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload file",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingFile(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -119,7 +131,6 @@ export default function AddEvent() {
         image: "",
         files: [],
       });
-      setImagePreview(null);
       fetchEvents();
     } catch (error) {
       toast({
@@ -264,50 +275,92 @@ export default function AddEvent() {
                   </div>
 
                   <div>
-                    <Label htmlFor="image">Event Image Link (Google Drive or URL)</Label>
-                    <Input
-                      id="image"
-                      placeholder="Paste Google Drive or image URL"
-                      value={formData.image}
-                      onChange={handleImageLinkChange}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share image from Google Drive → "Anyone with link" → Paste here
-                    </p>
-                    {formData.image && (
-                      <img
-                        src={formData.image}
-                        alt="Preview"
-                        className="mt-2 h-32 w-full object-cover rounded-md"
-                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                    <Label>Event Image</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={imageInputRef}
+                        onChange={handleImageUpload}
+                        accept="image/*"
+                        className="hidden"
                       />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => imageInputRef.current?.click()}
+                        disabled={isUploadingImage}
+                        className="w-full"
+                      >
+                        {isUploadingImage ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Image
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    {formData.image && (
+                      <div className="mt-2 relative">
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="h-32 w-full object-cover rounded-md"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-1 right-1 h-6 w-6 p-0"
+                          onClick={() => setFormData(prev => ({ ...prev, image: "" }))}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="fileLink">Event Files Link (Google Drive PDF, etc.)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="fileLink"
-                        placeholder="Paste Google Drive file link"
-                        value={currentFileLink}
-                        onChange={(e) => setCurrentFileLink(e.target.value)}
+                    <Label>Event Files (PDF, etc.)</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+                        multiple
+                        className="hidden"
                       />
-                      <Button type="button" onClick={handleAddFile} size="icon">
-                        <Plus className="w-4 h-4" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploadingFile}
+                        className="w-full"
+                      >
+                        {isUploadingFile ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="w-4 h-4 mr-2" />
+                            Choose Files
+                          </>
+                        )}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share file from Google Drive → "Anyone with link" → Paste here
-                    </p>
                     {formData.files.length > 0 && (
                       <div className="mt-2 space-y-2">
                         {formData.files.map((file, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
-                            <LinkIcon className="w-4 h-4 text-blue-500" />
-                            <a href={file} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate text-blue-500 hover:underline">
-                              {file.length > 50 ? file.substring(0, 50) + '...' : file}
-                            </a>
+                            <FileText className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm flex-1 truncate">{file.split('/').pop()}</span>
                             <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-destructive">
                               <X className="h-3 w-3" />
                             </Button>
@@ -317,7 +370,7 @@ export default function AddEvent() {
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || isUploadingImage || isUploadingFile}>
                     {isLoading ? "Creating..." : "Create Event"}
                   </Button>
                 </form>

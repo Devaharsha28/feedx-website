@@ -40,7 +40,7 @@ const UnderDevelopment = () => {
           </h1>
 
           <p className="text-xl text-muted-foreground mb-8 animate-fade-in">
-            We're working on FX Bot and related student-support features for FeedX Polytechnic.
+            We're working on FX Bot and related student-support features for FEEDX.
             This will help with knowledge sharing and guidance for students.
           </p>
 

@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import Updates from "./pages/Updates";
 import Projects from "./pages/Projects";
 import Resources from "./pages/Resources";
+import Notifications from "./pages/Notifications";
 import InstituteProfile from "./pages/InstituteProfile";
 // Removed Jobs page
 import About from "./pages/About";
@@ -31,7 +32,9 @@ import AddResource from "./pages/admin/AddResource";
 import AddEvent from "./pages/admin/AddEvent";
 import AddSpotlight from "./pages/admin/AddSpotlight";
 import AddTestimonial from "./pages/admin/AddTestimonial";
+import AddInstitute from "./pages/admin/AddInstitute";
 import ResourceDetail from "./pages/ResourceDetail";
+import InstituteDetail from "./pages/InstituteDetail";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import LoginLogs from "./pages/LoginLogs";
@@ -71,8 +74,10 @@ const App = () => (
             <Route path="/updates" element={<Updates />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/resources/:id" element={<ResourceDetail />} />
             <Route path="/institute-profile" element={<InstituteProfile />} />
+            <Route path="/institute/:code" element={<InstituteDetail />} />
             {/* Jobs route removed */}
             <Route path="/attendance" element={<AttendanceCalculator />} />
             <Route path="/student-analytics" element={<StudentAnalytics />} />
@@ -94,6 +99,7 @@ const App = () => (
             <Route path="/admin/events" element={<AddEvent />} />
             <Route path="/admin/spotlight" element={<AddSpotlight />} />
             <Route path="/admin/testimonials" element={<AddTestimonial />} />
+            <Route path="/admin/institutes" element={<AddInstitute />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/logs" element={<LoginLogs />} />
             

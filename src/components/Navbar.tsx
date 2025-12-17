@@ -11,7 +11,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-[hsl(var(--foreground))] shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#080d1a]/80 backdrop-blur-xl shadow-[0_18px_60px_-28px_rgba(0,0,0,0.85)]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center py-5">
           {/* Logo - Left */}
@@ -56,7 +56,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-3 flex-shrink-0 ml-auto">
             {/* FX Bot Button - Desktop only */}
             <Link to="/fxbot" className="hidden lg:block">
-              <Button size="sm" variant="outline" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-smooth">
+              <Button size="sm" variant="outline" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-smooth border-white/10 text-foreground">
                 <img src={fxbotIcon} alt="FX Bot" className="w-4 h-4" />
                 FX Bot
               </Button>
@@ -64,7 +64,7 @@ const Navbar = () => {
 
             {/* Join Us Button - Desktop */}
             <Link to="/join" className="hidden lg:block">
-              <Button size="sm" className="bg-gradient-brand text-white hover:opacity-90 transition-smooth">
+              <Button size="sm" className="bg-gradient-brand text-white hover:opacity-90 transition-smooth shadow-glow">
                 Join Us
               </Button>
             </Link>
@@ -98,7 +98,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border">
+          <div className="lg:hidden py-4 border-t border-white/10 bg-[#0b1224]/80 backdrop-blur-xl">
             <div className="flex flex-col space-y-3">
               <Link 
                 to="/" 

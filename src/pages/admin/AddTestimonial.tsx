@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { testimonialsAPI, Testimonial } from "@/lib/api";
+import { testimonialsAPI, Testimonial, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { X, Upload, Loader2 } from "lucide-react";
 
 export default function AddTestimonial() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,6 +23,7 @@ export default function AddTestimonial() {
     content: "",
     image: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth check
   useEffect(() => {
@@ -35,33 +38,26 @@ export default function AddTestimonial() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Convert Google Drive share link to direct viewable link
-  const convertGDriveLink = (url: string): string => {
-    if (!url) return url;
-    
-    // Format: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/open?id=FILE_ID
-    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/uc?id=FILE_ID
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
-    
-    return url;
-  };
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-  const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const link = convertGDriveLink(e.target.value);
-    setFormData((prev) => ({ ...prev, image: link }));
+    setIsUploading(true);
+    try {
+      const url = await uploadFile(files[0]);
+      setFormData((prev) => ({ ...prev, image: url }));
+      toast({ title: "Image uploaded successfully" });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +83,6 @@ export default function AddTestimonial() {
         content: "",
         image: "",
       });
-      setImagePreview(null);
       fetchTestimonials();
     } catch (error) {
       toast({
@@ -196,27 +191,56 @@ export default function AddTestimonial() {
                   </div>
 
                   <div>
-                    <Label htmlFor="image">Profile Image Link (Google Drive or URL)</Label>
-                    <Input
-                      id="image"
-                      placeholder="Paste Google Drive or image URL"
-                      value={formData.image}
-                      onChange={handleImageLinkChange}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share image from Google Drive → "Anyone with link" → Paste here
-                    </p>
-                    {formData.image && (
-                      <img
-                        src={formData.image}
-                        alt="Preview"
-                        className="mt-2 h-32 w-32 object-cover rounded-full mx-auto"
-                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                    <Label>Profile Image</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                        accept="image/*"
+                        className="hidden"
                       />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="w-full"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Image
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    {formData.image && (
+                      <div className="mt-2 relative w-32 mx-auto">
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="h-32 w-32 object-cover rounded-full"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute -top-1 -right-1 h-6 w-6 p-0 rounded-full"
+                          onClick={() => setFormData(prev => ({ ...prev, image: "" }))}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || isUploading}>
                     {isLoading ? "Creating..." : "Create Testimonial"}
                   </Button>
                 </form>

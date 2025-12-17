@@ -1,4 +1,4 @@
-# FEEDX Polytechnic Backend Setup
+# FEEDX Backend Setup
 
 ## Quick Start
 

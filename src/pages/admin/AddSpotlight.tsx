@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,21 +7,22 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { spotlightAPI, Spotlight } from "@/lib/api";
+import { spotlightAPI, Spotlight, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { X, Plus } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
 
 export default function AddSpotlight() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     images: [] as string[],
   });
-  const [currentImageLink, setCurrentImageLink] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auth check
   useEffect(() => {
@@ -36,39 +37,30 @@ export default function AddSpotlight() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Convert Google Drive share link to direct viewable link
-  const convertGDriveLink = (url: string): string => {
-    if (!url) return url;
-    
-    // Format: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/open?id=FILE_ID
-    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/uc?id=FILE_ID
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
-    
-    return url;
-  };
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-  const handleAddImage = () => {
-    if (currentImageLink.trim()) {
-      const link = convertGDriveLink(currentImageLink.trim());
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, link],
-      }));
-      setCurrentImageLink("");
-      toast({ title: "Image link added" });
+    setIsUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const url = await uploadFile(file);
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, url],
+        }));
+        toast({ title: "Image uploaded successfully" });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -100,7 +92,6 @@ export default function AddSpotlight() {
         description: "",
         images: [],
       });
-      setImagePreview(null);
       fetchSpotlights();
     } catch (error) {
       toast({
@@ -197,21 +188,36 @@ export default function AddSpotlight() {
                   </div>
 
                   <div>
-                    <Label htmlFor="imageLink">Image Link (Google Drive or URL)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="imageLink"
-                        placeholder="Paste Google Drive or image URL"
-                        value={currentImageLink}
-                        onChange={(e) => setCurrentImageLink(e.target.value)}
+                    <Label>Upload Images</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept="image/*"
+                        multiple
+                        className="hidden"
                       />
-                      <Button type="button" onClick={handleAddImage} size="icon">
-                        <Plus className="w-4 h-4" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="w-full"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Images
+                          </>
+                        )}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share image from Google Drive → "Anyone with link" → Paste here
-                    </p>
                   </div>
 
                   {formData.images.length > 0 && (
@@ -224,7 +230,6 @@ export default function AddSpotlight() {
                               src={img}
                               alt={`Spotlight ${idx}`}
                               className="h-16 w-16 object-cover rounded"
-                              onError={(e) => (e.currentTarget.style.display = 'none')}
                             />
                             <button
                               type="button"
@@ -239,7 +244,7 @@ export default function AddSpotlight() {
                     </div>
                   )}
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isLoading || isUploading}>
                     {isLoading ? "Creating..." : "Create Spotlight"}
                   </Button>
                 </form>

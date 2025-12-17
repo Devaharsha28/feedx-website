@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting FEEDX Polytechnic Attendance API"
+echo "🚀 Starting FEEDX Attendance API"
 echo "=============================================="
 
 # Navigate to server directory

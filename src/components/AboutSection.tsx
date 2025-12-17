@@ -14,7 +14,7 @@ const AboutSection = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            About <span className="text-gradient">FeedX Polytechnic</span>
+            About <span className="text-gradient">FEEDX</span>
           </h2>
           <p className="text-lg text-muted-foreground">
             A student community built for Polytechnic learners.
@@ -27,14 +27,14 @@ const AboutSection = () => {
             <div className="flex items-center space-x-4">
               <img src={feedxLogo} alt="FeedX Logo" className="h-14 w-14" />
               <div>
-                <h3 className="text-2xl font-bold">FEEDX POLYTECHNIC</h3>
+                <h3 className="text-2xl font-bold">FEEDX</h3>
                 <p className="text-sm text-muted-foreground">A student community for Polytechnic learners</p>
               </div>
             </div>
 
             <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
-                FeedX Polytechnic is built around Skills, Opportunities, and Knowledge — with practical support to help
+                FEEDX is built around Skills, Opportunities, and Knowledge — with practical support to help
                 students learn, connect, and move forward.
               </p>
               <p>

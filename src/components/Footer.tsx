@@ -1,5 +1,4 @@
 import feedxLogo from '@/assets/feedx-logo.png';
-import { MessageCircle, Users, Instagram } from 'lucide-react';
 import { SOCIAL_LINKS } from '@/lib/socialLinks';
 
 const Footer = () => {
@@ -12,7 +11,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-4">
               <img src={feedxLogo} alt="FeedX Logo" className="h-12 w-12" />
               <div>
-                <h3 className="text-xl font-bold text-foreground">FeedX Polytechnic</h3>
+                <h3 className="text-xl font-bold text-foreground">FEEDX</h3>
                 <p className="text-sm text-muted-foreground">Listen • Respond • Resolve</p>
               </div>
             </div>
@@ -52,7 +51,7 @@ const Footer = () => {
 
         {/* Bottom Bar with Socials */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-          <p className="text-muted-foreground text-center md:text-left">© 2025 FeedX Polytechnic. All rights reserved.</p>
+          <p className="text-muted-foreground text-center md:text-left">© 2025 FEEDX. All rights reserved.</p>
           <div className="flex items-center gap-3">
             <a
               href={SOCIAL_LINKS.whatsappChannel}
@@ -61,28 +60,46 @@ const Footer = () => {
               className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
               aria-label="WhatsApp Channel"
             >
-              <MessageCircle className="w-5 h-5 text-green-600" />
-              <span className="hidden sm:inline">WhatsApp Channel</span>
-            </a>
-            <a
-              href={SOCIAL_LINKS.whatsappCommunity}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
-              aria-label="WhatsApp Community"
-            >
-              <Users className="w-5 h-5 text-emerald-600" />
-              <span className="hidden sm:inline">WhatsApp Community</span>
+              <img
+                src="https://cdn.simpleicons.org/whatsapp/25D366"
+                alt="WhatsApp"
+                className="w-5 h-5"
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="hidden sm:inline">WhatsApp</span>
             </a>
             <a
               href={SOCIAL_LINKS.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
-              aria-label="Instagram Page"
+              aria-label="Instagram"
             >
-              <Instagram className="w-5 h-5 text-pink-600" />
-              <span className="hidden sm:inline">Instagram Page</span>
+              <img
+                src="https://cdn.simpleicons.org/instagram/E4405F"
+                alt="Instagram"
+                className="w-5 h-5"
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="hidden sm:inline">Instagram</span>
+            </a>
+            <a
+              href={SOCIAL_LINKS.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              aria-label="YouTube"
+            >
+              <img
+                src="https://cdn.simpleicons.org/youtube/FF0000"
+                alt="YouTube"
+                className="w-5 h-5"
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="hidden sm:inline">YouTube</span>
             </a>
           </div>
         </div>

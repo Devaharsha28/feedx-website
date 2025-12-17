@@ -62,7 +62,7 @@ const Projects = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="border-b border-border bg-white pt-24 pb-10">
+      <div className="border-b border-border bg-background pt-24 pb-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-6">
           <img src={projectsIllustration} alt="Projects" className="w-full max-w-md" />
           <div className="flex-1">

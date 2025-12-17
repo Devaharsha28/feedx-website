@@ -5,17 +5,20 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { notificationsAPI, Notification } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { Bell, RefreshCcw, Trash2, Eye, EyeOff, ArrowLeft, Info, FileText, Sparkles } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AddNotification() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -27,6 +30,7 @@ export default function AddNotification() {
     if (!token) {
       window.location.href = '/admin-login';
     }
+    fetchNotifications();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -50,7 +54,7 @@ export default function AddNotification() {
       });
 
       setFormData({ title: "", description: "" });
-      setShowForm(false);
+      setShowPreview(false);
       fetchNotifications();
     } catch (error) {
       toast({
@@ -98,102 +102,206 @@ export default function AddNotification() {
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
+        {/* Header */}
         <div className="mb-8">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => navigate("/admin")}
-            className="mb-4"
+            className="mb-4 gap-2 hover:bg-white/10"
           >
-            ← Back to Admin Panel
+            <ArrowLeft className="w-4 h-4" />
+            Back to Admin Panel
           </Button>
-          <h1 className="text-3xl font-bold mb-2">Manage Notifications</h1>
-          <p className="text-muted-foreground">
-            Add and manage system notifications
-          </p>
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
+              <Bell className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Manage Notifications</h1>
+              <p className="text-white/60 mt-1">
+                Create and manage notifications with Markdown support
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Form Section */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Add Notification</CardTitle>
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="glass-card border-white/10">
+              <CardHeader className="border-b border-white/10">
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <FileText className="w-5 h-5 text-cyan-400" />
+                  Add Notification
+                </CardTitle>
+                <CardDescription className="text-white/60">
+                  Use Markdown formatting for rich content
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title</Label>
+              <CardContent className="pt-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-white/80">Title</Label>
                     <Input
                       id="title"
                       name="title"
-                      placeholder="Notification title"
+                      placeholder="Enter notification title"
                       value={formData.title}
                       onChange={handleInputChange}
                       required
+                      className="bg-white/5 border-white/10 focus:border-cyan-500/50"
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      placeholder="Notification description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      required
-                      rows={4}
-                    />
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="description" className="text-white/80">Description (Markdown)</Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowPreview(!showPreview)}
+                        className="h-8 text-cyan-400 hover:text-cyan-300 hover:bg-white/10"
+                      >
+                        {showPreview ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
+                        {showPreview ? 'Edit' : 'Preview'}
+                      </Button>
+                    </div>
+                    
+                    {showPreview ? (
+                      <div className="min-h-[200px] p-4 rounded-lg bg-white/5 border border-white/10">
+                        <MarkdownRenderer content={formData.description || '*Start typing to preview...*'} />
+                      </div>
+                    ) : (
+                      <Textarea
+                        id="description"
+                        name="description"
+                        placeholder="# Heading&#10;**Bold text** and *italic text*&#10;&#10;- List item 1&#10;- List item 2&#10;&#10;[Link text](https://example.com)&#10;&#10;> Blockquote&#10;&#10;`inline code`"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        required
+                        rows={10}
+                        className="bg-white/5 border-white/10 focus:border-cyan-500/50 font-mono text-sm"
+                      />
+                    )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl h-11" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Creating..." : "Create Notification"}
                   </Button>
                 </form>
+              </CardContent>
+            </Card>
+
+            {/* Markdown Guide */}
+            <Card className="glass-card border-white/10">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm text-white/80">
+                  <Info className="w-4 h-4 text-cyan-400" />
+                  Markdown Quick Guide
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-white/60 space-y-2">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-white/5 p-2 rounded"><code># Heading 1</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>## Heading 2</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>**bold**</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>*italic*</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>- list item</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>1. numbered</code></div>
+                  <div className="bg-white/5 p-2 rounded col-span-2"><code>[link](https://url.com)</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>`code`</code></div>
+                  <div className="bg-white/5 p-2 rounded"><code>&gt; quote</code></div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
           {/* List Section */}
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>All Notifications</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <button
-                  onClick={fetchNotifications}
-                  className="text-blue-500 hover:underline mb-4 text-sm"
-                >
-                  Refresh List
-                </button>
-                <div className="space-y-3">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className="p-4 border rounded-lg hover:bg-secondary/50 transition"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-semibold">{notification.title}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {notification.description}
-                          </p>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDelete(notification.id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(notification.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
+            <Card className="glass-card border-white/10">
+              <CardHeader className="border-b border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-white">
+                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                      All Notifications
+                      <span className="text-sm font-normal text-white/50 bg-white/10 px-2 py-0.5 rounded-full ml-2">
+                        {notifications.length}
+                      </span>
+                    </CardTitle>
+                    <CardDescription className="text-white/60 mt-1">
+                      Click on a notification to view its markdown rendering
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchNotifications}
+                    className="border-white/10 hover:bg-white/10"
+                  >
+                    <RefreshCcw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
                 </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[600px]">
+                  <div className="p-4 space-y-3">
+                    {notifications.length === 0 ? (
+                      <div className="text-center py-12 text-white/50">
+                        <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No notifications yet</p>
+                        <p className="text-sm mt-1">Create your first notification above</p>
+                      </div>
+                    ) : (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className="group p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                        >
+                          <div className="flex justify-between items-start gap-4 mb-3">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-white text-lg">{notification.title}</h3>
+                              <p className="text-xs text-white/40 mt-1">
+                                {new Date(notification.timestamp).toLocaleString('en-IN', {
+                                  dateStyle: 'medium',
+                                  timeStyle: 'short'
+                                })}
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(notification.id)}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          
+                          {/* Rendered Markdown Preview */}
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <p className="text-xs text-white/40 mb-2">Preview:</p>
+                            <div className="bg-white/5 rounded-lg p-3">
+                              <MarkdownRenderer 
+                                content={notification.description.length > 300 
+                                  ? notification.description.substring(0, 300) + '...' 
+                                  : notification.description
+                                } 
+                                className="text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
               </CardContent>
             </Card>
           </div>

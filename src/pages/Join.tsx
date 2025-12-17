@@ -1,13 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Instagram, MessageCircle, Heart, Star, Award, Youtube } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { joinIllustration } from '@/lib/illustrations';
 import { useEffect, useState } from 'react';
 
 const Join = () => {
-  const [links, setLinks] = useState<{ whatsappChannel?: string; whatsappCommunity?: string; instagram?: string }>({});
+  const [links, setLinks] = useState<{ whatsappChannel?: string; instagram?: string; youtube?: string }>({});
   useEffect(() => {
     fetch('/social-links.json')
       .then((res) => res.json())
@@ -17,22 +16,22 @@ const Join = () => {
 
   const benefits = [
     {
-      icon: <Users className="w-6 h-6" />,
+      icon: <img src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/user-group.svg" alt="Community" className="w-6 h-6" />,
       title: "Community Support",
       description: "Connect with fellow students and get help from seniors and alumni"
     },
     {
-      icon: <Award className="w-6 h-6" />,
+      icon: <img src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/trophy.svg" alt="Resources" className="w-6 h-6" />,
       title: "Exclusive Resources",
       description: "Access to study materials, project guides, and career resources"
     },
     {
-      icon: <Star className="w-6 h-6" />,
+      icon: <img src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/star.svg" alt="Skill" className="w-6 h-6" />,
       title: "Skill Development",
       description: "Workshops, webinars, and training programs for career growth"
     },
     {
-      icon: <Heart className="w-6 h-6" />,
+      icon: <img src="https://cdn.jsdelivr.net/npm/heroicons@2.1.5/24/outline/heart.svg" alt="Networking" className="w-6 h-6" />,
       title: "Networking Opportunities",
       description: "Connect with industry professionals and potential employers"
     }
@@ -40,24 +39,19 @@ const Join = () => {
 
   const socials = [
     {
-      title: 'WhatsApp Channel',
+      title: 'WhatsApp',
       href: links.whatsappChannel || '#',
-      icon: <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-green-600" />,
+      icon: <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="WhatsApp" className="w-7 h-7" />,
     },
     {
-      title: 'WhatsApp Community',
-      href: links.whatsappCommunity || '#',
-      icon: <Users className="w-6 h-6 md:w-7 md:h-7 text-emerald-600" />,
-    },
-    {
-      title: 'Instagram Page',
+      title: 'Instagram',
       href: links.instagram || '#',
-      icon: <Instagram className="w-6 h-6 md:w-7 md:h-7 text-pink-600" />,
+      icon: <img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram" className="w-7 h-7" />,
     },
     {
-      title: 'YouTube Channel',
-      href: 'https://www.youtube.com/@feedx_official',
-      icon: <Youtube className="w-6 h-6 md:w-7 md:h-7 text-red-600" />,
+      title: 'YouTube',
+      href: links.youtube || '#',
+      icon: <img src="https://cdn.simpleicons.org/youtube/FF0000" alt="YouTube" className="w-7 h-7" />,
     },
   ];
 

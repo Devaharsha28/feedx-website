@@ -16,6 +16,7 @@ import {
   Activity,
   Globe,
   LogOut,
+  Building2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -98,6 +99,14 @@ export default function AdminPanel() {
       icon: MessageSquare,
       color: "bg-indigo-500",
       route: "/admin/testimonials",
+    },
+    {
+      id: "institutes",
+      title: "Institute Profiles",
+      description: "Add details and images for college profiles",
+      icon: Building2,
+      color: "bg-teal-500",
+      route: "/admin/institutes",
     },
     {
       id: "users",

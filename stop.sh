@@ -6,7 +6,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}🛑 Stopping FEEDX Polytechnic Application${NC}"
+echo -e "${YELLOW}🛑 Stopping FEEDX Application${NC}"
 echo "================================================"
 echo ""
 

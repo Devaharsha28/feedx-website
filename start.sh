@@ -7,7 +7,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 Starting FEEDX Polytechnic Application${NC}"
+echo -e "${BLUE}🚀 Starting FEEDX Application${NC}"
 echo "================================================"
 echo ""
 
@@ -125,7 +125,7 @@ fi
 echo ""
 
 echo "================================================"
-echo -e "${GREEN}✅ FEEDX Polytechnic is now running!${NC}"
+echo -e "${GREEN}✅ FEEDX is now running!${NC}"
 echo ""
 echo -e "${BLUE}📍 Access Points:${NC}"
 echo "   Frontend:     http://localhost:8080"

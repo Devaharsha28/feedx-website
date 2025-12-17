@@ -202,7 +202,7 @@ const Subscribe = () => {
                 <p className="text-xs text-muted-foreground text-center mt-6">
                   We respect your privacy. Unsubscribe at any time.
                   <br />
-                  By subscribing, you agree to receive updates about FeedX Polytechnic.
+                  By subscribing, you agree to receive updates about FEEDX.
                 </p>
               </>
             )}

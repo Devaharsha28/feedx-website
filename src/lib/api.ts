@@ -73,7 +73,10 @@ export interface Update {
   title: string;
   description: string;
   images: string[];
+  files: string[];
   priority: 'low' | 'medium' | 'high';
+  type: string;
+  category: string;
   timestamp: string;
 }
 
@@ -332,8 +335,8 @@ export const uploadImage = async (file: File): Promise<string> => {
 };
 
 // File upload helper - uploads to server and returns URL (WhatsApp style)
-export const uploadFile = async (file: File): Promise<string> => {
-  console.log('uploadFile called with:', file.name, file.type, file.size);
+export const uploadFile = async (file: File, resourceName?: string, fileCounter?: number): Promise<string> => {
+  console.log('uploadFile called with:', file.name, file.type, file.size, 'resourceName:', resourceName);
   
   // Validate file size (max 100MB for files)
   const maxSize = 100 * 1024 * 1024; // 100MB
@@ -343,38 +346,41 @@ export const uploadFile = async (file: File): Promise<string> => {
 
   // Validate file type
   const allowedTypes = [
-    'application/pdf',
-    'video/mp4',
-    'video/avi',
-    'video/mov',
-    'video/wmv',
-    'video/flv',
-    'video/webm',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'text/plain',
-    'application/zip',
-    'application/x-rar-compressed',
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp'
+    // Images
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/svg+xml',
+    // Videos
+    'video/mp4', 'video/avi', 'video/mov', 'video/mkv', 'video/webm', 'video/quicktime', 'video/wmv', 'video/flv',
+    // Documents
+    'application/pdf', 'text/plain',
+    'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    // Archives
+    'application/zip', 'application/x-zip-compressed', 'application/x-rar-compressed',
+    // Text/Code files
+    'text/csv', 'text/html', 'text/css', 'text/javascript', 'application/json',
+    // Audio
+    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'
   ];
 
   const isAllowedType = allowedTypes.includes(file.type) || 
-    file.name.match(/\.(pdf|mp4|avi|mov|wmv|flv|webm|doc|docx|xls|xlsx|ppt|pptx|txt|zip|rar|jpg|jpeg|png|gif|webp)$/i);
+    file.name.match(/\.(pdf|mp4|avi|mov|wmv|flv|webm|mkv|doc|docx|xls|xlsx|ppt|pptx|txt|zip|rar|jpg|jpeg|png|gif|webp|bmp|svg|mp3|wav|ogg|csv|html|css|js|json)$/i);
 
   if (!isAllowedType) {
-    throw new Error('Unsupported file type. Please upload images, PDF, video files, documents, or archives.');
+    throw new Error('Unsupported file type. Please upload images, videos, documents, archives, or audio files.');
   }
 
   // Upload to server
   const formData = new FormData();
   formData.append('file', file);
+  
+  // Add resource metadata if provided
+  if (resourceName) {
+    formData.append('resourceName', resourceName);
+    if (fileCounter !== undefined) {
+      formData.append('fileCounter', fileCounter.toString());
+    }
+  }
 
   console.log('Sending upload request to /api/upload');
   const response = await authenticatedFetch('/api/upload', {

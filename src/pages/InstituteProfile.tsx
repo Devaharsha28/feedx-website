@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { collegeListIllustration } from '@/lib/illustrations';
+import { Building2, Search, GraduationCap, Users } from 'lucide-react';
 
 const institutes = [
   { code: 'ADBP', name: 'S.G GOVT POLYTECHNIC', place: 'ADILABAD', dist: 'ADB', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
@@ -162,8 +162,9 @@ const InstituteProfile = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <header className="border-b border-border bg-white pt-16 pb-10 sm:pt-24 sm:pb-12">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
+      <header className="relative border-b border-border bg-background pt-16 pb-10 sm:pt-24 sm:pb-12 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
           <div className="space-y-4 text-left">
             <Badge className="bg-primary text-primary-foreground">Updated List</Badge>
             <h1 className="text-3xl sm:text-5xl font-bold text-gradient">Institute Profile</h1>
@@ -171,42 +172,40 @@ const InstituteProfile = () => {
               Browse all institutes under OU region with quick filters for type, mode, and location. Use the search to find a specific code or campus instantly.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <Card className="bg-white shadow-sm">
+              <Card className="glass-card border-white/10">
                 <CardContent className="p-4">
                   <p className="text-sm text-muted-foreground">Total Institutes</p>
-                  <p className="text-2xl font-bold text-foreground">{stats.total}</p>
+                  <p className="text-2xl font-bold text-primary">{stats.total}</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white shadow-sm">
+              <Card className="glass-card border-white/10">
                 <CardContent className="p-4">
                   <p className="text-sm text-muted-foreground">Government</p>
-                  <p className="text-2xl font-bold text-foreground">{stats.government}</p>
+                  <p className="text-2xl font-bold text-secondary">{stats.government}</p>
                 </CardContent>
               </Card>
-              <Card className="bg-white shadow-sm">
+              <Card className="glass-card border-white/10">
                 <CardContent className="p-4">
                   <p className="text-sm text-muted-foreground">Women-focused</p>
-                  <p className="text-2xl font-bold text-foreground">{stats.women}</p>
+                  <p className="text-2xl font-bold text-accent">{stats.women}</p>
                 </CardContent>
               </Card>
             </div>
           </div>
           <div className="flex justify-center">
-            <img
-              src={collegeListIllustration}
-              alt="Institute list"
-              className="w-full max-w-md"
-              loading="eager"
-              decoding="async"
-              width={640}
-              height={360}
-            />
+            <div className="w-full max-w-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl p-8 flex flex-col items-center justify-center border border-white/10">
+              <div className="w-24 h-24 bg-blue-600/20 rounded-full flex items-center justify-center mb-4">
+                <Building2 className="w-12 h-12 text-blue-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Institute Directory</h3>
+              <p className="text-white/60 text-center text-sm">Browse {stats.total}+ polytechnic institutes across Telangana</p>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-        <Card className="bg-white shadow-sm">
+        <Card className="glass-card border-white/10">
           <CardContent className="p-4 sm:p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
@@ -240,7 +239,7 @@ const InstituteProfile = () => {
                   {filtered.map((inst, index) => (
                     <tr key={`${inst.code}-${index}`} className="hover:bg-muted/40">
                       <td className="py-3 px-3 text-foreground">{index + 1}</td>
-                      <td className="py-3 px-3 font-semibold text-foreground">{inst.code}</td>
+                      <td className="py-3 px-3 font-semibold"><a href={`/institute/${inst.code}`} className="text-primary hover:underline cursor-pointer">{inst.code}</a></td>
                       <td className="py-3 px-3 text-foreground">{inst.name}</td>
                       <td className="py-3 px-3 text-foreground">{inst.place}</td>
                       <td className="py-3 px-3 text-foreground">{inst.dist}</td>

@@ -1,5 +1,5 @@
 export const SOCIAL_LINKS = {
-  whatsappChannel: 'https://whatsapp.com/channel/replace-with-your-channel',
-  whatsappCommunity: 'https://chat.whatsapp.com/replace-with-your-invite',
-  instagram: 'https://instagram.com/replace-with-your-handle',
+  whatsappChannel: 'https://whatsapp.com/channel/0029Vaqm8e4IN9iqTfXumX1r',
+  instagram: 'https://www.instagram.com/feedx_official/',
+  youtube: 'https://www.youtube.com/@feedx_official',
 } as const;

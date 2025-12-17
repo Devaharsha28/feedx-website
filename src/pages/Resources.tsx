@@ -148,6 +148,16 @@ const Resources = () => {
     });
   }, [query, resources]);
 
+  const filteredAdminResources = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return adminResources;
+    return adminResources.filter((r) => {
+      const tagsString = r.tags.join(' ').toLowerCase();
+      const hay = `${r.title} ${r.description} ${r.longDescription} ${tagsString}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [query, adminResources]);
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Training': return 'bg-blue-500';
@@ -164,19 +174,20 @@ const Resources = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="border-b border-border bg-white pt-24 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
           <Button
             variant="outline"
             onClick={() => navigate(-1)}
             className="mb-6"
           >
-            ← Back
+            0 Back
           </Button>
           <div className="flex flex-col items-center text-center gap-6">
-            <img src={resourcesIllustration} alt="Resources" className="w-full max-w-md" />
+            <img src={resourcesIllustration} alt="Resources" className="w-full max-w-md animate-float" />
             <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-3">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-gradient">
                 Resources & Materials
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -201,64 +212,40 @@ const Resources = () => {
           </div>
         </div>
 
-        {/* Admin Resources Section */}
-        {adminResources.length > 0 && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold mb-8">Featured Resources</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {adminResources.map((resource) => (
-                <Card
-                  key={resource.id}
-                  className="border border-border transition-all duration-300 hover:shadow-lg cursor-pointer"
-                  onClick={() => navigate(`/resources/${resource.id}`)}
-                >
-                  <CardHeader>
-                    {resource.images.length > 0 && (
-                      <img
-                        src={resource.images[0]}
-                        alt={resource.title}
-                        className="w-full h-32 object-cover rounded-lg mb-4"
-                      />
-                    )}
-                    <CardTitle className="text-lg">{resource.title}</CardTitle>
-                    <CardDescription>{resource.description}</CardDescription>
-                    {resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {resource.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    <Button className="w-full bg-gradient-brand hover:opacity-90 transition-smooth">
-                      View Details
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Resources Grid */}
-        {adminResources.length === 0 ? (
+        {filteredAdminResources.length === 0 && adminResources.length === 0 ? (
           <div className="col-span-full flex flex-col items-center text-center text-muted-foreground space-y-4 py-12">
             <img src={noDataIllustration} alt="No resources" className="w-full max-w-md" />
             <p>No resources added yet. Go to Admin Panel to create resources.</p>
           </div>
+        ) : filteredAdminResources.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center text-center text-muted-foreground space-y-4 py-12">
+            <img src={noDataIllustration} alt="No results" className="w-full max-w-md" />
+            <p>No resources found matching "{query}"</p>
+          </div>
         ) : (
           <div>
-            <h2 className="text-2xl font-bold mb-8">Resources</h2>
+            <h2 className="text-2xl font-bold mb-8">Resources {query && `(${filteredAdminResources.length} found)`}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              {adminResources.map((resource, index) => (
+              {filteredAdminResources.map((resource, index) => (
                 <Card key={resource.id} className="border border-border transition-all duration-300 animate-fade-in hover:shadow-md cursor-pointer" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => navigate(`/resources/${resource.id}`)}>
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
                       <Badge className="bg-gradient-brand text-white text-xs">
+                    {resource.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {resource.tags.slice(0, 3).map((tag, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {resource.tags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{resource.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                         Resource
                       </Badge>
                     </div>

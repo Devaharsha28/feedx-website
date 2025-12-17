@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,14 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { resourcesAPI, Resource } from "@/lib/api";
+import { resourcesAPI, Resource, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { X, Link as LinkIcon, Plus } from "lucide-react";
+import { X, Upload, Loader2, Link as LinkIcon } from "lucide-react";
 
 export default function AddResource() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [resources, setResources] = useState<Resource[]>([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -25,8 +26,9 @@ export default function AddResource() {
     files: [] as string[],
   });
   const [currentTag, setCurrentTag] = useState("");
-  const [currentImageLink, setCurrentImageLink] = useState("");
-  const [currentFileLink, setCurrentFileLink] = useState("");
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [externalLink, setExternalLink] = useState("");
 
   // Auth check
   useEffect(() => {
@@ -58,51 +60,57 @@ export default function AddResource() {
     }));
   };
 
-  // Convert Google Drive share link to direct viewable link
-  const convertGDriveLink = (url: string): string => {
-    if (!url) return url;
-    
-    // Format: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (!formData.title.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a resource title before uploading files",
+        variant: "destructive",
+      });
+      return;
     }
-    
-    // Format: https://drive.google.com/open?id=FILE_ID
-    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+    setIsUploadingImage(true);
+    try {
+      let counter = formData.images.length + 1;
+      for (const file of Array.from(files)) {
+        const url = await uploadFile(file, formData.title, counter);
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, url],
+        }));
+        toast({ title: "Image uploaded successfully" });
+        counter++;
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = '';
     }
-    
-    // Format: https://drive.google.com/uc?id=FILE_ID
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
-    
-    return url;
   };
 
-  const handleAddImage = () => {
-    if (currentImageLink.trim()) {
-      const link = convertGDriveLink(currentImageLink.trim());
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, link],
-      }));
-      setCurrentImageLink("");
-      toast({ title: "Image link added" });
+  // Add an external link (YouTube, Drive PDF, image, etc.) to files list
+  const handleAddExternalLink = () => {
+    const url = externalLink.trim();
+    if (!url) return;
+    try {
+      new URL(url);
+    } catch {
+      toast({ title: "Invalid URL", description: "Please paste a valid link", variant: "destructive" });
+      return;
     }
-  };
-
-  const handleAddFile = () => {
-    if (currentFileLink.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        files: [...prev.files, currentFileLink.trim()],
-      }));
-      setCurrentFileLink("");
-      toast({ title: "File link added" });
-    }
+    setFormData((prev) => ({ ...prev, files: [...prev.files, url] }));
+    setExternalLink("");
+    toast({ title: "Link added" });
   };
 
   const removeImage = (index: number) => {
@@ -121,7 +129,7 @@ export default function AddResource() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsUploadingImage(true);
 
     try {
       await resourcesAPI.create({
@@ -146,7 +154,6 @@ export default function AddResource() {
         images: [],
         files: [],
       });
-      setImagePreview(null);
       fetchResources();
     } catch (error) {
       toast({
@@ -155,7 +162,7 @@ export default function AddResource() {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsUploadingImage(false);
     }
   };
 
@@ -289,27 +296,42 @@ export default function AddResource() {
                   </div>
 
                   <div>
-                    <Label htmlFor="imageLink">Image Link (Google Drive or URL)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="imageLink"
-                        placeholder="Paste Google Drive or image URL"
-                        value={currentImageLink}
-                        onChange={(e) => setCurrentImageLink(e.target.value)}
+                    <Label>Upload Images</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={imageInputRef}
+                        onChange={handleImageUpload}
+                        accept="image/*"
+                        multiple
+                        className="hidden"
                       />
-                      <Button type="button" onClick={handleAddImage} size="icon">
-                        <Plus className="w-4 h-4" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => imageInputRef.current?.click()}
+                        disabled={isUploadingImage}
+                        className="w-full"
+                      >
+                        {isUploadingImage ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Images
+                          </>
+                        )}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share image from Google Drive → "Anyone with link" → Paste here
-                    </p>
                     {formData.images.length > 0 && (
                       <div className="mt-2 space-y-2">
                         {formData.images.map((img, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
-                            <img src={img} alt="" className="w-10 h-10 object-cover rounded" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                            <span className="text-sm flex-1 truncate">{img}</span>
+                            <img src={img} alt="" className="w-10 h-10 object-cover rounded" />
+                            <span className="text-sm flex-1 truncate">{img.split('/').pop()}</span>
                             <Button type="button" variant="ghost" size="sm" onClick={() => removeImage(index)} className="h-6 w-6 p-0 text-destructive">
                               <X className="h-3 w-3" />
                             </Button>
@@ -320,28 +342,24 @@ export default function AddResource() {
                   </div>
 
                   <div>
-                    <Label htmlFor="fileLink">File Link (Google Drive PDF, etc.)</Label>
-                    <div className="flex gap-2">
+                    <Label>Links (YouTube, Google Drive PDF, Images, etc.)</Label>
+                    <div className="flex gap-2 mt-2">
                       <Input
-                        id="fileLink"
-                        placeholder="Paste Google Drive file link"
-                        value={currentFileLink}
-                        onChange={(e) => setCurrentFileLink(e.target.value)}
+                        placeholder="Paste a link (e.g., https://youtu.be/..., https://drive.google.com/...)"
+                        value={externalLink}
+                        onChange={(e) => setExternalLink(e.target.value)}
                       />
-                      <Button type="button" onClick={handleAddFile} size="icon">
-                        <Plus className="w-4 h-4" />
+                      <Button type="button" onClick={handleAddExternalLink}>
+                        <LinkIcon className="w-4 h-4 mr-2" /> Add
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share file from Google Drive → "Anyone with link" → Paste here
-                    </p>
                     {formData.files.length > 0 && (
                       <div className="mt-2 space-y-2">
                         {formData.files.map((file, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
-                            <LinkIcon className="w-4 h-4 text-blue-500" />
-                            <a href={file} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate text-blue-500 hover:underline">
-                              {file.length > 50 ? file.substring(0, 50) + '...' : file}
+                            <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">Link</span>
+                            <a href={file} target="_blank" rel="noreferrer" className="text-sm flex-1 truncate hover:underline">
+                              {file}
                             </a>
                             <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-destructive">
                               <X className="h-3 w-3" />
@@ -350,10 +368,11 @@ export default function AddResource() {
                         ))}
                       </div>
                     )}
+                    <p className="text-xs text-muted-foreground mt-1">File upload disabled. Use links instead.</p>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creating..." : "Create Resource"}
+                  <Button type="submit" className="w-full" disabled={isUploadingImage || isUploadingFile}>
+                    {isUploadingImage ? "Creating..." : "Create Resource"}
                   </Button>
                 </form>
               </CardContent>

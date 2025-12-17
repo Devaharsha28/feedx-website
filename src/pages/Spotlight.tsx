@@ -30,12 +30,13 @@ const Spotlight = () => {
       <Navbar />
 
       {/* Header */}
-      <div className="border-b border-border bg-white pt-16 pb-8 sm:pt-24 sm:pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-5 sm:gap-6">
+      <div className="relative border-b border-border bg-background pt-16 pb-8 sm:pt-24 sm:pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-5 sm:gap-6">
           <img
             src={spotlightIllustration}
             alt="Spotlight"
-            className="w-full max-w-sm sm:max-w-md"
+            className="w-full max-w-sm sm:max-w-md animate-float"
             loading="eager"
             decoding="async"
             width={640}

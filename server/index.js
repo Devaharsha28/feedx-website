@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import path from 'path';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +17,29 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Simple file-based storage
 const USERS_FILE = path.join(__dirname, 'users.json');
 const DATA_DIR = path.join(__dirname, '..', 'public', 'data');
+const UPLOADS_DIR = path.join(__dirname, '..', 'public', 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  console.log('✅ Created uploads directory:', UPLOADS_DIR);
+}
+
+// Serve uploads statically
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+// Multer setup for uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9-_]/g, '');
+    const stamp = Date.now();
+    cb(null, `${base || 'file'}-${stamp}${ext}`);
+  },
+});
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
 
 // Helper functions
 const readUsers = () => {
@@ -98,6 +122,27 @@ app.use((req, res, next) => {
   }
 
   next();
+});
+
+// Upload endpoint (auth-optional to avoid 404s; uses token if provided)
+app.post('/api/upload', (req, res) => {
+  upload.single('file')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'File too large. Max 100MB.' });
+      }
+      return res.status(400).json({ error: `Upload error: ${err.message}` });
+    } else if (err) {
+      return res.status(400).json({ error: err.message || 'Failed to upload file' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileUrl = `/uploads/${req.file.filename}`;
+    return res.json({ url: fileUrl, filename: req.file.originalname, size: req.file.size, mimetype: req.file.mimetype });
+  });
 });
 
 app.use(express.json());
@@ -309,6 +354,116 @@ app.get('/api/attendance', async (req, res) => {
   } catch (error) {
     console.error('Error fetching attendance data:', error);
     res.status(500).json({ error: 'Internal server error while fetching attendance data' });
+  }
+});
+
+// Proxy route for SBTET Telangana results API
+app.get('/api/results', async (req, res) => {
+  try {
+    const { pin } = req.query;
+
+    if (!pin) {
+      return res.status(400).json({ error: 'PIN parameter is required' });
+    }
+
+    // For testing purposes, return mock data if pin is 'test'
+    if (pin === 'test') {
+      return res.json({
+        success: true,
+        data: {
+          Table: [
+            {
+              StudentName: "Test Student",
+              Pin: pin,
+              BranchCode: "CPS",
+              Scheme: "C-18",
+              CenterName: "Test Center",
+              CenterCode: "001"
+            }
+          ],
+          Table1: [
+            {
+              TotalMaxCredits: 100,
+              CreditsGained: 85,
+              CGPA: 8.5
+            }
+          ],
+          Table2: [],
+          Table3: []
+        }
+      });
+    }
+
+    // Fetch data from SBTET Telangana API
+    const apiUrl = `https://www.sbtet.telangana.gov.in/api/api/PreExamination/GetStudentResult?Pin=${encodeURIComponent(pin)}`;
+
+    console.log('Fetching results from:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; FeedX-Proxy/1.0)'
+      }
+    });
+
+    console.log('Results API response status:', response.status);
+
+    if (!response.ok) {
+      console.error('Results API Response not ok:', response.status, response.statusText);
+      let errorDetails = `Failed to fetch results: ${response.statusText}`;
+
+      try {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          errorDetails = errorData.message || errorData.error || errorDetails;
+        }
+      } catch (parseError) {
+        console.error('Could not parse error response:', parseError);
+      }
+
+      return res.status(response.status).json({
+        success: false,
+        error: errorDetails
+      });
+    }
+
+    let data;
+    try {
+      const responseText = await response.text();
+      console.log('Raw results response (first 500 chars):', responseText.substring(0, 500));
+
+      if (!responseText.trim()) {
+        return res.status(404).json({
+          success: false,
+          error: 'Empty response from results API'
+        });
+      }
+
+      data = JSON.parse(responseText);
+      console.log('Results parsed successfully');
+    } catch (jsonError) {
+      console.error('JSON parsing error:', jsonError);
+      return res.status(500).json({
+        success: false,
+        error: 'Invalid JSON response from results API',
+        details: jsonError.message
+      });
+    }
+
+    // Return with success flag
+    res.json({
+      success: true,
+      data: data
+    });
+
+  } catch (error) {
+    console.error('Error fetching results data:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Internal server error while fetching results data' 
+    });
   }
 });
 
@@ -831,5 +986,62 @@ app.delete('/api/admin/testimonials/:id', (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete testimonial' });
+  }
+});
+
+// INSTITUTES
+app.get('/api/admin/institutes', (req, res) => {
+  const institutes = readDataFile('institutes.json');
+  res.json(institutes);
+});
+
+app.get('/api/admin/institutes/:code', (req, res) => {
+  const institutes = readDataFile('institutes.json');
+  const institute = institutes.find(i => i.code.toUpperCase() === req.params.code.toUpperCase());
+  if (!institute) {
+    return res.status(404).json({ error: 'Institute not found' });
+  }
+  res.json(institute);
+});
+
+app.post('/api/admin/institutes', (req, res) => {
+  try {
+    const data = req.body;
+    if (!data.code) {
+      return res.status(400).json({ error: 'College code is required' });
+    }
+
+    const institutes = readDataFile('institutes.json');
+    const existingIndex = institutes.findIndex(i => i.code.toUpperCase() === data.code.toUpperCase());
+    
+    const instituteData = {
+      ...data,
+      code: data.code.toUpperCase(),
+      timestamp: new Date().toISOString()
+    };
+
+    if (existingIndex >= 0) {
+      // Update existing
+      institutes[existingIndex] = instituteData;
+    } else {
+      // Add new
+      institutes.push(instituteData);
+    }
+
+    writeDataFile('institutes.json', institutes);
+    res.status(201).json(instituteData);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save institute' });
+  }
+});
+
+app.delete('/api/admin/institutes/:code', (req, res) => {
+  try {
+    const institutes = readDataFile('institutes.json');
+    const filtered = institutes.filter(i => i.code.toUpperCase() !== req.params.code.toUpperCase());
+    writeDataFile('institutes.json', filtered);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete institute' });
   }
 });

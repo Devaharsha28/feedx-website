@@ -7,7 +7,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}📊 FEEDX Polytechnic Status Check${NC}"
+echo -e "${BLUE}📊 FEEDX Status Check${NC}"
 echo "================================================"
 echo ""
 

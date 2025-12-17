@@ -11,6 +11,8 @@ import { Loader2, BarChart3, GraduationCap } from 'lucide-react';
 import { dataAnalysisIllustration as analyticsIllustration } from '@/lib/illustrations';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import * as RechartsPrimitive from 'recharts';
+import RecommendedResources from '@/components/RecommendedResources';
+import StreakTracker from '@/components/StreakTracker';
 
 type AttendanceSummary = {
   attendancePercentage: number | null;
@@ -321,15 +323,16 @@ const StudentAnalytics = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="border-b border-border bg-white pt-24 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
+      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
           <div className="flex-1 text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-3">Student Analytics</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-gradient">Student Analytics</h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
               Enter your PIN to fetch attendance and academic performance details.
             </p>
           </div>
-          <img src={analyticsIllustration} alt="Student analytics" className="w-full max-w-sm" />
+          <img src={analyticsIllustration} alt="Student analytics" className="w-full max-w-sm animate-float" />
         </div>
       </div>
 
@@ -462,6 +465,14 @@ const StudentAnalytics = () => {
                 </ChartContainer>
               </CardContent>
             </Card>
+          )}
+
+          {/* Recommended Resources */}
+          {results && results.weakSubjects.length > 0 && (
+            <RecommendedResources 
+              weakSubjects={results.weakSubjects} 
+              topSubjects={results.topSubjects}
+            />
           )}
 
           {/* Highlights */}

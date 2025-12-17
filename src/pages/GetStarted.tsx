@@ -84,7 +84,7 @@ const GetStarted = () => {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Get Started</CardTitle>
           <CardDescription className="text-center">
-            Create your account to start using FeedX Polytechnic
+            Create your account to start using FEEDX
           </CardDescription>
         </CardHeader>
         <CardContent>

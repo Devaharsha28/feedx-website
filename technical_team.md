@@ -1,5 +1,5 @@
 # AS A TECHINICAL MEMBER:
-This is the FEEDX Polytechnic Community Website.
+This is the FEEDX Community Website.
 Features of this website:
 * 1.Updates 
 * 2.Projects and Initiatives by Feedx team

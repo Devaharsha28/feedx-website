@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,24 +14,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updatesAPI, Update } from "@/lib/api";
+import { updatesAPI, Update, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { X, Plus } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
 
 export default function AddUpdate() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [updates, setUpdates] = useState<Update[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     priority: "medium" as "low" | "medium" | "high",
+    type: "announcement",
+    category: "General",
     images: [] as string[],
+    files: [] as string[],
   });
-  const [currentImageLink, setCurrentImageLink] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const documentInputRef = useRef<HTMLInputElement>(null);
 
-  // Auth check
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
@@ -51,39 +55,69 @@ export default function AddUpdate() {
     }));
   };
 
-  // Convert Google Drive share link to direct viewable link
-  const convertGDriveLink = (url: string): string => {
-    if (!url) return url;
-    
-    // Format: https://drive.google.com/file/d/FILE_ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/open?id=FILE_ID
-    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (match) {
-      return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
-    
-    // Format: https://drive.google.com/uc?id=FILE_ID
-    if (url.includes('drive.google.com/uc')) {
-      return url.replace('export=download', 'export=view');
-    }
-    
-    return url;
+  const handleTypeChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, type: value }));
   };
 
-  const handleAddImage = () => {
-    if (currentImageLink.trim()) {
-      const link = convertGDriveLink(currentImageLink.trim());
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, link],
-      }));
-      setCurrentImageLink("");
-      toast({ title: "Image link added" });
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, category: e.target.value }));
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const url = await uploadFile(file);
+        setFormData((prev) => ({
+          ...prev,
+          images: [...prev.images, url],
+        }));
+        toast({ title: "Image uploaded successfully" });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const url = await uploadFile(file);
+        setFormData((prev) => ({
+          ...prev,
+          files: [...prev.files, url],
+        }));
+        toast({ title: "File uploaded successfully" });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload file",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (documentInputRef.current) {
+        documentInputRef.current.value = '';
+      }
     }
   };
 
@@ -91,6 +125,13 @@ export default function AddUpdate() {
     setFormData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeFile = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      files: prev.files.filter((_, i) => i !== index),
     }));
   };
 
@@ -103,7 +144,10 @@ export default function AddUpdate() {
         title: formData.title,
         description: formData.description,
         priority: formData.priority,
+        type: formData.type,
+        category: formData.category,
         images: formData.images,
+        files: formData.files,
       });
 
       toast({
@@ -113,11 +157,13 @@ export default function AddUpdate() {
 
       setFormData({
         title: "",
+        type: "announcement",
+        category: "General",
         description: "",
         priority: "medium",
         images: [],
+        files: [],
       });
-      setImagePreview(null);
       fetchUpdates();
     } catch (error) {
       toast({
@@ -186,7 +232,6 @@ export default function AddUpdate() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Form Section */}
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
@@ -220,6 +265,45 @@ export default function AddUpdate() {
                   </div>
 
                   <div>
+                    <Label htmlFor="type">Type</Label>
+                    <Select value={formData.type} onValueChange={handleTypeChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="exam">Exam</SelectItem>
+                        <SelectItem value="result">Result</SelectItem>
+                        <SelectItem value="circular">Circular</SelectItem>
+                        <SelectItem value="announcement">Announcement</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Input
+                      id="category"
+                      name="category"
+                      placeholder="e.g., Academic, Events"
+                      value={formData.category}
+                      onChange={handleCategoryChange}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Input
+                      type="text"
+                      id="category"
+                      name="category"
+                      placeholder="e.g., Academics, Admissions"
+                      value={formData.category}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div>
                     <Label htmlFor="priority">Priority</Label>
                     <Select value={formData.priority} onValueChange={handlePriorityChange}>
                       <SelectTrigger>
@@ -234,27 +318,43 @@ export default function AddUpdate() {
                   </div>
 
                   <div>
-                    <Label htmlFor="imageLink">Image Link (Google Drive or URL)</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="imageLink"
-                        placeholder="Paste Google Drive or image URL"
-                        value={currentImageLink}
-                        onChange={(e) => setCurrentImageLink(e.target.value)}
+                    <Label htmlFor="images">Upload Images</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        id="image-upload"
                       />
-                      <Button type="button" onClick={handleAddImage} size="icon">
-                        <Plus className="w-4 h-4" />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="w-full"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Images
+                          </>
+                        )}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Share image from Google Drive → "Anyone with link" → Paste here
-                    </p>
                     {formData.images.length > 0 && (
-                      <div className="mt-2 space-y-2">
+                      <div className="mt-3 space-y-2">
                         {formData.images.map((img, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
-                            <img src={img} alt="" className="w-10 h-10 object-cover rounded" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                            <span className="text-sm flex-1 truncate">{img.length > 40 ? img.substring(0, 40) + '...' : img}</span>
+                            <img src={img} alt="" className="w-12 h-12 object-cover rounded" />
+                            <span className="text-sm flex-1 truncate">{img.split('/').pop()}</span>
                             <Button type="button" variant="ghost" size="sm" onClick={() => removeImage(index)} className="h-6 w-6 p-0 text-destructive">
                               <X className="h-3 w-3" />
                             </Button>
@@ -264,7 +364,53 @@ export default function AddUpdate() {
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <div>
+                    <Label htmlFor="documents">Attach Files (PDF, Documents, etc.)</Label>
+                    <div className="mt-2">
+                      <input
+                        type="file"
+                        ref={documentInputRef}
+                        onChange={handleDocumentUpload}
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt"
+                        multiple
+                        className="hidden"
+                        id="document-upload"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => documentInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="w-full"
+                      >
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Choose Files
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    {formData.files.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {formData.files.map((file, index) => (
+                          <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
+                            <span className="text-sm flex-1 truncate">{file.split('/').pop()}</span>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-destructive">
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={isLoading || isUploading}>
                     {isLoading ? "Creating..." : "Create Update"}
                   </Button>
                 </form>
@@ -272,7 +418,6 @@ export default function AddUpdate() {
             </Card>
           </div>
 
-          {/* List Section */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
@@ -296,9 +441,7 @@ export default function AddUpdate() {
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-semibold">{update.title}</h3>
                             <span
-                              className={`text-xs px-2 py-1 rounded-full capitalize ${
-                                priorityColors[update.priority]
-                              }`}
+                              className={`text-xs px-2 py-1 rounded-full capitalize ${priorityColors[update.priority]}`}
                             >
                               {update.priority}
                             </span>

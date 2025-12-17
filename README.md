@@ -1,11 +1,11 @@
-# FeedX Polytechnic - Student Portal
+# FEEDX - Student Portal
 if you are seeing this you are part of feedx admin team 
 we recommend you to visit and see the website thouroughly once
 
 ---
-# FeedX Polytechnic Initiative
+# FEEDX Initiative
 
-This README summarizes the vision, mission, and framework of **FeedX Polytechnic**, an innovation hub and career accelerator designed for Polytechnic students in Telangana.
+This README summarizes the vision, mission, and framework of **FEEDX**, an innovation hub and career accelerator designed for Polytechnic students in Telangana.
 
 ## 🌟 Overview: What is FeedX?
 
@@ -64,7 +64,7 @@ FeedX is a career accelerator committed to bridging the gap between policy and g
 
 **A bridge connecting students, teachers, and administration under one vision.**
 
-**- FEEDX POLYTECHNIC COMMUNITY**
+**- FEEDX COMMUNITY**
 
 
 
