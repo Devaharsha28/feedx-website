@@ -1,12 +1,20 @@
 [
   {
-    "id": "mj7epn277oewjf8zkja",
+    "id": "admin001",
     "username": "admin",
-    "password": "$2b$10$SlK.ywru/S0ghXuC39Jhk.Aw8Fw5TxW6A.QUaezjn0tpJL0kN0PKe",
+    "email": "admin@feedx.com",
     "name": "Administrator",
-    "email": "admin@feedxnexus.com",
-    "phone": "0000000000",
-    "pin": "0000",
-    "createdAt": "2025-12-15T17:07:28.639Z"
+    "password": "$2b$10$iWsNE.Alk.dKkeICmyRxpuMN9nM4HImf1SJj.hwGRZcM7wChqNws.",
+    "created_at": "2025-12-17T17:51:39.489Z"
+  },
+  {
+    "id": "mjabbhypdh7w8swvyn",
+    "username": "harsha",
+    "password": "$2b$10$Sks49Wj9MN9Pm/y5v2z34.Ede96Eh3o5U4ZaGbl.o.98lzbnFNwTu",
+    "name": "devaharsha d",
+    "email": "deva32871@gmail.com",
+    "phone": "9440029698",
+    "pin": "cps015",
+    "created_at": "2025-12-17T17:55:48.529Z"
   }
 ]

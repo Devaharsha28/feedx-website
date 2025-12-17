@@ -8,10 +8,34 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   ArrowLeft, MapPin, Building2, Star, MessageSquare, 
-  Bookmark, GitCompare, Download, Bell, ChevronRight, ChevronDown, ChevronUp,
+  Bookmark, GitCompare, Download, ChevronRight, ChevronDown, ChevronUp,
   Phone, Mail, Globe, ExternalLink, TrendingUp, Image as ImageIcon
 } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+// Interfaces
+interface FacultyMember {
+  id: string;
+  name: string;
+  designation: string;
+  qualification: string;
+  department: string;
+  image?: string;
+  email?: string;
+  phone?: string;
+  specialization?: string;
+  experience?: string;
+}
+
+interface Department {
+  id: string;
+  name: string;
+  code: string;
+  hod: FacultyMember | null;
+  description?: string;
+  intake?: number;
+  labs?: string[];
+}
 
 interface InstituteData {
   code: string;
@@ -36,6 +60,17 @@ interface InstituteData {
   facilities?: string[];
   rating?: number;
   reviews?: number;
+  departments?: Department[];
+  faculty?: FacultyMember[];
+  achievements?: string[];
+  placements?: {
+    year: string;
+    placed: number;
+    total: number;
+    topRecruiters?: string[];
+    avgPackage?: string;
+    highestPackage?: string;
+  }[];
 }
 
 // Basic institute data
@@ -57,9 +92,7 @@ const allInstitutes: InstituteData[] = [
   { code: 'IOEPH', name: 'GOVT INSTITUTE OF ELECTRONICS', place: 'SECUNDERABAD', dist: 'HYD', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED', established: '1981' },
 ];
 
-// Default placeholder images
-const defaultBanner = "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=400&fit=crop";
-const defaultLogo = "https://cdn-icons-png.flaticon.com/512/3914/3914158.png";
+
 
 export default function InstituteDetail() {
   const { code } = useParams<{ code: string }>();
@@ -109,12 +142,12 @@ export default function InstituteDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-24 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Loading institute details...</p>
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading institute details...</p>
           </div>
         </main>
         <Footer />
@@ -124,16 +157,16 @@ export default function InstituteDetail() {
 
   if (!institute) {
     return (
-      <div className="min-h-screen flex flex-col bg-white">
+      <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 container mx-auto px-4 py-24">
           <div className="text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Building2 className="w-10 h-10 text-gray-400" />
+            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+              <Building2 className="w-10 h-10 text-muted-foreground" />
             </div>
-            <h1 className="text-2xl font-bold mb-4 text-gray-900">Institute Not Found</h1>
-            <p className="text-gray-600 mb-6">The institute code "{code}" was not found in our records.</p>
-            <Button onClick={() => navigate("/institute-profile")} className="bg-blue-600 hover:bg-blue-700">
+            <h1 className="text-2xl font-bold mb-4 text-foreground">Institute Not Found</h1>
+            <p className="text-muted-foreground mb-6">The institute code "{code}" was not found in our records.</p>
+            <Button onClick={() => navigate("/institute-profile")}>
               Back to Institute Directory
             </Button>
           </div>
@@ -145,40 +178,34 @@ export default function InstituteDetail() {
 
   const typeLabel = institute.type === 'GOV' ? 'Government' : 'Private';
   const modeLabel = institute.mode === 'COED' ? 'Co-Education' : institute.mode === 'GIRLS' ? 'Women Only' : 'Men Only';
-  const rating = institute.rating || 4.2;
-  const reviews = institute.reviews || 84;
-  const established = institute.established || '1990';
-
-  // Table of contents items
-  const tocItems = [
-    { id: 'highlights', label: `${institute.name} Highlights 2025` },
-    { id: 'programs', label: `${institute.code} Popular programs` },
-    { id: 'admission', label: `${institute.code} Admission process` },
-    { id: 'reviews', label: `${institute.code} Student Reviews` },
-    { id: 'placements', label: `${institute.code} Placements 2025` },
-  ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
 
       <main className="flex-1 pt-16">
-        {/* Hero Banner - Shiksha Style */}
-        <div className="relative bg-white shadow-sm">
+        {/* Hero Banner */}
+        <div className="relative bg-card/50 border-b border-white/10">
           {/* Banner Image */}
           <div className="relative h-40 sm:h-48 overflow-hidden">
-            <img
-              src={institute.bannerImage || defaultBanner}
-              alt={`${institute.name} campus`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            {institute.bannerImage ? (
+              <img
+                src={institute.bannerImage}
+                alt={`${institute.name} campus`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
             
             {/* Photo count badge */}
-            <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2">
-              <ImageIcon className="w-4 h-4" />
-              <span>{institute.images?.length || 2} Photos</span>
-            </div>
+            {institute.images && institute.images.length > 0 && (
+              <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                <span>{institute.images.length} Photos</span>
+              </div>
+            )}
           </div>
 
           {/* Institute Info Card */}
@@ -186,55 +213,64 @@ export default function InstituteDetail() {
             <div className="relative -mt-16 sm:-mt-20 pb-6">
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
                 {/* Logo */}
-                <div className="w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-xl shadow-lg border border-gray-200 p-2 flex items-center justify-center shrink-0">
-                  <img
-                    src={institute.logoImage || defaultLogo}
-                    alt={`${institute.code} logo`}
-                    className="w-full h-full object-contain"
-                  />
+                <div className="w-20 h-20 sm:w-28 sm:h-28 bg-card rounded-xl shadow-lg border border-white/10 p-2 flex items-center justify-center shrink-0">
+                  {institute.logoImage ? (
+                    <img
+                      src={institute.logoImage}
+                      alt={`${institute.code} logo`}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <Building2 className="w-12 h-12 text-primary" />
+                  )}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 pt-2 sm:pt-8">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight mb-2">
-                    {institute.name}: Courses, Fees, Admission 2025, Reviews, Info
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground leading-tight mb-2">
+                    {institute.name}
                   </h1>
                   
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 mb-3">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
                     <span className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      {institute.place}
+                      <MapPin className="w-4 h-4" />
+                      {institute.place}, {institute.dist}
                     </span>
-                    <span className="flex items-center gap-1.5">
-                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                      <span className="font-semibold text-gray-900">{rating}</span>/5
-                      <span className="text-blue-600 hover:underline cursor-pointer">({reviews} Reviews)</span>
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageSquare className="w-4 h-4 text-gray-400" />
-                      <span className="text-blue-600 hover:underline cursor-pointer">1 Student Q&A</span>
-                    </span>
+                    {institute.rating && (
+                      <span className="flex items-center gap-1.5">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <span className="font-semibold text-foreground">{institute.rating}</span>/5
+                        {institute.reviews && (
+                          <span className="text-primary hover:underline cursor-pointer">({institute.reviews} Reviews)</span>
+                        )}
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                    <Badge variant="secondary" className="bg-primary/20 text-primary border-0">
                       {typeLabel} Institute
-                    </span>
-                    <span className="text-gray-500 text-sm">Estd. {established}</span>
+                    </Badge>
+                    <Badge variant="outline" className="border-white/20">
+                      {modeLabel}
+                    </Badge>
+                    {institute.established && (
+                      <span className="text-muted-foreground text-sm">Estd. {institute.established}</span>
+                    )}
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto sm:pt-8">
-                  <Button variant="outline" className="flex items-center gap-2 border-gray-300 hover:bg-gray-50">
+                  <Button variant="outline" className="flex items-center gap-2 border-white/20">
                     <Bookmark className="w-4 h-4" />
                     Save
                   </Button>
-                  <Button variant="outline" className="flex items-center gap-2 border-gray-300 hover:bg-gray-50">
+                  <Button variant="outline" className="flex items-center gap-2 border-white/20">
                     <GitCompare className="w-4 h-4" />
                     Compare
                   </Button>
-                  <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button className="flex items-center gap-2">
                     <Download className="w-4 h-4" />
                     Brochure
                   </Button>
@@ -243,19 +279,19 @@ export default function InstituteDetail() {
             </div>
           </div>
 
-          {/* Navigation Tabs - Shiksha Style */}
-          <div className="border-t border-gray-200 bg-white sticky top-16 z-40">
+          {/* Navigation Tabs */}
+          <div className="border-t border-white/10 bg-card/80 backdrop-blur-sm sticky top-16 z-40">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <ScrollArea className="w-full">
                 <div className="flex gap-0 min-w-max">
-                  {['College Info', 'Courses', 'Fees', 'Reviews', 'Placements', 'Cut-Offs', 'Gallery', 'Infrastructure', 'Faculty', 'Compare', 'Q&A'].map((tab) => (
+                  {['College Info', 'Departments', 'Faculty', 'Courses', 'Placements', 'Gallery', 'Infrastructure', 'Reviews', 'Q&A'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab.toLowerCase().replace(/[^a-z]/g, ''))}
                       className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                         activeTab === tab.toLowerCase().replace(/[^a-z]/g, '')
-                          ? 'border-blue-600 text-blue-600'
-                          : 'border-transparent text-gray-600 hover:text-gray-900'
+                          ? 'border-primary text-primary'
+                          : 'border-transparent text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       {tab}
@@ -267,321 +303,489 @@ export default function InstituteDetail() {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Tab Based */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid lg:grid-cols-[1fr_360px] gap-8">
-            {/* Left Column */}
-            <div className="space-y-6">
-              {/* What's New Section */}
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <button
-                  onClick={() => toggleSection('whatsNew')}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Bell className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">{institute.code}</p>
-                      <h2 className="text-lg font-semibold text-gray-900">What's new?</h2>
-                    </div>
-                  </div>
-                  {expandedSections.whatsNew ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-                </button>
-                
-                {expandedSections.whatsNew && (
-                  <CardContent className="px-6 pb-6 pt-0">
-                    <p className="text-gray-600 mb-4">
-                      Get all the latest information regarding {institute.name} Courses, Fees, Eligibility, Admission, Rankings and Reviews on this page.
-                    </p>
-                    <Button className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2">
-                      <Bell className="w-4 h-4" />
-                      Keep Me Notified
-                    </Button>
-                  </CardContent>
-                )}
-              </Card>
-
-              {/* Table of Contents */}
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <button
-                  onClick={() => toggleSection('tableOfContents')}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">{institute.code} Overview</p>
-                    <h2 className="text-lg font-semibold text-gray-900">Table of contents</h2>
-                  </div>
-                  {expandedSections.tableOfContents ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-                </button>
-                
-                {expandedSections.tableOfContents && (
-                  <CardContent className="px-6 pb-6 pt-0">
-                    <ul className="space-y-2">
-                      {tocItems.map((item) => (
-                        <li key={item.id}>
-                          <a href={`#${item.id}`} className="text-blue-600 hover:text-blue-800 hover:underline text-sm">
-                            {item.label}
-                          </a>
-                        </li>
-                      ))}
-                      <li>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1">
-                          + 7 more items
-                          <ChevronDown className="w-4 h-4" />
-                        </button>
-                      </li>
-                    </ul>
-                  </CardContent>
-                )}
-              </Card>
-
-              {/* Highlights Section */}
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden" id="highlights">
-                <button
-                  onClick={() => toggleSection('highlights')}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <h2 className="text-lg font-semibold text-gray-900">{institute.name} Highlights 2025</h2>
-                  {expandedSections.highlights ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-                </button>
-                
-                {expandedSections.highlights && (
-                  <CardContent className="px-6 pb-6 pt-0">
-                    <p className="text-gray-600 mb-6">
-                      Established in {established}, {institute.name} is located in {institute.place}, Telangana. The institute offers diploma programs in various engineering and technology streams.
-                    </p>
-                    
-                    {/* Quick Info Table */}
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <table className="w-full text-sm">
-                        <tbody>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700 w-1/3">Institute Code</td>
-                            <td className="px-4 py-3 text-gray-900">{institute.code}</td>
-                          </tr>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Type</td>
-                            <td className="px-4 py-3 text-gray-900">{typeLabel}</td>
-                          </tr>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Location</td>
-                            <td className="px-4 py-3 text-gray-900">{institute.place}, {institute.dist}</td>
-                          </tr>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Region</td>
-                            <td className="px-4 py-3 text-gray-900">{institute.region}</td>
-                          </tr>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Mode</td>
-                            <td className="px-4 py-3 text-gray-900">{modeLabel}</td>
-                          </tr>
-                          <tr className="border-b border-gray-200">
-                            <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Established</td>
-                            <td className="px-4 py-3 text-gray-900">{established}</td>
-                          </tr>
-                          {institute.minority !== 'NA' && (
-                            <tr className="border-b border-gray-200">
-                              <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Minority Status</td>
-                              <td className="px-4 py-3 text-gray-900">{institute.minority}</td>
-                            </tr>
-                          )}
-                          {institute.principal && (
-                            <tr>
-                              <td className="px-4 py-3 bg-gray-50 font-medium text-gray-700">Principal</td>
-                              <td className="px-4 py-3 text-gray-900">{institute.principal}</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Contact Info */}
-                    {(institute.phone || institute.email || institute.website) && (
-                      <div className="mt-6 space-y-3">
-                        <h3 className="font-semibold text-gray-900">Contact Information</h3>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {institute.phone && (
-                            <a href={`tel:${institute.phone}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
-                              <Phone className="w-4 h-4" />
-                              {institute.phone}
-                            </a>
-                          )}
-                          {institute.email && (
-                            <a href={`mailto:${institute.email}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
-                              <Mail className="w-4 h-4" />
-                              {institute.email}
-                            </a>
-                          )}
-                          {institute.website && (
-                            <a href={institute.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-600 hover:text-blue-800">
-                              <Globe className="w-4 h-4" />
-                              Visit Website
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Courses */}
-                    {institute.courses && institute.courses.length > 0 && (
-                      <div className="mt-6">
-                        <h3 className="font-semibold text-gray-900 mb-3">Courses Offered</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {institute.courses.map((course, idx) => (
-                            <Badge key={idx} variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">
-                              {course}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Facilities */}
-                    {institute.facilities && institute.facilities.length > 0 && (
-                      <div className="mt-6">
-                        <h3 className="font-semibold text-gray-900 mb-3">Facilities</h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {institute.facilities.map((facility, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-gray-600 text-sm">
-                              <div className="w-2 h-2 rounded-full bg-green-500" />
-                              {facility}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                )}
-              </Card>
-            </div>
-
-            {/* Right Sidebar */}
-            <div className="space-y-6">
-              {/* Campus Gallery */}
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <ImageIcon className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">{institute.code}</p>
-                      <h3 className="font-semibold text-gray-900">Take a look at Campus</h3>
-                    </div>
-                  </div>
-                  
-                  {institute.images && institute.images.length > 0 ? (
-                    <Carousel className="w-full">
-                      <CarouselContent>
-                        {institute.images.map((img, idx) => (
-                          <CarouselItem key={idx}>
-                            <div className="relative rounded-lg overflow-hidden">
-                              <img
-                                src={img}
-                                alt={`Campus ${idx + 1}`}
-                                className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform"
-                                onClick={() => window.open(img, "_blank")}
-                              />
-                              <span className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                                {idx === 0 ? 'Entrance' : `View ${idx + 1}`}
-                              </span>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="left-2" />
-                      <CarouselNext className="right-2" />
-                    </Carousel>
-                  ) : (
-                    <div className="relative rounded-lg overflow-hidden">
-                      <img
-                        src={defaultBanner}
-                        alt="Campus"
-                        className="w-full h-48 object-cover"
-                      />
-                      <span className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                        Entrance
-                      </span>
-                    </div>
-                  )}
-                  
-                  <button className="w-full mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium text-right">
-                    View All →
+          
+          {/* College Info Tab */}
+          {activeTab === 'collegeinfo' && (
+            <div className="grid lg:grid-cols-[1fr_360px] gap-8">
+              {/* Left Column */}
+              <div className="space-y-6">
+                {/* Highlights Section */}
+                <Card className="glass-card border-white/10 overflow-hidden" id="highlights">
+                  <button
+                    onClick={() => toggleSection('highlights')}
+                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-white/5 transition-colors"
+                  >
+                    <h2 className="text-lg font-semibold text-foreground">{institute.name} Overview</h2>
+                    {expandedSections.highlights ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
                   </button>
-                </CardContent>
-              </Card>
+                  
+                  {expandedSections.highlights && (
+                    <CardContent className="px-6 pb-6 pt-0">
+                      {institute.description && (
+                        <p className="text-muted-foreground mb-6">{institute.description}</p>
+                      )}
+                      
+                      {/* Quick Info Table */}
+                      <div className="border border-white/10 rounded-lg overflow-hidden">
+                        <table className="w-full text-sm">
+                          <tbody>
+                            <tr className="border-b border-white/10">
+                              <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground w-1/3">Institute Code</td>
+                              <td className="px-4 py-3 text-foreground">{institute.code}</td>
+                            </tr>
+                            <tr className="border-b border-white/10">
+                              <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Type</td>
+                              <td className="px-4 py-3 text-foreground">{typeLabel}</td>
+                            </tr>
+                            <tr className="border-b border-white/10">
+                              <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Location</td>
+                              <td className="px-4 py-3 text-foreground">{institute.place}, {institute.dist}</td>
+                            </tr>
+                            <tr className="border-b border-white/10">
+                              <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Region</td>
+                              <td className="px-4 py-3 text-foreground">{institute.region}</td>
+                            </tr>
+                            <tr className="border-b border-white/10">
+                              <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Mode</td>
+                              <td className="px-4 py-3 text-foreground">{modeLabel}</td>
+                            </tr>
+                            {institute.established && (
+                              <tr className="border-b border-white/10">
+                                <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Established</td>
+                                <td className="px-4 py-3 text-foreground">{institute.established}</td>
+                              </tr>
+                            )}
+                            {institute.minority !== 'NA' && (
+                              <tr className="border-b border-white/10">
+                                <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Minority Status</td>
+                                <td className="px-4 py-3 text-foreground">{institute.minority}</td>
+                              </tr>
+                            )}
+                            {institute.principal && (
+                              <tr>
+                                <td className="px-4 py-3 bg-muted/30 font-medium text-muted-foreground">Principal</td>
+                                <td className="px-4 py-3 text-foreground">{institute.principal}</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
 
-              {/* News & Updates */}
-              <Card className="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">{institute.code}</p>
-                      <h3 className="font-semibold text-gray-900">News & Updates</h3>
-                    </div>
-                  </div>
+                      {/* Contact Info */}
+                      {(institute.phone || institute.email || institute.website || institute.address) && (
+                        <div className="mt-6 space-y-3">
+                          <h3 className="font-semibold text-foreground">Contact Information</h3>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            {institute.address && (
+                              <div className="flex items-start gap-2 text-muted-foreground">
+                                <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
+                                <span className="text-sm">{institute.address}</span>
+                              </div>
+                            )}
+                            {institute.phone && (
+                              <a href={`tel:${institute.phone}`} className="flex items-center gap-2 text-primary hover:underline">
+                                <Phone className="w-4 h-4" />
+                                {institute.phone}
+                              </a>
+                            )}
+                            {institute.email && (
+                              <a href={`mailto:${institute.email}`} className="flex items-center gap-2 text-primary hover:underline">
+                                <Mail className="w-4 h-4" />
+                                {institute.email}
+                              </a>
+                            )}
+                            {institute.website && (
+                              <a href={institute.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
+                                <Globe className="w-4 h-4" />
+                                Visit Website
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  )}
+                </Card>
+              </div>
 
-                  {/* Tabs */}
-                  <div className="flex gap-2 mb-4">
-                    <button className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                      Latest
-                    </button>
-                    <button className="px-3 py-1.5 text-gray-500 hover:bg-gray-50 rounded-full text-sm">
-                      Popular
-                    </button>
-                  </div>
-
-                  {/* News Items */}
-                  <div className="space-y-4">
-                    <div className="border-b border-gray-100 pb-4">
-                      <a href="#" className="text-blue-600 hover:text-blue-800 font-medium text-sm leading-tight block mb-1">
-                        TS POLYCET 2026: Notification, Registration, Syllabus, Pattern, Important Dates
-                      </a>
-                      <p className="text-xs text-gray-500">Samridhi Mishra · Dec 10, 2025</p>
-                      <p className="text-xs text-gray-400">11.9K views</p>
+              {/* Right Sidebar */}
+              <div className="space-y-6">
+                {/* Quick Links */}
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-foreground mb-3">Quick Navigation</h3>
+                    <div className="space-y-2">
+                      <button onClick={() => setActiveTab('departments')} className="w-full flex items-center justify-between p-2 hover:bg-white/5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <span>Departments & HODs</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => setActiveTab('faculty')} className="w-full flex items-center justify-between p-2 hover:bg-white/5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <span>Faculty Details</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => setActiveTab('placements')} className="w-full flex items-center justify-between p-2 hover:bg-white/5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <span>Placement Records</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => setActiveTab('infrastructure')} className="w-full flex items-center justify-between p-2 hover:bg-white/5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <span>Infrastructure</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
-                    <div>
-                      <a href="#" className="text-blue-600 hover:text-blue-800 font-medium text-sm leading-tight block mb-1">
-                        TS POLYCET Counselling 2025: Seat Allotment (OUT), Internal Sliding Ongoing, Dates
-                      </a>
-                      <p className="text-xs text-gray-500">Samridhi Mishra · Nov 16, 2025</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
 
-              {/* Quick Links */}
-              <Card className="bg-white border border-gray-200 shadow-sm">
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-3">Quick Links</h3>
-                  <div className="space-y-2">
-                    <a href="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 transition-colors">
-                      <span>Admission Process</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </a>
-                    <a href="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 transition-colors">
-                      <span>Fee Structure</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </a>
-                    <a href="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 transition-colors">
-                      <span>Placement Records</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </a>
-                    <a href="#" className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg text-sm text-gray-700 transition-colors">
-                      <span>Student Reviews</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </a>
+          {/* Departments Tab */}
+          {activeTab === 'departments' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">Departments & HODs</h2>
+                {institute.departments && institute.departments.length > 0 && (
+                  <Badge className="bg-primary/20 text-primary border-0">{institute.departments.length} Departments</Badge>
+                )}
+              </div>
+              
+              {institute.departments && institute.departments.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {institute.departments.map((dept) => (
+                    <Card key={dept.id} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <Badge className="bg-primary/20 text-primary border-0 mb-2">{dept.code}</Badge>
+                            <h3 className="text-lg font-semibold text-foreground">{dept.name}</h3>
+                          </div>
+                          {dept.intake && (
+                            <div className="text-right">
+                              <p className="text-sm text-muted-foreground">Intake</p>
+                              <p className="text-xl font-bold text-primary">{dept.intake}</p>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {dept.description && (
+                          <p className="text-muted-foreground text-sm mb-4">{dept.description}</p>
+                        )}
+                        
+                        {dept.hod && (
+                          <div className="border-t border-white/10 pt-4">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Head of Department</p>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="w-12 h-12">
+                                <AvatarImage src={dept.hod.image} />
+                                <AvatarFallback className="bg-primary/20 text-primary">
+                                  {dept.hod.name.split(' ').map(n => n[0]).join('')}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium text-foreground">{dept.hod.name}</p>
+                                <p className="text-sm text-muted-foreground">{dept.hod.qualification}</p>
+                                {dept.hod.experience && <p className="text-xs text-muted-foreground">{dept.hod.experience} experience</p>}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {dept.labs && dept.labs.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Labs & Facilities</p>
+                            <div className="flex flex-wrap gap-2">
+                              {dept.labs.map((lab, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs border-white/20">{lab}</Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Building2 className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Departments Added Yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Department information will be displayed here once added by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Faculty Tab */}
+          {activeTab === 'faculty' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">Faculty Members</h2>
+                {institute.faculty && institute.faculty.length > 0 && (
+                  <Badge className="bg-primary/20 text-primary border-0">{institute.faculty.length} Members</Badge>
+                )}
+              </div>
+              
+              {institute.faculty && institute.faculty.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {institute.faculty.map((faculty) => (
+                    <Card key={faculty.id} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
+                      <CardContent className="p-4 text-center">
+                        <Avatar className="w-20 h-20 mx-auto mb-3">
+                          <AvatarImage src={faculty.image} />
+                          <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xl">
+                            {faculty.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <h3 className="font-semibold text-foreground">{faculty.name}</h3>
+                        <p className="text-sm text-primary">{faculty.designation}</p>
+                        <Badge variant="outline" className="mt-2 text-xs border-white/20">{faculty.department}</Badge>
+                        <div className="mt-3 text-xs text-muted-foreground space-y-1">
+                          <p>{faculty.qualification}</p>
+                          {faculty.experience && <p>{faculty.experience}</p>}
+                          {faculty.specialization && <p className="text-primary">{faculty.specialization}</p>}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Building2 className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Faculty Data Available</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Faculty member details will be displayed here once added by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Courses Tab */}
+          {activeTab === 'courses' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground">Courses Offered</h2>
+              
+              {institute.courses && institute.courses.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {institute.courses.map((course, idx) => (
+                    <Card key={idx} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
+                      <CardContent className="p-6">
+                        <Badge className="bg-primary/20 text-primary border-0 mb-3">{course}</Badge>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">{course}</h3>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Duration: 3 Years</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Building2 className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Courses Added Yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Course information will be displayed here once added by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Placements Tab */}
+          {activeTab === 'placements' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground">Placement Records</h2>
+              
+              {institute.placements && institute.placements.length > 0 ? (
+                <>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border-primary/20">
+                      <CardContent className="p-6 text-center">
+                        <p className="text-muted-foreground text-sm">Placement Rate {institute.placements[0].year}</p>
+                        <p className="text-4xl font-bold text-foreground mt-2">
+                          {Math.round((institute.placements[0].placed / institute.placements[0].total) * 100)}%
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-gradient-to-br from-secondary/20 to-secondary/5 border-secondary/20">
+                      <CardContent className="p-6 text-center">
+                        <p className="text-muted-foreground text-sm">Students Placed</p>
+                        <p className="text-4xl font-bold text-foreground mt-2">{institute.placements[0].placed}+</p>
+                      </CardContent>
+                    </Card>
+                    {institute.placements[0].avgPackage && (
+                      <Card className="bg-gradient-to-br from-accent/20 to-accent/5 border-accent/20">
+                        <CardContent className="p-6 text-center">
+                          <p className="text-muted-foreground text-sm">Avg. Package</p>
+                          <p className="text-4xl font-bold text-foreground mt-2">{institute.placements[0].avgPackage}</p>
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
+                  
+                  {institute.placements[0].topRecruiters && institute.placements[0].topRecruiters.length > 0 && (
+                    <Card className="glass-card border-white/10">
+                      <CardContent className="p-6">
+                        <h3 className="font-semibold text-foreground mb-4">Top Recruiting Companies</h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                          {institute.placements[0].topRecruiters.map((company, idx) => (
+                            <div key={idx} className="p-4 bg-muted/30 rounded-lg text-center">
+                              <p className="font-medium text-foreground">{company}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Placement Data Available</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Placement records will be displayed here once added by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Gallery Tab */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground">Campus Gallery</h2>
+              
+              {institute.images && institute.images.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {institute.images.map((img, idx) => (
+                    <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden group cursor-pointer border border-white/10">
+                      <img
+                        src={img}
+                        alt={`Campus ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        onClick={() => window.open(img, '_blank')}
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <ImageIcon className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Gallery Images Available</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Campus photos will be displayed here once uploaded by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Infrastructure Tab */}
+          {activeTab === 'infrastructure' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground">Infrastructure & Facilities</h2>
+              
+              {institute.facilities && institute.facilities.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {institute.facilities.map((facility, idx) => (
+                    <Card key={idx} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
+                      <CardContent className="p-6">
+                        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                          <Building2 className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="font-semibold text-foreground">{facility}</h3>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Building2 className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Infrastructure Data Available</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Infrastructure and facilities information will be displayed here once added by the administrator.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Reviews Tab */}
+          {activeTab === 'reviews' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">Student Reviews</h2>
+              </div>
+              
+              {institute.rating ? (
+                <div className="grid md:grid-cols-[300px_1fr] gap-8">
+                  {/* Rating Summary */}
+                  <Card className="glass-card border-white/10 h-fit">
+                    <CardContent className="p-6 text-center">
+                      <p className="text-5xl font-bold text-foreground">{institute.rating}</p>
+                      <div className="flex justify-center gap-1 my-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} className={`w-5 h-5 ${star <= Math.round(institute.rating || 0) ? 'text-yellow-500 fill-yellow-500' : 'text-muted'}`} />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground">{institute.reviews || 0} Reviews</p>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Reviews List - Empty state */}
+                  <Card className="glass-card border-white/10">
+                    <CardContent className="p-8 text-center">
+                      <p className="text-muted-foreground">No written reviews available yet.</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                      <Star className="w-8 h-8 text-primary/60" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No Reviews Yet</h3>
+                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Student reviews will be displayed here once added.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Q&A Tab */}
+          {activeTab === 'qa' && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground">Questions & Answers</h2>
+              
+              <Card className="glass-card border-white/10">
+                <CardContent className="p-12 text-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <MessageSquare className="w-8 h-8 text-primary/60" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No Questions Yet</h3>
+                  <p className="text-muted-foreground text-sm max-w-md mx-auto">Questions and answers will be displayed here once added.</p>
                 </CardContent>
               </Card>
             </div>
-          </div>
+          )}
+
         </div>
 
         {/* Back Button */}
@@ -589,7 +793,7 @@ export default function InstituteDetail() {
           <Button
             variant="outline"
             onClick={() => navigate("/institute-profile")}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-white/20"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Institute Directory

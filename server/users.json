@@ -1,19 +1,10 @@
 [
   {
-    "id": 1765706443995,
+    "id": "admin001",
+    "username": "admin",
     "email": "admin@feedx.com",
-    "name": "admin",
-    "password": "$2b$10$/ffcps0YblytMp95AexYKepOyQzw17pUeg8/kNzjIUnGuYBKtcOHi",
-    "created_at": "2025-12-14T10:00:43.995Z"
-  },
-  {
-    "id": 1765992866777,
-    "username": "harshall28",
-    "password": "$2b$10$FH3auUGDJaDGw7U4VrZKROxleyZFgAl9tKnRPa8nz/Yls2njwIf5O",
-    "name": "D.deva harsha",
-    "email": "harsha282009@gmail.com",
-    "phone": "9440029698",
-    "pin": "24054-cps-015",
-    "created_at": "2025-12-17T17:34:26.777Z"
+    "name": "Administrator",
+    "password": "$2b$10$8e/pKvqTYix1bKwmrDNA7uB/NaQiI9DKYkUxwvLyWrafTucuSo18e",
+    "created_at": "2025-12-17T17:49:37.865Z"
   }
 ]

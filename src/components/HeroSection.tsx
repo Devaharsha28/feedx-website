@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
-import { GraduationCap, Briefcase, BookOpen, ArrowRight } from 'lucide-react';
+import { GraduationCap, Briefcase, BookOpen, ArrowRight, Youtube, Instagram, MessageCircle } from 'lucide-react';
+import { SOCIAL_LINKS } from '@/lib/socialLinks';
 
 const HeroSection = () => {
   return (
@@ -42,7 +43,7 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 mb-10 sm:mb-12 px-4">
+          <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 sm:gap-4 mb-6 px-4">
             <Link to="/resources">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white px-7 py-6 rounded-full transition-smooth group w-full sm:w-auto shadow-[0_12px_30px_rgba(37,99,235,0.35)]">
                 Start learning
@@ -54,6 +55,37 @@ const HeroSection = () => {
                 About
               </Button>
             </Link>
+          </div>
+
+          {/* Social Media Links */}
+          <div className="flex items-center justify-center lg:justify-start gap-4 mb-10 sm:mb-12 px-4">
+            <a 
+              href={SOCIAL_LINKS.whatsappChannel} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full text-green-400 hover:text-green-300 transition-all"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">WhatsApp</span>
+            </a>
+            <a 
+              href={SOCIAL_LINKS.youtube} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 rounded-full text-red-400 hover:text-red-300 transition-all"
+            >
+              <Youtube className="w-5 h-5" />
+              <span className="text-sm font-medium">YouTube</span>
+            </a>
+            <a 
+              href={SOCIAL_LINKS.instagram} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 rounded-full text-pink-400 hover:text-pink-300 transition-all"
+            >
+              <Instagram className="w-5 h-5" />
+              <span className="text-sm font-medium">Instagram</span>
+            </a>
           </div>
 
           {/* Feature Cards */}

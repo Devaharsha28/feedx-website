@@ -252,18 +252,28 @@ app.use((error, req, res, next) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log('Login attempt:', { username, passwordProvided: !!password });
+    
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
     const users = readJsonFile('users.json');
+    console.log('Users loaded:', users.length, 'users found');
+    console.log('Looking for user:', username);
+    
     const user = users.find(u => u.username === username || u.email === username);
 
     if (!user) {
+      console.log('User not found');
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    
+    console.log('User found:', user.username);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match:', passwordMatch);
+    
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -280,6 +290,87 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Register new user (admin only)
+app.post('/api/auth/register', verifyToken, async (req, res) => {
+  try {
+    const { username, password, name, email, phone, pin } = req.body;
+
+    if (!username || !password || !name || !email) {
+      return res.status(400).json({ error: 'Username, password, name, and email are required' });
+    }
+
+    const users = readJsonFile('users.json');
+    
+    // Check if username or email already exists
+    if (users.find(u => u.username === username)) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+    if (users.find(u => u.email === email)) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = {
+      id: generateId(),
+      username,
+      password: hashedPassword,
+      name,
+      email,
+      phone: phone || '',
+      pin: pin || '',
+      created_at: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    writeJsonFile('users.json', users);
+
+    res.json({ 
+      message: 'User created successfully',
+      user: { id: newUser.id, username: newUser.username, name: newUser.name, email: newUser.email }
+    });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all users (admin only)
+app.get('/api/auth/users', verifyToken, (req, res) => {
+  const users = readJsonFile('users.json');
+  // Return users without passwords
+  const safeUsers = users.map(u => ({
+    id: u.id,
+    username: u.username,
+    name: u.name,
+    email: u.email,
+    phone: u.phone,
+    created_at: u.created_at || u.createdAt
+  }));
+  res.json(safeUsers);
+});
+
+// Delete user (admin only)
+app.delete('/api/auth/users/:id', verifyToken, (req, res) => {
+  let users = readJsonFile('users.json');
+  const userToDelete = users.find(u => u.id === req.params.id || u.id === parseInt(req.params.id));
+  
+  if (!userToDelete) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  
+  // Prevent deleting the last admin
+  if (users.length === 1) {
+    return res.status(400).json({ error: 'Cannot delete the last user' });
+  }
+  
+  users = users.filter(u => u.id !== req.params.id && u.id !== parseInt(req.params.id));
+  writeJsonFile('users.json', users);
+  
+  res.json({ message: 'User deleted successfully' });
+});
+
 app.get('/api/auth/me', verifyToken, (req, res) => {
   const users = readJsonFile('users.json');
   const user = users.find(u => u.id === req.user.id);
@@ -292,6 +383,7 @@ app.get('/api/auth/me', verifyToken, (req, res) => {
 // ================== GENERIC CRUD HELPERS ==================
 const createCrudRoutes = (resourceName) => {
   const filename = `${resourceName}.json`;
+
 
   // GET all
   app.get(`/api/admin/${resourceName}`, (req, res) => {
