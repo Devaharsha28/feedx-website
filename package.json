@@ -9,9 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "start": "node server/index-json.js",
     "server": "node server/index-json.js",
-    "server:sqlite": "node server/index-sqlite.js",
-    "server:old": "node server/index.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\""
   },
   "dependencies": {
