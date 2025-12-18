@@ -58,7 +58,7 @@ const AdminLogin = () => {
               </div>
             </div>
             <CardTitle className="text-2xl text-white">Admin Login</CardTitle>
-            <p className="text-sm text-gray-400">FeedX Nexus Management</p>
+            <p className="text-sm text-gray-400">FeedX Management</p>
           </CardHeader>
 
           <CardContent>

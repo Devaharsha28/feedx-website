@@ -182,7 +182,7 @@ export default function AddTestimonial() {
                     <Textarea
                       id="content"
                       name="content"
-                      placeholder="What do you think about FeedX Nexus?"
+                      placeholder="What do you think about FeedX?"
                       value={formData.content}
                       onChange={handleInputChange}
                       required
