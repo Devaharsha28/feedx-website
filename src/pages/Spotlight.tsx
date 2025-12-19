@@ -106,7 +106,7 @@ const Spotlight = () => {
             </p>
             <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-smooth">
               <Instagram className="w-4 h-4 mr-2" />
-              Follow @feedx_polytechnic
+              Follow @feedx_official
             </Button>
           </div>
 

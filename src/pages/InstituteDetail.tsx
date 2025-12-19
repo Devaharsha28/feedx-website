@@ -38,6 +38,14 @@ interface Department {
   labs?: string[];
 }
 
+interface Course {
+  code: string;
+  name: string;
+  intake: number;
+  fee: number;
+  nba: boolean;
+}
+
 interface InstituteData {
   code: string;
   name: string;
@@ -57,13 +65,15 @@ interface InstituteData {
   website?: string;
   principal?: string;
   established?: string;
-  courses?: string[];
+  affiliation?: string;
+  courses?: Course[];
   facilities?: string[];
   rating?: number;
   reviews?: number;
   departments?: Department[];
   faculty?: FacultyMember[];
   achievements?: string[];
+  hostel?: string;
   placements?: {
     year: string;
     placed: number;
@@ -107,6 +117,27 @@ const allInstitutes: InstituteData[] = [
     hostel: 'Both Boys and Girls',
     affiliation: 'SBTET',
     facilities: ['Computer Labs', 'Electronics Labs', 'Library', 'Auditorium', 'Sports Ground', 'Canteen', 'WiFi Campus'],
+    // Banner, logo and gallery images for IOES — prefer dedicated images/ioes folder
+    bannerImage: '/images/ioes_banner.jpg',
+    logoImage: '/images/ioes_banner.jpg',
+    images: [
+      '/images/ioes_banner.jpg',
+      '/images/ioes/2d839e36-0991-49a8-88aa-b1bd002f0eec.jpg',
+      '/images/ioes/362f15d5-e1da-4563-8412-1ab8f1067f3b.jpg',
+      '/images/ioes/44bf578a-9013-44e4-8ca3-88c6a15d00b8.jpg',
+      '/images/ioes/537422c4-fa2d-4a37-986a-4468ee4c224a.jpg',
+      '/images/ioes/7229f92e-c61c-4c22-9705-5235a05dfa76.jpg',
+      '/images/ioes/83598784-aff9-46b0-b33d-d05486751359.jpg',
+      '/images/ioes/87de1f65-8006-41bc-9fc1-db7ac3c7cf04.jpg',
+      '/images/ioes/93e9ac10-f524-43a6-af6c-fe61b54038d4.jpg',
+      '/images/ioes/b8af2369-7938-4f19-a178-0ed6bab9787e.jpg',
+      '/images/ioes/cd96ad0e-d8eb-4ffe-8b51-783c4cd3b661.jpg',
+      '/images/ioes/dbff9a99-48ef-4442-8902-a40303bbe65e.jpg',
+      '/images/ioes/e3a637d5-3e5b-44de-8c1d-14bb58cf7d31.jpg',
+      '/images/ioes/f7525e12-3d26-4ef3-835c-df1111043f76.jpg',
+      '/images/ioes/f7b89bec-bf2c-4702-94bd-1b7965a1a6ab.jpg',
+      '/images/ioes/Screenshot 2025-12-19 235808.png'
+    ],
     courses: [
       { code: 'AI', name: 'DIPLOMA IN ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING', intake: 66, fee: 5080, nba: false },
       { code: 'BM', name: 'DIPLOMA IN BIOMEDICAL ENGINEERING', intake: 66, fee: 5080, nba: false },
@@ -207,6 +238,7 @@ export default function InstituteDetail() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const [institute, setInstitute] = useState<InstituteData | null>(null);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   // Set default tab to 'collegeinfo' for direct College Info view
   const [activeTab, setActiveTab] = useState("collegeinfo");
@@ -249,6 +281,44 @@ export default function InstituteDetail() {
       fetchInstitute();
     }
   }, [code]);
+
+  // When institute loads, prepare gallery images — prefer ioes folder files if available
+  useEffect(() => {
+    if (!institute) return;
+    const init = async () => {
+      // start with any images already present
+      let imgs: string[] = institute.images ? [...institute.images] : [];
+
+      // if this is IOES, check for an /uploads/ioes/ folder images (common names)
+      if (institute.code?.toUpperCase() === 'IOES') {
+        const candidates = [
+          '/uploads/ioes/ioes_banner.jpg',
+          '/uploads/ioes/ioes_banner.png',
+          '/uploads/ioes/ioes-banner.jpg',
+          '/uploads/ioes/ioes-banner.png',
+          '/uploads/ioes/banner.jpg',
+          '/uploads/ioes/banner.png',
+          '/uploads/ioes/1.jpg',
+          '/uploads/ioes/01.jpg'
+        ];
+
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { method: 'HEAD' });
+            if (res.ok) {
+              // prepend if not already included
+              if (!imgs.includes(url)) imgs.unshift(url);
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+
+      setGalleryImages(imgs);
+    };
+    init();
+  }, [institute]);
 
   if (isLoading) {
     return (
@@ -637,7 +707,7 @@ export default function InstituteDetail() {
               <Card className="glass-card border-white/10">
                 <CardContent className="flex flex-col md:flex-row items-center gap-8 p-8">
                   <Avatar className="w-32 h-32 shadow-lg">
-                    <AvatarImage src="/principal-gioe.jpg" />
+                    <AvatarImage src={institute.logoImage || institute.images?.[0] || '/uploads/images/1765994989752-986544424.jpeg'} />
                     <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-4xl">BR</AvatarFallback>
                   </Avatar>
                   <div>
@@ -685,8 +755,8 @@ export default function InstituteDetail() {
                   {institute.courses.map((course, idx) => (
                     <Card key={idx} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
                       <CardContent className="p-6">
-                        <Badge className="bg-primary/20 text-primary border-0 mb-3">{course}</Badge>
-                        <h3 className="text-lg font-semibold text-foreground mb-2">{course}</h3>
+                        <Badge className="bg-primary/20 text-primary border-0 mb-3">{course.code}</Badge>
+                        <h3 className="text-lg font-semibold text-foreground mb-2">{course.name}</h3>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-muted-foreground">Duration: 3 Years</span>
                         </div>
@@ -774,9 +844,9 @@ export default function InstituteDetail() {
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Campus Gallery</h2>
               
-              {institute.images && institute.images.length > 0 ? (
+              {galleryImages && galleryImages.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {institute.images.map((img, idx) => (
+                  {galleryImages.map((img, idx) => (
                     <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden group cursor-pointer border border-white/10">
                       <img
                         src={img}
@@ -806,7 +876,16 @@ export default function InstituteDetail() {
           {activeTab === 'infrastructure' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Infrastructure & Facilities</h2>
-              
+
+              {/* Showcase a hero image if available */}
+              {institute.images && institute.images.length > 0 && (
+                <div className="mb-4">
+                  <div className="w-full rounded-lg overflow-hidden border border-white/10">
+                    <img src={institute.images[0]} alt={`${institute.name} infrastructure`} className="w-full h-56 object-cover" />
+                  </div>
+                </div>
+              )}
+
               {institute.facilities && institute.facilities.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {institute.facilities.map((facility, idx) => (

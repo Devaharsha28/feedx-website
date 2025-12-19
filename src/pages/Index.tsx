@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import ImageCarousel from '@/components/ImageCarousel';
+// ImageCarousel removed per request
 import FeaturesSection from '@/components/FeaturesSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import EventsSection from '@/components/EventsSection';
@@ -13,7 +13,6 @@ const Index = () => {
       <Navbar />
       <main className="pt-24 space-y-12">
         <HeroSection />
-        <ImageCarousel />
         <FeaturesSection />
         <TestimonialsSection />
         <EventsSection />

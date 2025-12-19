@@ -239,7 +239,20 @@ const InstituteProfile = () => {
                   {filtered.map((inst, index) => (
                     <tr key={`${inst.code}-${index}`} className="hover:bg-muted/40">
                       <td className="py-3 px-3 text-foreground">{index + 1}</td>
-                      <td className="py-3 px-3 font-semibold"><a href={`/institute/${inst.code}`} className="text-primary hover:underline cursor-pointer">{inst.code}</a></td>
+                      <td className="py-3 px-3 font-semibold">
+                        {inst.code === 'IOES' ? (
+                          <a
+                            href="https://gioescbd.dte.telangana.gov.in/"
+                            className="text-primary hover:underline cursor-pointer"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {inst.code}
+                          </a>
+                        ) : (
+                          <a href={`/institute/${inst.code}`} className="text-primary hover:underline cursor-pointer">{inst.code}</a>
+                        )}
+                      </td>
                       <td className="py-3 px-3 text-foreground">{inst.name}</td>
                       <td className="py-3 px-3 text-foreground">{inst.place}</td>
                       <td className="py-3 px-3 text-foreground">{inst.dist}</td>

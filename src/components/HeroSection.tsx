@@ -56,12 +56,13 @@ const HeroSection = () => {
             </div>
 
             {/* Social Media Links */}
-            <div className="flex items-center justify-center lg:justify-start gap-4 px-4">
-              <a 
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4">
+              {/* Stacked on mobile (column), inline on sm+ screens */}
+              <a
                 href={SOCIAL_LINKS.whatsappChannel} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full text-green-400 hover:text-green-300 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full text-green-400 hover:text-green-300 transition-all w-full sm:w-auto justify-center"
               >
                 <MessageCircle className="w-5 h-5" />
                 <span className="text-sm font-medium">WhatsApp</span>
@@ -70,7 +71,7 @@ const HeroSection = () => {
                 href={SOCIAL_LINKS.youtube} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 rounded-full text-red-400 hover:text-red-300 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 rounded-full text-red-400 hover:text-red-300 transition-all w-full sm:w-auto justify-center"
               >
                 <Youtube className="w-5 h-5" />
                 <span className="text-sm font-medium">YouTube</span>
@@ -79,7 +80,7 @@ const HeroSection = () => {
                 href={SOCIAL_LINKS.instagram} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 rounded-full text-pink-400 hover:text-pink-300 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 rounded-full text-pink-400 hover:text-pink-300 transition-all w-full sm:w-auto justify-center"
               >
                 <Instagram className="w-5 h-5" />
                 <span className="text-sm font-medium">Instagram</span>
