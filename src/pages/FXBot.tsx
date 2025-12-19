@@ -10,15 +10,16 @@ const FXBot = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <div className="border-b border-border bg-white pt-24 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-6">
+      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-6">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-brand rounded-full blur-2xl opacity-30" />
             <img src={fxbotIcon} alt="FX Bot" className="relative h-20 w-20 rounded-2xl" />
           </div>
           <div>
             <div className="flex items-center justify-center gap-2 mb-3">
-              <h1 className="text-4xl sm:text-5xl font-bold">FX Bot</h1>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gradient">FX Bot</h1>
               <Badge className="bg-blue-500 text-white">In progress</Badge>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

@@ -405,17 +405,17 @@ const StudentAnalytics = () => {
                 {/* Attendance (summary only) */}
                 {attendance && (
                   <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="rounded-xl border border-border bg-white p-4">
+                    <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Attendance %</Label>
-                      <div className="text-2xl font-semibold">
+                      <div className="text-2xl font-semibold text-primary">
                         {attendance.attendancePercentage == null ? '—' : `${attendance.attendancePercentage.toFixed(1)}%`}
                       </div>
                     </div>
-                    <div className="rounded-xl border border-border bg-white p-4">
+                    <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Total days</Label>
                       <div className="text-2xl font-semibold">{attendance.totalDays ?? '—'}</div>
                     </div>
-                    <div className="rounded-xl border border-border bg-white p-4">
+                    <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Present days</Label>
                       <div className="text-2xl font-semibold">{attendance.presentDays ?? '—'}</div>
                     </div>

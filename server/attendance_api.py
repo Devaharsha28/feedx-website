@@ -420,7 +420,22 @@ def health():
     return jsonify({"status": "ok", "service": "SBTET Attendance API"}), 200
 
 
+# Serve React frontend (for Azure deployment)
+from flask import send_from_directory
+
+DIST_DIR = os.path.join(os.path.dirname(__file__), '..', 'dist')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    """Serve React frontend - must be last route"""
+    if path and os.path.exists(os.path.join(DIST_DIR, path)):
+        return send_from_directory(DIST_DIR, path)
+    return send_from_directory(DIST_DIR, 'index.html')
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
-    print(f"Starting SBTET Attendance API on port {port}...")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    print(f"Starting FEEDX Server on port {port}...")
+    print(f"Serving frontend from: {DIST_DIR}")
+    app.run(host="0.0.0.0", port=port, debug=False)

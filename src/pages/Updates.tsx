@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import { noDataIllustration, updatesIllustration } from '@/lib/illustrations';
 import { updatesAPI, Update } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 
 const Updates = () => {
   const navigate = useNavigate();
@@ -225,7 +226,9 @@ const Updates = () => {
                 </Badge>
               </div>
 
-              <p className="text-foreground">{selectedUpdate.description}</p>
+              <p className="text-foreground">
+                <MarkdownRenderer content={selectedUpdate.description || '*No description available.*'} />
+              </p>
 
               {/* Images */}
               {selectedUpdate.images && selectedUpdate.images.length > 0 && (

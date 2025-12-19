@@ -17,6 +17,7 @@ import {
 import { updatesAPI, Update, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { X, Upload, Loader2 } from "lucide-react";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 export default function AddUpdate() {
   const navigate = useNavigate();
@@ -252,16 +253,22 @@ export default function AddUpdate() {
                   </div>
 
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">Description <span className="text-xs text-muted-foreground">(Markdown supported)</span></Label>
                     <Textarea
                       id="description"
                       name="description"
-                      placeholder="Update description"
+                      placeholder="Update description - supports **bold**, *italic*, [links](url), lists, etc."
                       value={formData.description}
                       onChange={handleInputChange}
                       required
                       rows={3}
                     />
+                    {formData.description && (
+                      <div className="mt-2 p-3 border border-border rounded-lg bg-card">
+                        <p className="text-xs text-muted-foreground mb-2">Preview:</p>
+                        <MarkdownRenderer content={formData.description} />
+                      </div>
+                    )}
                   </div>
 
                   <div>

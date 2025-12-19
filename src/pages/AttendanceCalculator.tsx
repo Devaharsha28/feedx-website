@@ -99,10 +99,11 @@ const AttendanceCalculator = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="border-b border-border bg-white pt-24 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
+      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
           <div className="flex-1 text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-3">Attendance</h1>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-gradient">Attendance</h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
               Calculate your attendance percentage and check your examination eligibility
             </p>

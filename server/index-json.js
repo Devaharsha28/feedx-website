@@ -61,7 +61,7 @@ const initializeAdmin = async () => {
       username: 'admin',
       password: hashedPassword,
       name: 'Administrator',
-      email: 'admin@feedxnexus.com',
+      email: 'admin@feedx.com',
       phone: '0000000000',
       pin: '0000',
       createdAt: new Date().toISOString()
@@ -503,6 +503,303 @@ app.delete('/api/admin/institutes/:code', verifyToken, (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ================== SBTET API PROXY ==================
+// In-memory cache for results
+const resultsCache = new Map();
+const resultsJsonCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+const sbtetHeaders = {
+  'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'Accept': 'application/json, text/javascript, */*; q=0.01',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'X-Requested-With': 'XMLHttpRequest',
+  'Referer': 'https://www.sbtet.telangana.gov.in/',
+};
+
+// Helper to convert value to number
+const toNumber = (value) => {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'number') return value;
+  const s = String(value).trim();
+  if (!s) return null;
+  const cleaned = s.replace(/[^0-9.]/g, '');
+  if (!cleaned) return null;
+  const num = parseFloat(cleaned);
+  return isNaN(num) ? null : num;
+};
+
+// Helper to find number by key pattern
+const pickNumberByKey = (obj, patterns) => {
+  if (!obj || typeof obj !== 'object') return null;
+  for (const [key, value] of Object.entries(obj)) {
+    const k = String(key).toLowerCase();
+    if (patterns.some(p => k.match(p))) {
+      const n = toNumber(value);
+      if (n !== null) return n;
+    }
+  }
+  return null;
+};
+
+// Compute attendance summary
+const computeAttendanceSummary = (studentInfo, records) => {
+  const source = (studentInfo && Object.keys(studentInfo).length > 0) 
+    ? studentInfo 
+    : (records && records.length > 0 ? records[0] : {});
+
+  // Debug log to see actual keys
+  console.log('Attendance source keys:', Object.keys(source));
+  console.log('Attendance source values:', source);
+
+  let totalDays = pickNumberByKey(source, [/total.*day/i, /working.*day/i, /no.*day/i, /totday/i, /twd/i, /twdays/i, /totalworkingdays/i, /noofdays/i]);
+  let presentDays = pickNumberByKey(source, [/present.*day/i, /attend.*day/i, /presentday/i, /pday/i, /noofpresentdays/i, /presentdays/i, /daysattended/i, /attended/i]);
+  let percent = pickNumberByKey(source, [/percent/i, /percentage/i, /attend.*%/i, /att.*per/i, /attendancepercent/i]);
+
+  // Also check for direct field access with common variations
+  if (totalDays === null) {
+    totalDays = toNumber(source.TotalWorkingDays) ?? toNumber(source.TotalDays) ?? toNumber(source.TWDays) ?? toNumber(source.NoOfDays);
+  }
+  if (presentDays === null) {
+    presentDays = toNumber(source.PresentDays) ?? toNumber(source.NoOfPresentDays) ?? toNumber(source.DaysAttended) ?? toNumber(source.Attended);
+  }
+  if (percent === null) {
+    percent = toNumber(source.AttendancePercentage) ?? toNumber(source.Percentage) ?? toNumber(source.AttPercent);
+  }
+
+  if (percent === null && totalDays !== null && totalDays > 0 && presentDays !== null) {
+    percent = (presentDays / totalDays) * 100;
+  }
+
+  const asInt = (n) => {
+    if (n === null) return null;
+    return Math.abs(n - Math.round(n)) < 1e-9 ? Math.round(n) : n;
+  };
+
+  const totalDaysN = asInt(totalDays);
+  const presentDaysN = asInt(presentDays);
+  const absentDaysN = (totalDaysN !== null && presentDaysN !== null) 
+    ? asInt(totalDaysN - presentDaysN) 
+    : null;
+
+  return {
+    attendancePercentage: percent !== null ? Math.round(percent * 100) / 100 : null,
+    totalDays: totalDaysN,
+    presentDays: presentDaysN,
+    absentDays: absentDaysN,
+  };
+};
+
+// Fetch attendance from SBTET
+const fetchAttendance = async (pin) => {
+  const urls = [
+    `https://www.sbtet.telangana.gov.in/api/api/PreExamination/getAttendanceReport?Pin=${pin}`,
+    `https://www.sbtet.telangana.gov.in/api/PreExamination/getAttendanceReport?Pin=${pin}`,
+  ];
+
+  let lastError = null;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { headers: sbtetHeaders, timeout: 15000 });
+      if (!response.ok) {
+        lastError = new Error(`HTTP ${response.status}`);
+        continue;
+      }
+      let data = await response.json();
+      if (typeof data === 'string') {
+        data = JSON.parse(data);
+      }
+      return data;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('Failed to fetch from SBTET');
+};
+
+// Fetch results JSON from SBTET
+const fetchResultsJson = async (pin) => {
+  const pinKey = pin.toLowerCase();
+  const cached = resultsJsonCache.get(pinKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const urls = [
+    `https://www.sbtet.telangana.gov.in/api/api/Results/GetConsolidatedResults?Pin=${pin}`,
+    `https://www.sbtet.telangana.gov.in/api/Results/GetConsolidatedResults?Pin=${pin}`,
+  ];
+
+  let lastError = null;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { headers: sbtetHeaders, timeout: 20000 });
+      if (!response.ok) {
+        lastError = new Error(`HTTP ${response.status}`);
+        continue;
+      }
+      let data = await response.json();
+      if (typeof data === 'string') {
+        data = JSON.parse(data);
+      }
+      if (!data) throw new Error('Empty response');
+      
+      resultsJsonCache.set(pinKey, { timestamp: Date.now(), data });
+      return data;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('Failed to fetch results');
+};
+
+// Fetch results HTML from proxy
+const fetchResultsHtml = async (pin) => {
+  const pinKey = pin.toLowerCase();
+  const cached = resultsCache.get(pinKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.html;
+  }
+
+  const url = `http://18.61.7.125/result/${pin}`;
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': sbtetHeaders['User-Agent'],
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    },
+    timeout: 20000,
+  });
+
+  if (response.status === 404) {
+    throw new Error('Student not found');
+  }
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const html = await response.text();
+  if (html.length < 200) {
+    throw new Error('Empty HTML response');
+  }
+
+  resultsCache.set(pinKey, { timestamp: Date.now(), html });
+  return html;
+};
+
+// GET /api/attendance - Fetch attendance by PIN
+app.get('/api/attendance', async (req, res) => {
+  const { pin } = req.query;
+  if (!pin) {
+    return res.status(400).json({ error: 'Missing pin parameter' });
+  }
+
+  try {
+    const data = await fetchAttendance(pin);
+
+    if (!data) {
+      return res.status(404).json({ success: false, error: 'No data returned from SBTET API' });
+    }
+
+    const response = {
+      success: true,
+      studentInfo: {},
+      attendanceRecords: [],
+      attendanceSummary: {
+        attendancePercentage: null,
+        totalDays: null,
+        presentDays: null,
+        absentDays: null,
+      },
+    };
+
+    if (typeof data === 'object') {
+      if (!data || Object.values(data).every(v => !v)) {
+        return res.status(404).json({
+          success: false,
+          error: 'No data found for this PIN. Please verify the PIN is correct.',
+        });
+      }
+
+      if (data.Table && Array.isArray(data.Table) && data.Table.length > 0) {
+        response.studentInfo = data.Table[0];
+      }
+
+      if (data.Table1 && Array.isArray(data.Table1)) {
+        response.attendanceRecords = data.Table1;
+      } else if (data.Table && Array.isArray(data.Table) && !response.studentInfo) {
+        response.attendanceRecords = data.Table;
+      }
+    }
+
+    response.attendanceSummary = computeAttendanceSummary(
+      response.studentInfo,
+      response.attendanceRecords
+    );
+
+    if (!response.studentInfo || Object.keys(response.studentInfo).length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'No data found for this PIN. The PIN may be invalid or not in the SBTET system.',
+      });
+    }
+
+    res.json(response);
+  } catch (err) {
+    console.error('Attendance API error:', err.message);
+    if (err.message.includes('404') || err.message.includes('not found')) {
+      return res.status(404).json({ error: 'Student not found. Please check the PIN.' });
+    }
+    if (err.message.includes('timeout')) {
+      return res.status(504).json({ error: 'Request timeout. Please try again.' });
+    }
+    res.status(502).json({ error: `Network error: ${err.message}` });
+  }
+});
+
+// GET /api/results - Fetch consolidated results JSON
+app.get('/api/results', async (req, res) => {
+  const { pin } = req.query;
+  if (!pin) {
+    return res.status(400).json({ success: false, error: 'Missing pin parameter' });
+  }
+
+  try {
+    const data = await fetchResultsJson(pin);
+    res.json({ success: true, pin, data });
+  } catch (err) {
+    console.error('Results API error:', err.message);
+    if (err.message.includes('404') || err.message.includes('not found')) {
+      return res.status(404).json({ success: false, error: 'Student not found. Please check the PIN.' });
+    }
+    if (err.message.includes('timeout')) {
+      return res.status(504).json({ success: false, error: 'Request timeout. Please try again.' });
+    }
+    res.status(500).json({ success: false, error: `Server error: ${err.message}` });
+  }
+});
+
+// GET /api/results/raw - Fetch results HTML
+app.get('/api/results/raw', async (req, res) => {
+  const { pin } = req.query;
+  if (!pin) {
+    return res.status(400).json({ success: false, error: 'Missing pin parameter' });
+  }
+
+  try {
+    const html = await fetchResultsHtml(pin);
+    res.json({ success: true, pin, html });
+  } catch (err) {
+    console.error('Results raw API error:', err.message);
+    if (err.message.includes('not found')) {
+      return res.status(404).json({ success: false, error: 'Student not found. Please check the PIN.' });
+    }
+    if (err.message.includes('timeout')) {
+      return res.status(504).json({ success: false, error: 'Request timeout. Please try again.' });
+    }
+    res.status(500).json({ success: false, error: `Server error: ${err.message}` });
   }
 });
 

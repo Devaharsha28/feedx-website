@@ -468,6 +468,9 @@ export default function AddInstitute() {
                       <p className="text-sm text-muted-foreground truncate max-w-[150px]">{inst.name || "No name"}</p>
                     </div>
                     <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/admin/institutes/${inst.code}`)}>
+                        Manage
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => loadInstitute(inst)}>
                         Edit
                       </Button>

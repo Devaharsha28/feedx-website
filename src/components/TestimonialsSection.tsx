@@ -54,7 +54,7 @@ const TestimonialsSection = () => {
             Testimonials
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            What students are saying about FeedX Nexus
+            What students are saying about FeedX
           </p>
         </div>
 

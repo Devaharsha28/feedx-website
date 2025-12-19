@@ -9,6 +9,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { resourcesAPI, Resource } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Download, ArrowLeft } from "lucide-react";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 export default function ResourceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -112,7 +113,7 @@ export default function ResourceDetail() {
     if (isGoogleDrive(url) || isPdfUrl(url)) {
       const embedUrl = isGoogleDrive(url) ? getDrivePreview(url) : `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`;
       return (
-        <div key={key} className="aspect-[4/3] w-full overflow-hidden rounded-lg border bg-white">
+        <div key={key} className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card">
           <iframe src={embedUrl} className="w-full h-full" title="Document viewer" />
         </div>
       );
@@ -215,9 +216,10 @@ export default function ResourceDetail() {
             <CardContent className="pt-6">
               <h2 className="text-xl font-semibold mb-4">Details</h2>
               <div className="prose prose-sm max-w-none dark:prose-invert">
-                <p className="text-muted-foreground whitespace-pre-wrap">
-                  {resource.longDescription}
-                </p>
+                <MarkdownRenderer 
+                  content={resource.longDescription || '*No additional details available.*'}
+                  className="text-muted-foreground"
+                />
               </div>
             </CardContent>
           </Card>

@@ -158,7 +158,7 @@ export default function AdminPanel() {
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold mb-2">Admin Panel</h1>
             <p className="text-muted-foreground">
-              Manage all content sections for the FeedX Nexus platform
+              Manage all content sections for the FeedX platform
             </p>
             {user && <p className="text-sm text-muted-foreground mt-2">Welcome, {user.name}!</p>}
           </div>
