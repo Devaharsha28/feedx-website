@@ -123,19 +123,19 @@ const RecommendedResources = ({ weakSubjects, topSubjects }: RecommendedResource
   }
 
   return (
-    <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-white">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+    <Card className="border border-primary/20 bg-card">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Lightbulb className="w-5 h-5 text-yellow-500" />
               Recommended for You
             </CardTitle>
-            <CardDescription className="mt-2">
+            <CardDescription className="mt-1 text-sm">
               Based on your performance analysis, these resources can help you improve
             </CardDescription>
           </div>
-          <Badge className="bg-yellow-500 text-white">
+          <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 w-fit">
             <TrendingUp className="w-3 h-3 mr-1" />
             {recommendedResources.length} Resources
           </Badge>
@@ -144,14 +144,14 @@ const RecommendedResources = ({ weakSubjects, topSubjects }: RecommendedResource
       <CardContent>
         {/* Weak Subjects Info */}
         {weakSubjects.length > 0 && (
-          <div className="mb-6 p-4 bg-white rounded-lg border border-yellow-200">
-            <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-yellow-600" />
+          <div className="mb-6 p-4 bg-card/50 rounded-lg border border-border">
+            <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-foreground">
+              <BookOpen className="w-4 h-4 text-primary" />
               Focus Areas
             </h4>
             <div className="flex flex-wrap gap-2">
               {weakSubjects.slice(0, 3).map((subject, idx) => (
-                <Badge key={idx} variant="outline" className="border-yellow-400 text-yellow-700">
+                <Badge key={idx} variant="outline" className="border-primary/40 text-primary bg-primary/10 text-xs">
                   {subject.subject.split(' ').slice(0, 3).join(' ')}
                   {subject.marks !== null && ` (${subject.marks})`}
                 </Badge>
@@ -160,36 +160,36 @@ const RecommendedResources = ({ weakSubjects, topSubjects }: RecommendedResource
           </div>
         )}
 
-        {/* Resources Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Resources Grid - Mobile First */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {recommendedResources.map((resource, index) => (
             <Card 
               key={resource.id} 
-              className="border border-border hover:border-yellow-400 transition-all duration-300 cursor-pointer hover:shadow-lg group"
+              className="border border-border bg-card/50 hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-lg group"
               style={{ animationDelay: `${index * 0.1}s` }}
               onClick={() => navigate(`/resources/${resource.id}`)}
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 p-4">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-sm font-semibold line-clamp-2 group-hover:text-yellow-600 transition-colors">
+                  <CardTitle className="text-sm font-semibold line-clamp-2 group-hover:text-primary transition-colors text-foreground">
                     {resource.title}
                   </CardTitle>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0 group-hover:text-yellow-600 transition-colors" />
+                  <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0 group-hover:text-primary transition-colors" />
                 </div>
-                <CardDescription className="text-xs line-clamp-2">
+                <CardDescription className="text-xs line-clamp-2 mt-1">
                   {resource.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent className="pt-0 p-4 pt-0">
                 {resource.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
                     {resource.tags.slice(0, 2).map((tag, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs px-2 py-0.5">
+                      <Badge key={idx} variant="secondary" className="text-xs px-2 py-0.5 bg-secondary/50">
                         {tag}
                       </Badge>
                     ))}
                     {resource.tags.length > 2 && (
-                      <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                      <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-secondary/50">
                         +{resource.tags.length - 2}
                       </Badge>
                     )}
@@ -215,7 +215,7 @@ const RecommendedResources = ({ weakSubjects, topSubjects }: RecommendedResource
           <Button 
             variant="outline"
             onClick={() => navigate('/resources')}
-            className="border-yellow-400 hover:bg-yellow-50"
+            className="border-border hover:bg-card hover:border-primary/50"
           >
             View All Resources
             <ExternalLink className="w-4 h-4 ml-2" />

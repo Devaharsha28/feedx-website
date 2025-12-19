@@ -33,6 +33,7 @@ import AddEvent from "./pages/admin/AddEvent";
 import AddSpotlight from "./pages/admin/AddSpotlight";
 import AddTestimonial from "./pages/admin/AddTestimonial";
 import AddInstitute from "./pages/admin/AddInstitute";
+import InstituteAdmin from "./pages/admin/InstituteAdmin";
 import ResourceDetail from "./pages/ResourceDetail";
 import InstituteDetail from "./pages/InstituteDetail";
 import AdminLogin from "./pages/AdminLogin";
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/admin/spotlight" element={<AddSpotlight />} />
             <Route path="/admin/testimonials" element={<AddTestimonial />} />
             <Route path="/admin/institutes" element={<AddInstitute />} />
+            <Route path="/admin/institutes/:code" element={<InstituteAdmin />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/logs" element={<LoginLogs />} />
             

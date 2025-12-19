@@ -551,9 +551,24 @@ const computeAttendanceSummary = (studentInfo, records) => {
     ? studentInfo 
     : (records && records.length > 0 ? records[0] : {});
 
-  let totalDays = pickNumberByKey(source, [/total.*day/, /working.*day/, /no.*day/, /totday/, /twd/]);
-  let presentDays = pickNumberByKey(source, [/present.*day/, /attend.*day/, /presentday/, /pday/]);
-  let percent = pickNumberByKey(source, [/percent/, /percentage/, /attend.*%/, /att.*per/]);
+  // Debug log to see actual keys
+  console.log('Attendance source keys:', Object.keys(source));
+  console.log('Attendance source values:', source);
+
+  let totalDays = pickNumberByKey(source, [/total.*day/i, /working.*day/i, /no.*day/i, /totday/i, /twd/i, /twdays/i, /totalworkingdays/i, /noofdays/i]);
+  let presentDays = pickNumberByKey(source, [/present.*day/i, /attend.*day/i, /presentday/i, /pday/i, /noofpresentdays/i, /presentdays/i, /daysattended/i, /attended/i]);
+  let percent = pickNumberByKey(source, [/percent/i, /percentage/i, /attend.*%/i, /att.*per/i, /attendancepercent/i]);
+
+  // Also check for direct field access with common variations
+  if (totalDays === null) {
+    totalDays = toNumber(source.TotalWorkingDays) ?? toNumber(source.TotalDays) ?? toNumber(source.TWDays) ?? toNumber(source.NoOfDays);
+  }
+  if (presentDays === null) {
+    presentDays = toNumber(source.PresentDays) ?? toNumber(source.NoOfPresentDays) ?? toNumber(source.DaysAttended) ?? toNumber(source.Attended);
+  }
+  if (percent === null) {
+    percent = toNumber(source.AttendancePercentage) ?? toNumber(source.Percentage) ?? toNumber(source.AttPercent);
+  }
 
   if (percent === null && totalDays !== null && totalDays > 0 && presentDays !== null) {
     percent = (presentDays / totalDays) * 100;

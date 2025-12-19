@@ -59,10 +59,11 @@ const Join = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="border-b border-border bg-white pt-24 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
+      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
           <div className="flex-1 text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-3">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-3 text-gradient">
               Join FEEDX
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl">
@@ -71,6 +72,20 @@ const Join = () => {
           </div>
           <img src={joinIllustration} alt="Join FEEDX" className="w-full max-w-md" />
         </div>
+        {/* Fix theme for Join Us button (top right) */}
+        <style>{`
+          .join-us-btn {
+            background: linear-gradient(90deg, #2563eb 0%, #9333ea 100%);
+            color: #fff !important;
+            border: none;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+            transition: background 0.2s;
+          }
+          .join-us-btn:hover {
+            background: linear-gradient(90deg, #9333ea 0%, #2563eb 100%);
+            color: #fff !important;
+          }
+        `}</style>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -78,19 +93,30 @@ const Join = () => {
           {/* Social Join Card */}
           <Card>
             <CardContent className="p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex flex-col gap-3 sm:grid sm:grid-cols-3">
+                  <style>{`
+                    @media (max-width: 640px) {
+                      .join-social-vertical {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.75rem;
+                      }
+                    }
+                  `}</style>
+                  <div className="join-social-vertical">
                 {socials.map((s) => (
                   <a
                     key={s.title}
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-xl border p-4 bg-card hover:bg-muted transition-smooth"
+                    className="flex items-center justify-center gap-2 rounded-xl border p-4 bg-card hover:bg-muted transition-smooth join-us-btn"
                   >
                     {s.icon}
                     <span className="font-medium text-sm sm:text-base">{s.title}</span>
                   </a>
                 ))}
+                  </div>
               </div>
             </CardContent>
           </Card>

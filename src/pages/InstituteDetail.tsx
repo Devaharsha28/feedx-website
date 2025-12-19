@@ -12,6 +12,7 @@ import {
   Phone, Mail, Globe, ExternalLink, TrendingUp, Image as ImageIcon
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import FacultyAccordion from '@/components/FacultyAccordion';
 
 // Interfaces
 interface FacultyMember {
@@ -88,7 +89,115 @@ const allInstitutes: InstituteData[] = [
   { code: 'MASB', name: 'GOVT POLYTECHNIC', place: 'MASAB TANK', dist: 'HYD', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
   { code: 'NZBD', name: 'GOVT POLYTECHNIC', place: 'NIZAMABAD', dist: 'NZB', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
   { code: 'NALG', name: 'GOVT POLYTECHNIC', place: 'NALGONDA', dist: 'NLG', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
-  { code: 'IOES', name: 'GOVT INSTITUTE OF ELECTRONICS', place: 'SECUNDERABAD', dist: 'HYD', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED', established: '1981' },
+  { 
+    code: 'IOES', 
+    name: 'GOVT INSTITUTE OF ELECTRONICS', 
+    place: 'SECUNDERABAD', 
+    dist: 'HYD', 
+    region: 'OU', 
+    type: 'GOV', 
+    minority: 'NA', 
+    mode: 'COED', 
+    established: '1981',
+    description: 'Government Institute of Electronics (GIOE) is a premier government polytechnic established in 1981, offering diploma courses in cutting-edge technology fields including AI/ML, Cloud Computing, Cyber Security, and traditional Electronics branches.',
+    address: 'EAST MARRED PALLY, SECUNDERABAD, 500026',
+    phone: '4027730000',
+    email: 'principalgioe@gmail.com',
+    website: 'https://gioescbd.dte.telangana.gov.in/',
+    hostel: 'Both Boys and Girls',
+    affiliation: 'SBTET',
+    facilities: ['Computer Labs', 'Electronics Labs', 'Library', 'Auditorium', 'Sports Ground', 'Canteen', 'WiFi Campus'],
+    courses: [
+      { code: 'AI', name: 'DIPLOMA IN ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING', intake: 66, fee: 5080, nba: false },
+      { code: 'BM', name: 'DIPLOMA IN BIOMEDICAL ENGINEERING', intake: 66, fee: 5080, nba: false },
+      { code: 'CCB', name: 'DIPLOMA IN CLOUD COMPUTING AND BIG DATA', intake: 66, fee: 5080, nba: false },
+      { code: 'CPS', name: 'DIPLOMA IN CYBER PHYSICAL SYSTEMS AND SECURITY', intake: 66, fee: 5080, nba: false },
+      { code: 'CS', name: 'DIPLOMA IN COMPUTER SCIENCE AND ENGINEERING', intake: 66, fee: 5080, nba: true },
+      { code: 'EC', name: 'DIPLOMA IN ELECTRONICS & COMMUNICATION ENGINEERING', intake: 66, fee: 5080, nba: true },
+      { code: 'EI', name: 'DIPLOMA IN ELECTRONICS & INSTRUMENTATION ENGINEERING', intake: 66, fee: 5080, nba: false },
+      { code: 'ES', name: 'DIPLOMA IN EMBEDDED SYSTEMS ENGINEERING', intake: 66, fee: 5080, nba: false },
+      { code: 'EV', name: 'DIPLOMA IN ELECTRONICS AND VIDEO ENGINEERING', intake: 66, fee: 5080, nba: true },
+    ],
+    departments: [
+      { id: 'aiml', name: 'Artificial Intelligence & Machine Learning', code: 'AIML', hod: { id: 'f1', name: 'N Srinivasa Rao', designation: 'Head of Department', qualification: '', department: 'AIML' }, intake: 60 },
+      { id: 'cse', name: 'Computer Science & Engineering', code: 'CSE', hod: { id: 'f6', name: 'G V Nagalakshmi', designation: 'Head of Department', qualification: '', department: 'CSE' }, intake: 60 },
+      { id: 'eie', name: 'Electronics & Instrumentation Engineering', code: 'EIE', hod: { id: 'f11', name: 'G V Nagalakshmi', designation: 'Head of Department', qualification: '', department: 'EIE' }, intake: 60 },
+      { id: 'eve', name: 'Electronics & Video Engineering', code: 'EVE', hod: { id: 'f16', name: 'B Laxmi Kantha', designation: 'Head of Department', qualification: '', department: 'EVE' }, intake: 40 },
+      { id: 'bme', name: 'Biomedical Engineering', code: 'BME', hod: { id: 'f21', name: 'P Jyothi', designation: 'Head of Department', qualification: '', department: 'BME' }, intake: 40 },
+      { id: 'ccbd', name: 'Cloud Computing & Big Data', code: 'CCBD', hod: { id: 'f27', name: 'S P Venkat Reddy', designation: 'Head of Department', qualification: '', department: 'CCBD' }, intake: 60 },
+      { id: 'ece', name: 'Electronics & Communication Engineering', code: 'ECE', hod: { id: 'f31', name: 'N Srinivasa Rao', designation: 'Head of Department', qualification: '', department: 'ECE' }, intake: 60 },
+      { id: 'ese', name: 'Embedded Systems Engineering', code: 'ESE', hod: { id: 'f36', name: 'B Ram Mohan Reddy', designation: 'Head of Department', qualification: '', department: 'ESE' }, intake: 40 },
+      { id: 'cpss', name: 'Cyber Physical Systems & Security', code: 'CPSS', hod: { id: 'f41', name: 'Venkata Satish Kumar M', designation: 'Head of Department', qualification: '', department: 'CPSS' }, intake: 60 },
+      { id: 'hs', name: 'Humanities & Sciences', code: 'H&S', hod: { id: 'f46', name: 'D Satyanandam', designation: 'Head of Department', qualification: '', department: 'H&S' }, intake: 0 },
+    ],
+    faculty: [
+      // AIML Department
+      { id: 'f1', name: 'N Srinivasa Rao', designation: 'Head of Department', qualification: '', department: 'Artificial Intelligence & Machine Learning' },
+      { id: 'f2', name: 'Asheera Begum', designation: 'Lecturer', qualification: '', department: 'Artificial Intelligence & Machine Learning' },
+      { id: 'f3', name: 'Sai Kumar', designation: 'Lecturer', qualification: '', department: 'Artificial Intelligence & Machine Learning' },
+      { id: 'f4', name: 'A Vikram Chakravorthy', designation: 'Lecturer', qualification: '', department: 'Artificial Intelligence & Machine Learning' },
+      { id: 'f5', name: 'K Pramil', designation: 'Lecturer', qualification: '', department: 'Artificial Intelligence & Machine Learning' },
+      // CSE Department
+      { id: 'f6', name: 'G V Nagalakshmi', designation: 'Head of Department', qualification: '', department: 'Computer Science & Engineering' },
+      { id: 'f7', name: 'K Sunitha', designation: 'Lecturer', qualification: '', department: 'Computer Science & Engineering' },
+      { id: 'f8', name: 'P Srikar', designation: 'Lecturer', qualification: '', department: 'Computer Science & Engineering' },
+      { id: 'f9', name: 'B Devisree', designation: 'Lecturer', qualification: '', department: 'Computer Science & Engineering' },
+      { id: 'f10', name: 'S Swati', designation: 'Lecturer', qualification: '', department: 'Computer Science & Engineering' },
+      // EIE Department
+      { id: 'f11', name: 'G V Nagalakshmi', designation: 'Head of Department', qualification: '', department: 'Electronics & Instrumentation Engineering' },
+      { id: 'f12', name: 'U Sriram', designation: 'Senior Lecturer', qualification: '', department: 'Electronics & Instrumentation Engineering' },
+      { id: 'f13', name: 'B Indira Priyadarshini', designation: 'Lecturer', qualification: '', department: 'Electronics & Instrumentation Engineering' },
+      { id: 'f14', name: 'P Satya', designation: 'Lecturer', qualification: '', department: 'Electronics & Instrumentation Engineering' },
+      { id: 'f15', name: 'B Padmalatha', designation: 'Lecturer', qualification: '', department: 'Electronics & Instrumentation Engineering' },
+      // EVE Department
+      { id: 'f16', name: 'B Laxmi Kantha', designation: 'Head of Department', qualification: '', department: 'Electronics & Video Engineering' },
+      { id: 'f17', name: 'P Shiva Raju', designation: 'Lecturer', qualification: '', department: 'Electronics & Video Engineering' },
+      { id: 'f18', name: 'M Phanidhar Kumar', designation: 'Lecturer', qualification: '', department: 'Electronics & Video Engineering' },
+      { id: 'f19', name: 'P Ravi', designation: 'Lecturer', qualification: '', department: 'Electronics & Video Engineering' },
+      { id: 'f20', name: 'E Vinayak', designation: 'Lecturer', qualification: '', department: 'Electronics & Video Engineering' },
+      // BME Department
+      { id: 'f21', name: 'P Jyothi', designation: 'Head of Department', qualification: '', department: 'Biomedical Engineering' },
+      { id: 'f22', name: 'P Kishen Chandrika', designation: 'Lecturer', qualification: '', department: 'Biomedical Engineering' },
+      { id: 'f23', name: 'K Thirupathanna', designation: 'Lecturer', qualification: '', department: 'Biomedical Engineering' },
+      { id: 'f24', name: 'Y Poornachandra Rao', designation: 'Lecturer', qualification: '', department: 'Biomedical Engineering' },
+      { id: 'f25', name: 'R Rameshwar', designation: 'Lecturer', qualification: '', department: 'Biomedical Engineering' },
+      { id: 'f26', name: 'A Ajay Teja', designation: 'Lecturer', qualification: '', department: 'Biomedical Engineering' },
+      // CCBD Department
+      { id: 'f27', name: 'S P Venkat Reddy', designation: 'Head of Department', qualification: '', department: 'Cloud Computing & Big Data' },
+      { id: 'f28', name: 'V Kalpana', designation: 'Lecturer', qualification: '', department: 'Cloud Computing & Big Data' },
+      { id: 'f29', name: 'A Vani', designation: 'Lecturer', qualification: '', department: 'Cloud Computing & Big Data' },
+      { id: 'f30', name: 'S Dattatri Reddy', designation: 'Lecturer', qualification: '', department: 'Cloud Computing & Big Data' },
+      // ECE Department
+      { id: 'f31', name: 'N Srinivasa Rao', designation: 'Head of Department', qualification: '', department: 'Electronics & Communication Engineering' },
+      { id: 'f32', name: 'V Maheshwari', designation: 'Senior Lecturer', qualification: '', department: 'Electronics & Communication Engineering' },
+      { id: 'f33', name: 'K M Arvind Kumar', designation: 'Senior Lecturer', qualification: '', department: 'Electronics & Communication Engineering' },
+      { id: 'f34', name: 'M Narender', designation: 'Lecturer', qualification: '', department: 'Electronics & Communication Engineering' },
+      { id: 'f35', name: 'B Pushyami', designation: 'Lecturer', qualification: '', department: 'Electronics & Communication Engineering' },
+      // ESE Department
+      { id: 'f36', name: 'B Ram Mohan Reddy', designation: 'Head of Department', qualification: '', department: 'Embedded Systems Engineering' },
+      { id: 'f37', name: 'Dr T Krishna Manohar', designation: 'Senior Lecturer', qualification: '', department: 'Embedded Systems Engineering' },
+      { id: 'f38', name: 'T P Lingswamy', designation: 'Senior Lecturer', qualification: '', department: 'Embedded Systems Engineering' },
+      { id: 'f39', name: 'A Suresh', designation: 'Lecturer', qualification: '', department: 'Embedded Systems Engineering' },
+      { id: 'f40', name: 'M Javid Ali', designation: 'Lecturer', qualification: '', department: 'Embedded Systems Engineering' },
+      // CPSS Department
+      { id: 'f41', name: 'Venkata Satish Kumar M', designation: 'Head of Department', qualification: '', department: 'Cyber Physical Systems & Security' },
+      { id: 'f42', name: 'K Sunitha', designation: 'Lecturer', qualification: '', department: 'Cyber Physical Systems & Security' },
+      { id: 'f43', name: 'K M Sateesh Kumar', designation: 'Senior Lecturer', qualification: '', department: 'Cyber Physical Systems & Security' },
+      { id: 'f44', name: 'T Bhargavi', designation: 'Lecturer', qualification: '', department: 'Cyber Physical Systems & Security' },
+      { id: 'f45', name: 'A Satheesh Naik', designation: 'Lecturer', qualification: '', department: 'Cyber Physical Systems & Security' },
+      // Humanities & Sciences Department
+      { id: 'f46', name: 'D Satyanandam', designation: 'Head of Department', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f47', name: 'P V V Ramanamurthy', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f48', name: 'M Vijaya Laxmi', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f49', name: 'G Prasad', designation: 'Senior Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f50', name: 'M Uma Rani', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f51', name: 'R Vijaya', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f52', name: 'M Radhika', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f53', name: 'G Madhubabu', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f54', name: 'M Manjula', designation: 'Librarian', qualification: '', department: 'Humanities & Sciences' },
+      { id: 'f55', name: 'B Srikantha Chary', designation: 'Lecturer', qualification: '', department: 'Humanities & Sciences' },
+    ]
+  },
   { code: 'IOEPH', name: 'GOVT INSTITUTE OF ELECTRONICS', place: 'SECUNDERABAD', dist: 'HYD', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED', established: '1981' },
 ];
 
@@ -99,7 +208,8 @@ export default function InstituteDetail() {
   const navigate = useNavigate();
   const [institute, setInstitute] = useState<InstituteData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("info");
+  // Set default tab to 'collegeinfo' for direct College Info view
+  const [activeTab, setActiveTab] = useState("collegeinfo");
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     whatsNew: true,
     tableOfContents: true,
@@ -522,48 +632,46 @@ export default function InstituteDetail() {
 
           {/* Faculty Tab */}
           {activeTab === 'faculty' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-foreground">Faculty Members</h2>
-                {institute.faculty && institute.faculty.length > 0 && (
-                  <Badge className="bg-primary/20 text-primary border-0">{institute.faculty.length} Members</Badge>
-                )}
-              </div>
-              
-              {institute.faculty && institute.faculty.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {institute.faculty.map((faculty) => (
-                    <Card key={faculty.id} className="glass-card border-white/10 hover:border-primary/30 transition-colors">
-                      <CardContent className="p-4 text-center">
-                        <Avatar className="w-20 h-20 mx-auto mb-3">
-                          <AvatarImage src={faculty.image} />
-                          <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-xl">
-                            {faculty.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <h3 className="font-semibold text-foreground">{faculty.name}</h3>
-                        <p className="text-sm text-primary">{faculty.designation}</p>
-                        <Badge variant="outline" className="mt-2 text-xs border-white/20">{faculty.department}</Badge>
-                        <div className="mt-3 text-xs text-muted-foreground space-y-1">
-                          <p>{faculty.qualification}</p>
-                          {faculty.experience && <p>{faculty.experience}</p>}
-                          {faculty.specialization && <p className="text-primary">{faculty.specialization}</p>}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
+            <div className="space-y-8">
+              {/* Principal Section */}
+              <Card className="glass-card border-white/10">
+                <CardContent className="flex flex-col md:flex-row items-center gap-8 p-8">
+                  <Avatar className="w-32 h-32 shadow-lg">
+                    <AvatarImage src="/principal-gioe.jpg" />
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-4xl">BR</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground mb-1">Sri. B. Ram Mohan Reddy, M.Tech., MISTE.</h2>
+                    <p className="text-primary font-semibold mb-2">Principal (FAC)</p>
+                    <h3 className="text-lg font-semibold mb-2">About Principal</h3>
+                    <p className="text-muted-foreground text-sm mb-2">Sri B. Ram Mohan Reddy is a dedicated academician and seasoned administrator with more than three decades of rich experience in technical education. He completed his Bachelor of Engineering (ECE) in 1989, laying a strong foundation for a lifelong career in teaching and institutional development. He joined the Department of Technical Education as a Lecturer on 06-08-1992, marking the beginning of his long and committed service in government polytechnic education.<br/><br/>With a deep passion for advanced learning and academic excellence, he pursued and successfully completed his M.Tech in Digital Systems & Computer Electronics from JNTU in 1999. His consistent academic growth and commitment to teaching led to his promotion as Senior Lecturer in 2014. Recognizing his leadership qualities and administrative capabilities, he was promoted as Head of the Department in 2017, where he played a vital role in academic planning, laboratory modernization, faculty coordination, student mentoring, and accreditation activities.<br/><br/>In recognition of his vast experience, integrity, and leadership, Sri B. Ram Mohan Reddy assumed charge as Principal (FAC) in December 2025 at the Government Institute of Electronics, Secunderabad. As Principal (FAC), he is committed to strengthening academic discipline, enhancing student skill development, improving institutional performance, promoting industry interaction, and ensuring the holistic growth of students through quality technical education.<br/><br/>Throughout his career, he has been known for his student-centric approach, strong ethical values, academic discipline, and a clear vision for continuous institutional improvement. His leadership philosophy is grounded in the principles of quality education, innovation, accountability, and social responsibility.</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Vision & Mission */}
+              <div className="grid md:grid-cols-2 gap-8">
                 <Card className="glass-card border-white/10">
-                  <CardContent className="p-12 text-center">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <Building2 className="w-8 h-8 text-primary/60" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">No Faculty Data Available</h3>
-                    <p className="text-muted-foreground text-sm max-w-md mx-auto">Faculty member details will be displayed here once added by the administrator.</p>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-primary mb-2">Vision</h3>
+                    <p className="text-muted-foreground text-sm">To be equipped with state-of-the-art technology, attract and retain talented human resources, and deliver a balanced education of rigorous theory and practical skills aligned with industry needs, thereby maturing into a world-class institute that empowers students to innovate, serve, and lead.</p>
                   </CardContent>
                 </Card>
-              )}
+                <Card className="glass-card border-white/10">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-primary mb-2">Mission</h3>
+                    <p className="text-muted-foreground text-sm">To achieve an educational environment where every enrolled student successfully completes the program with zero dropout rate, attains 100% academic success, and secures 100% placement through strong industry-oriented training and institutional support.</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Faculty Accordion by Department */}
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-4">Faculty Details</h2>
+                {institute.departments && institute.faculty && (
+                  <FacultyAccordion departments={institute.departments} faculty={institute.faculty} />
+                )}
+              </div>
             </div>
           )}
 

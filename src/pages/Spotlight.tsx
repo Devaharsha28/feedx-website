@@ -6,6 +6,7 @@ import { noDataIllustration, spotlightIllustration } from '@/lib/illustrations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { spotlightAPI, Spotlight as SpotlightItem } from '@/lib/api';
+import { MarkdownRenderer } from '@/components/MarkdownRenderer';
 
 const Spotlight = () => {
   const [spotlights, setSpotlights] = useState<SpotlightItem[]>([]);
@@ -73,7 +74,9 @@ const Spotlight = () => {
                       <CardTitle className="text-lg">{spotlight.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">{spotlight.description}</p>
+                      <div className="text-sm text-muted-foreground mb-4">
+                        <MarkdownRenderer content={spotlight.description || '*No description available.*'} />
+                      </div>
                       {spotlight.images.length > 1 && (
                         <div className="flex gap-2 flex-wrap">
                           {spotlight.images.slice(1).map((img, idx) => (

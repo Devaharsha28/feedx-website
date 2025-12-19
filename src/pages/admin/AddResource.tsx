@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { resourcesAPI, Resource, uploadFile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { X, Upload, Loader2, Link as LinkIcon } from "lucide-react";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 export default function AddResource() {
   const navigate = useNavigate();
@@ -250,16 +251,22 @@ export default function AddResource() {
                   </div>
 
                   <div>
-                    <Label htmlFor="longDescription">Long Description</Label>
+                    <Label htmlFor="longDescription">Long Description <span className="text-xs text-muted-foreground">(Markdown supported)</span></Label>
                     <Textarea
                       id="longDescription"
                       name="longDescription"
-                      placeholder="Detailed description"
+                      placeholder="Detailed description - supports **bold**, *italic*, [links](url), lists, etc."
                       value={formData.longDescription}
                       onChange={handleInputChange}
                       required
                       rows={3}
                     />
+                    {formData.longDescription && (
+                      <div className="mt-2 p-3 border border-border rounded-lg bg-card">
+                        <p className="text-xs text-muted-foreground mb-2">Preview:</p>
+                        <MarkdownRenderer content={formData.longDescription} />
+                      </div>
+                    )}
                   </div>
 
                   <div>
