@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { NotificationsPanel } from '@/components/NotificationsPanel';
 import { GraduationCap, Briefcase, BookOpen, ArrowRight, Youtube, Instagram, MessageCircle } from 'lucide-react';
 import { SOCIAL_LINKS } from '@/lib/socialLinks';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HeroSection = () => {
   return (
@@ -18,9 +19,10 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Main Content - Left/Center */}
-          <div className="lg:col-span-7 text-center lg:text-left order-1">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7, type: 'spring' }} className="lg:col-span-7 text-center lg:text-left order-1">
             {/* Badge */}
-            <div className="inline-flex items-center space-x-2 bg-card ">
+            <div className="inline-flex items-center space-x-2 bg-card px-3 py-1 rounded-full">
+              <span className="text-xs bg-[#FFD700] text-black font-semibold px-2 py-1 rounded-full">🎉 1st Anniversary</span>
             </div>
 
             {/* Main Heading */}
@@ -86,7 +88,7 @@ const HeroSection = () => {
                 <span className="text-sm font-medium">Instagram</span>
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Notifications Panel - Right Side (order-2 on mobile, shows after main content) */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end order-2">
@@ -95,40 +97,6 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* SOK Feature Cards - Full width on mobile, shows after notifications panel */}
-          <div className="col-span-1 lg:col-span-12 order-3 mt-6 lg:mt-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 px-4 max-w-4xl mx-auto lg:mx-0">
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-[0_12px_30px_rgba(0,0,0,0.35)] backdrop-blur">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/20 border border-blue-500/40 rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                  <GraduationCap className="w-6 h-6 text-blue-400" />
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-2 text-blue-100 text-center">S — Skills</h3>
-                <p className="text-xs sm:text-sm text-slate-300 text-center">
-                  Training, certifications, freelancing, and projects.
-                </p>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-[0_12px_30px_rgba(0,0,0,0.35)] backdrop-blur">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/20 border border-blue-500/40 rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                  <Briefcase className="w-6 h-6 text-blue-400" />
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-2 text-blue-100 text-center">O — Opportunities</h3>
-                <p className="text-xs sm:text-sm text-slate-300 text-center">
-                  Jobs, startups, internships, and industrial visits.
-                </p>
-              </div>
-
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-6 sm:col-span-2 lg:col-span-1 shadow-[0_12px_30px_rgba(0,0,0,0.35)] backdrop-blur">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/20 border border-blue-500/40 rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
-                  <BookOpen className="w-6 h-6 text-blue-400" />
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-2 text-blue-100 text-center">K — Knowledge</h3>
-                <p className="text-xs sm:text-sm text-slate-300 text-center">
-                  Notes, resources, workshops, and feedback sharing.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

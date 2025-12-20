@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
+import AnniversaryPopup from "./components/AnniversaryPopup";
 import UnderDevelopment from "./pages/UnderDevelopment";
 import Subscribe from "./pages/Subscribe";
 import SignIn from "./pages/SignIn";
@@ -58,9 +59,10 @@ const App = () => (
     <ThemeProvider>
       <AuthProvider>
         <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+          <Toaster />
+          <Sonner />
+          <AnniversaryPopup />
+          <BrowserRouter>
           {/* Global background accents */}
           <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
             <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />

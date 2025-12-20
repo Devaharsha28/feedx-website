@@ -226,6 +226,7 @@ const parseResultsJson = (payload: ResultsApiPayload, fallbackPin: string): Stud
 };
 
 const StudentAnalytics = () => {
+  const FEATURE_SOON = true;
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -241,6 +242,11 @@ const StudentAnalytics = () => {
   );
 
   const fetchAll = async () => {
+    if (FEATURE_SOON) {
+      setError('Student analytics feature will be available soon.');
+      return;
+    }
+
     const trimmed = pin.trim();
     if (!trimmed) {
       setError('Please enter a valid PIN.');
@@ -331,6 +337,13 @@ const StudentAnalytics = () => {
             <p className="text-lg text-muted-foreground max-w-2xl">
               Enter your PIN to fetch attendance and academic performance details.
             </p>
+            {FEATURE_SOON && (
+              <div className="mt-4">
+                <Alert>
+                  <AlertDescription>Student analytics feature will be available soon. We're working to restore reliable attendance and results fetch.</AlertDescription>
+                </Alert>
+              </div>
+            )}
           </div>
           <img src={analyticsIllustration} alt="Student analytics" className="w-full max-w-sm animate-float" />
         </div>

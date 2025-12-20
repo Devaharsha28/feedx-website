@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import AnniversaryPopup from '@/components/AnniversaryPopup';
 
 const features = [
   {
@@ -31,12 +30,11 @@ const features = [
 const FeaturesSection = () => {
   return (
     <section id="features" className="py-24 bg-[#111112] relative overflow-hidden">
-      <AnniversaryPopup />
       {/* Anniversary gold confetti effect */}
       <div className="pointer-events-none select-none absolute inset-0 z-0">
         <div className="w-full h-full bg-gradient-to-br from-black/80 via-[#222]/90 to-yellow-900/40 opacity-80" />
         <div className="absolute top-0 left-0 w-full flex justify-center mt-8 animate-bounce">
-          <span className="text-3xl md:text-4xl font-bold text-gold drop-shadow-gold-glow">🎉 1st Anniversary Edition 🎉</span>
+          <span className="text-3xl md:text-4xl font-bold text-gold drop-shadow-gold-glow"></span>
         </div>
       </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,16 +69,7 @@ const FeaturesSection = () => {
                   </span>
                 </div>
               )}
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <motion.div
-                    className="w-12 h-12 bg-gold/90 rounded-lg flex items-center justify-center text-3xl font-extrabold text-black shadow-gold-glow border-2 border-gold/80"
-                    whileHover={{ rotate: [0, 10, -10, 0], scale: 1.15 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                  >
-                    {feature.key}
-                  </motion.div>
-                </div>
+              <div className="flex items-start">
                 <div className="flex-1">
                   <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-smooth">
                     {feature.title}

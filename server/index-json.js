@@ -83,6 +83,15 @@ app.use(cors({
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
+// Set a tight but functional Content Security Policy to avoid default-src 'none'
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';"
+  );
+  next();
+});
+
 // Serve public folder (for images, robots.txt, etc.)
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
@@ -593,8 +602,53 @@ const computeAttendanceSummary = (studentInfo, records) => {
   };
 };
 
-// Fetch attendance from SBTET
+// Fetch attendance by proxying the internal HTML endpoint and parsing minimal fields
 const fetchAttendance = async (pin) => {
+  // First try proxy HTML parsing
+  try {
+    const html = await fetchResultsHtml(pin);
+
+    // Try to extract attendance percentage
+    const percentMatch = html.match(/([0-9]{1,3}(?:\.[0-9]+)?)\s?%/);
+    const attendancePercentage = percentMatch ? parseFloat(percentMatch[1]) : null;
+
+    // Try to extract SGPA/CGPA
+    const sgpaMatch = html.match(/(SGPA|CGPA|GPA)[:\s]*([0-9]+(?:\.[0-9]+)?)/i);
+    const sgpa = sgpaMatch ? parseFloat(sgpaMatch[2]) : null;
+
+    // Try to extract student name
+    const nameMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i) || html.match(/Student\s*Name[:\s]*([^<\n\r]+)/i);
+    const studentName = nameMatch ? nameMatch[1].trim() : null;
+
+    // Extract simple subject rows from any tables
+    const rows = [];
+    const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    let tr;
+    while ((tr = trRegex.exec(html)) !== null) {
+      const cols = [...tr[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim());
+      if (cols.length >= 2) {
+        rows.push({ subject: cols[0], details: cols.slice(1) });
+      }
+    }
+
+    // If parsing yields useful data, return it
+    if (studentName || rows.length || attendancePercentage !== null) {
+      return {
+        Table: [{ StudentName: studentName || null, Pin: pin }],
+        Table1: rows,
+        rawHtml: html,
+        attendanceMeta: {
+          attendancePercentage,
+          sgpa
+        }
+      };
+    }
+  } catch (err) {
+    // fallthrough to try direct SBTET JSON endpoints
+    console.warn('Proxy HTML fetch failed, falling back to SBTET JSON endpoints:', err.message);
+  }
+
+  // Fallback: try official SBTET attendance JSON endpoints
   const urls = [
     `https://www.sbtet.telangana.gov.in/api/api/PreExamination/getAttendanceReport?Pin=${pin}`,
     `https://www.sbtet.telangana.gov.in/api/PreExamination/getAttendanceReport?Pin=${pin}`,
@@ -609,15 +663,13 @@ const fetchAttendance = async (pin) => {
         continue;
       }
       let data = await response.json();
-      if (typeof data === 'string') {
-        data = JSON.parse(data);
-      }
+      if (typeof data === 'string') data = JSON.parse(data);
       return data;
     } catch (err) {
       lastError = err;
     }
   }
-  throw lastError || new Error('Failed to fetch from SBTET');
+  throw lastError || new Error('Failed to fetch attendance from SBTET');
 };
 
 // Fetch results JSON from SBTET
@@ -628,6 +680,49 @@ const fetchResultsJson = async (pin) => {
     return cached.data;
   }
 
+  try {
+    const html = await fetchResultsHtml(pin);
+
+    // Basic parsing to extract tables of results and SGPA
+    const sgpaMatch = html.match(/(SGPA|CGPA|GPA)[:\s]*([0-9]+(?:\.[0-9]+)?)/i);
+    const sgpa = sgpaMatch ? parseFloat(sgpaMatch[2]) : null;
+
+    const studentNameMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i) || html.match(/Student\s*Name[:\s]*([^<\n\r]+)/i);
+    const studentName = studentNameMatch ? studentNameMatch[1].trim() : null;
+
+    // Extract rows from any tables as arrays
+    const tables = [];
+    const tableRegex = /<table[^>]*>([\s\S]*?)<\/table>/gi;
+    let t;
+    while ((t = tableRegex.exec(html)) !== null) {
+      const tableHtml = t[1];
+      const rows = [];
+      const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+      let tr;
+      while ((tr = trRegex.exec(tableHtml)) !== null) {
+        const cols = [...tr[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(m => m[1].replace(/<[^>]+>/g,'').trim());
+        if (cols.length) rows.push(cols);
+      }
+      if (rows.length) tables.push(rows);
+    }
+
+    const data = {
+      student: { name: studentName, pin },
+      sgpa,
+      tables,
+      rawHtml: html
+    };
+
+    // If parsing produced useful data, cache and return it
+    if (studentName || sgpa !== null || tables.length) {
+      resultsJsonCache.set(pinKey, { timestamp: Date.now(), data });
+      return data;
+    }
+  } catch (err) {
+    console.warn('Proxy HTML parsing failed, falling back to official SBTET endpoints:', err.message);
+  }
+
+  // Fallback: try official SBTET results JSON endpoints
   const urls = [
     `https://www.sbtet.telangana.gov.in/api/api/Results/GetConsolidatedResults?Pin=${pin}`,
     `https://www.sbtet.telangana.gov.in/api/Results/GetConsolidatedResults?Pin=${pin}`,
@@ -642,11 +737,9 @@ const fetchResultsJson = async (pin) => {
         continue;
       }
       let data = await response.json();
-      if (typeof data === 'string') {
-        data = JSON.parse(data);
-      }
+      if (typeof data === 'string') data = JSON.parse(data);
       if (!data) throw new Error('Empty response');
-      
+
       resultsJsonCache.set(pinKey, { timestamp: Date.now(), data });
       return data;
     } catch (err) {
