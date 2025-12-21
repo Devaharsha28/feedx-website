@@ -195,10 +195,6 @@ All colors MUST be HSL.
     animation: cloudDrift 20s ease-in-out infinite;
   }
 
-  .animate-pulse-slow {
-    animation: pulseSlow 8s ease-in-out infinite;
-  }
-
   .animate-star-twinkle {
     animation: starTwinkle 3s ease-in-out infinite;
   }
@@ -518,20 +514,6 @@ All colors MUST be HSL.
 
 .animate-marquee-vertical {
   animation: marquee-vertical var(--duration) linear infinite;
-}
-
-@keyframes pulseSlow {
-
-  0%,
-  100% {
-    opacity: 0.1;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.2;
-    transform: scale(1.1);
-  }
 }
 
 .animate-marquee-left:hover,
