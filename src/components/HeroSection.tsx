@@ -9,137 +9,116 @@ const HeroSection = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-start overflow-hidden pt-16 pb-8 sm:pb-16"
+      className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-16"
     >
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+      {/* Refined Gradient Background with Blobs to match image */}
+      <div className="absolute inset-0 bg-[#f8fafc]" />
 
-      {/* Animated circles */}
-      <div className="absolute top-20 left-10 w-72 h-72 sm:w-96 sm:h-96 bg-primary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '0s' }} />
-      <div className="absolute bottom-20 right-10 w-96 h-96 sm:w-[32rem] sm:h-[32rem] bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-80 sm:h-80 bg-accent/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      {/* Large blobs matching the reference image */}
+      <div className="absolute top-[-10%] left-[-5%] w-[40rem] h-[40rem] bg-blue-100/40 rounded-full blur-[100px] animate-float-slow" />
+      <div className="absolute top-[40%] right-[10%] w-[35rem] h-[35rem] bg-purple-100/30 rounded-full blur-[100px] animate-float" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[30rem] h-[30rem] bg-teal-100/40 rounded-full blur-[100px] animate-float-slow" style={{ animationDelay: '1s' }} />
 
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-14 items-start">
-          {/* Main Content - Left/Center - Shows FIRST on mobile */}
-          <div className="lg:col-span-7 text-center lg:text-left order-1">
-            {/* Glassmorphism wrapper for mobile */}
-            <div className="glass-card border-white/20 rounded-3xl p-6 sm:p-8 lg:p-0 lg:bg-transparent lg:border-0 lg:backdrop-blur-none">
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center space-x-2 glass-card border-white/20 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 mb-6 sm:mb-8"
-              >
-                <span className="text-xs bg-gradient-to-r from-yellow-400/20 to-orange-400/20 text-yellow-700 font-semibold px-2 py-1 rounded-full border border-yellow-400/30">🎉 1st Anniversary</span>
-              </motion.div>
+      <div className="container relative z-10 mx-auto px-6 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Main Content - Left Side */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center space-x-2 bg-white/60 backdrop-blur-sm border border-slate-200 rounded-full px-4 py-2 mb-8 shadow-sm"
+            >
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-slate-600">Anonymous & Secure Feedback System</span>
+            </motion.div>
 
-              {/* Main Heading */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-2"
-              >
-                <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent drop-shadow-lg">FEEDX</span>
-              </motion.h1>
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-slate-900"
+            >
+              Your Voice Matters,<br />
+              <span className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-400 bg-clip-text text-transparent">Your Identity Protected</span>
+            </motion.h1>
 
-              {/* Subheading */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 px-4"
-              >
-                A student community that supports Polytechnic learners with Skills, Opportunities, and Knowledge (SOK)
-                through curated resources, guidance, and structured updates.
-              </motion.p>
+            {/* Subheading */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-lg md:text-xl text-slate-500 mb-10 max-w-xl leading-relaxed"
+            >
+              FeedX Portal empowers students to share feedback, report issues, and drive positive change while maintaining complete anonymity with our AI-powered FX Bot.
+            </motion.p>
 
-              {/* Mission */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 px-4"
-              >
-                <span className="font-semibold text-foreground">Mission:</span> Make student support and growth easier to access,
-                faster to coordinate, and transparent to track.
-              </motion.p>
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap items-center gap-4 mb-16"
+            >
+              <Link to="/join">
+                <Button size="lg" className="h-12 px-8 bg-[#3a8abf] hover:bg-[#327aab] text-white rounded-xl shadow-lg shadow-blue-500/20 group">
+                  Submit Feedback
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <Link to="/about">
+                <Button variant="outline" size="lg" className="h-12 px-8 border-slate-200 bg-white/50 backdrop-blur-sm hover:bg-white text-slate-600 rounded-xl">
+                  Learn More
+                </Button>
+              </Link>
+            </motion.div>
 
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 sm:gap-4 mb-8 px-4"
-              >
-                <Link to="/resources" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full bg-gradient-brand hover:opacity-90 transition-smooth group shadow-lg">
-                    Start learning
-                    <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Link to="/about" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full hover-lift border-primary/20">
-                    About
-                  </Button>
-                </Link>
-                <Link to="/celebrations" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:opacity-90 transition-smooth shadow-md border-0">
-                    🎉 1st Anniversary Special
-                  </Button>
-                </Link>
-              </motion.div>
-
-              {/* Social Media Links */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 px-4 sm:px-0"
-              >
-                <a
-                  href={SOCIAL_LINKS.whatsappChannel}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-green-50 border border-green-200 rounded-full text-green-700 hover:text-green-800 transition-all w-full sm:w-auto justify-center shadow-sm"
-                >
-                  <MessageCircle className="w-5 h-5 text-green-600" />
-                  <span className="text-sm font-medium">WhatsApp</span>
-                </a>
-                <a
-                  href={SOCIAL_LINKS.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-red-50 border border-red-200 rounded-full text-red-700 hover:text-red-800 transition-all w-full sm:w-auto justify-center shadow-sm"
-                >
-                  <Youtube className="w-5 h-5 text-red-600" />
-                  <span className="text-sm font-medium">YouTube</span>
-                </a>
-                <a
-                  href={SOCIAL_LINKS.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-50 border border-pink-200 rounded-full text-pink-700 hover:text-pink-800 transition-all w-full sm:w-auto justify-center shadow-sm"
-                >
-                  <Instagram className="w-5 h-5 text-pink-600" />
-                  <span className="text-sm font-medium">Instagram</span>
-                </a>
-              </motion.div>
-            </div>
-            {/* End glassmorphism wrapper */}
+            {/* Feature Cards at Bottom */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full"
+            >
+              {[
+                {
+                  icon: <MessageSquare className="w-5 h-5 text-blue-600" />,
+                  title: "Anonymous Submission",
+                  desc: "Submit feedback completely anonymously with auto-generated IDs"
+                },
+                {
+                  icon: <Shield className="w-5 h-5 text-blue-600" />,
+                  title: "Track Issues",
+                  desc: "Monitor your submissions with unique tracking IDs"
+                },
+                {
+                  icon: <TrendingUp className="w-5 h-5 text-blue-600" />,
+                  title: "Real-time Updates",
+                  desc: "Get instant updates on issue status and resolutions"
+                }
+              ].map((feature, i) => (
+                <div key={i} className="bg-white/70 backdrop-blur-md border border-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all group">
+                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    {feature.icon}
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-2">{feature.title}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">{feature.desc}</p>
+                </div>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Notifications Panel - Right Side - Shows SECOND on mobile */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end order-2">
+          {/* Notifications Panel - Right Side */}
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative w-full max-w-sm lg:max-w-xs xl:max-w-sm"
+              className="relative w-full max-w-sm"
             >
-              <div className="absolute inset-0 bg-primary/20 blur-3xl -z-10 rounded-full opacity-0 lg:opacity-100" />
+              <div className="absolute -inset-4 bg-gradient-to-tr from-blue-100 to-purple-100 blur-3xl rounded-full -z-10 opacity-60" />
               <NotificationsPanel />
             </motion.div>
           </div>

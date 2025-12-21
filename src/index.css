@@ -18,9 +18,9 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Brand Colors extracted from image */
-    --primary: 195 85% 42%;
-    /* Teal-ish Blue for buttons like 'Submit Feedback' */
+    /* Brand Colors extracted from image - Professional Blue */
+    --primary: 204 53% 49%;
+    /* Muted Blue for buttons like 'Submit Feedback' */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96%;

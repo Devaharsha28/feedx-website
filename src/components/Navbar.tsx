@@ -62,10 +62,10 @@ const Navbar = () => {
               </Button>
             </Link>
 
-            {/* Join Us Button - Desktop */}
+            {/* Join Community Button - Desktop */}
             <Link to="/join" className="hidden lg:block">
-              <Button size="sm" className="bg-gradient-brand text-white hover:opacity-90 transition-smooth shadow-glow">
-                Join Us
+              <Button size="sm" className="bg-[#3a8abf] hover:bg-[#327aab] text-white transition-smooth rounded-lg px-5">
+                Join Community
               </Button>
             </Link>
 
