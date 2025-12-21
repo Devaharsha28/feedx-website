@@ -903,6 +903,23 @@ app.get('/api/attendance', async (req, res) => {
     return res.status(400).json({ error: 'Missing pin parameter' });
   }
 
+  // Try to proxy to Python API (Port 5001) first
+  try {
+    const pythonUrl = `http://localhost:5001/api/attendance?pin=${encodeURIComponent(pin)}`;
+    console.log(`[PROXY] Forwarding attendance request to: ${pythonUrl}`);
+    const pyResponse = await fetch(pythonUrl, { signal: AbortSignal.timeout(5000) });
+
+    if (pyResponse.ok) {
+      const pyData = await pyResponse.json();
+      console.log('[PROXY] Python API success for attendance');
+      return res.json(pyData);
+    } else {
+      console.warn(`[PROXY] Python API returned status: ${pyResponse.status}`);
+    }
+  } catch (err) {
+    console.warn('[PROXY] Python API unreachable for attendance, using built-in logic:', err.message);
+  }
+
   try {
     const data = await fetchAttendance(pin);
 
@@ -973,6 +990,21 @@ app.get('/api/results', async (req, res) => {
     return res.status(400).json({ success: false, error: 'Missing pin parameter' });
   }
 
+  // Try to proxy to Python API (Port 5001) first
+  try {
+    const pythonUrl = `http://localhost:5001/api/results?pin=${encodeURIComponent(pin)}`;
+    console.log(`[PROXY] Forwarding results request to: ${pythonUrl}`);
+    const pyResponse = await fetch(pythonUrl);
+
+    if (pyResponse.ok) {
+      const pyData = await pyResponse.json();
+      console.log('[PROXY] Python API success for results');
+      return res.json(pyData);
+    }
+  } catch (err) {
+    console.warn('[PROXY] Python API unreachable for results, using built-in logic:', err.message);
+  }
+
   try {
     const data = await fetchResultsJson(pin);
     res.json({ success: true, pin, data });
@@ -993,6 +1025,21 @@ app.get('/api/results/raw', async (req, res) => {
   const { pin } = req.query;
   if (!pin) {
     return res.status(400).json({ success: false, error: 'Missing pin parameter' });
+  }
+
+  // Try to proxy to Python API (Port 5001) first
+  try {
+    const pythonUrl = `http://localhost:5001/api/results/raw?pin=${encodeURIComponent(pin)}`;
+    console.log(`[PROXY] Forwarding results raw request to: ${pythonUrl}`);
+    const pyResponse = await fetch(pythonUrl);
+
+    if (pyResponse.ok) {
+      const pyText = await pyResponse.text();
+      console.log('[PROXY] Python API success for results raw');
+      return res.send(pyText);
+    }
+  } catch (err) {
+    console.warn('[PROXY] Python API unreachable for results raw, using built-in logic:', err.message);
   }
 
   try {

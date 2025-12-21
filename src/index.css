@@ -18,9 +18,9 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Brand Colors extracted from image - Professional Blue */
-    --primary: 204 53% 49%;
-    /* Muted Blue for buttons like 'Submit Feedback' */
+    /* Brand Colors extracted from image */
+    --primary: 195 85% 42%;
+    /* Teal-ish Blue for buttons like 'Submit Feedback' */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96%;
@@ -193,6 +193,10 @@ All colors MUST be HSL.
 
   .animate-cloud-drift {
     animation: cloudDrift 20s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 8s ease-in-out infinite;
   }
 
   .animate-star-twinkle {
@@ -514,6 +518,20 @@ All colors MUST be HSL.
 
 .animate-marquee-vertical {
   animation: marquee-vertical var(--duration) linear infinite;
+}
+
+@keyframes pulseSlow {
+
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.2;
+    transform: scale(1.1);
+  }
 }
 
 .animate-marquee-left:hover,
