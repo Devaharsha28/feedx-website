@@ -29,23 +29,16 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-[#111112] relative overflow-hidden">
-      {/* Anniversary gold confetti effect */}
-      <div className="pointer-events-none select-none absolute inset-0 z-0">
-        <div className="w-full h-full bg-gradient-to-br from-black/80 via-[#222]/90 to-yellow-900/40 opacity-80" />
-        <div className="absolute top-0 left-0 w-full flex justify-center mt-8 animate-bounce">
-          <span className="text-3xl md:text-4xl font-bold text-gold drop-shadow-gold-glow"></span>
-        </div>
-      </div>
+    <section id="features" className="py-24 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            <span className="text-gold drop-shadow-gold-glow">The SOK Model</span>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
+            The SOK Model
           </h2>
-          <p className="text-lg text-gold/80">
-            A career-driven approach for Polytechnic students: <span className="font-bold text-gold">Skills, Opportunities, and Knowledge</span> — powered by <span className="font-bold text-gold">X</span>.<br/>
-            <span className="text-gold/70 font-semibold">Celebrating 1 Year of FEEDX!</span>
+          <p className="text-lg text-muted-foreground">
+            A career-driven approach for Polytechnic students: <span className="font-bold text-primary">Skills, Opportunities, and Knowledge</span> — powered by <span className="font-bold text-primary">X</span>.<br />
+            <span className="text-primary/80 font-semibold">Celebrating 1 Year of FEEDX!</span>
           </p>
         </div>
 
@@ -57,24 +50,23 @@ const FeaturesSection = () => {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: index * 0.15 }}
-              whileHover={{ scale: 1.04, boxShadow: '0 0 32px 0 #FFD70055' }}
-              className={`relative group bg-[#18181b] border border-gold/30 rounded-2xl p-8 shadow-xl transition-all duration-300 ${
-                feature.highlight ? 'ring-2 ring-gold/40 glow-gold-soft' : ''
-              }`}
+              whileHover={{ scale: 1.02 }}
+              className={`relative group bg-white/40 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 ${feature.highlight ? 'border-primary/50 bg-primary/5' : ''
+                }`}
             >
               {feature.highlight && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-gold text-black text-xs font-semibold px-3 py-1 rounded-full shadow-gold-glow animate-pulse">
+                  <span className="bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full border border-primary/20">
                     Popular
                   </span>
                 </div>
               )}
               <div className="flex items-start">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-gold transition-smooth">
+                  <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-smooth">
                     {feature.title}
                   </h3>
-                  <p className="text-gold/80">
+                  <p className="text-muted-foreground">
                     {feature.description}
                   </p>
                 </div>
@@ -82,16 +74,6 @@ const FeaturesSection = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Anniversary gold theme styles */}
-        <style>{`
-          .text-gold { color: #FFD700; }
-          .bg-gold { background: #FFD700; }
-          .shadow-gold-glow { box-shadow: 0 0 16px 0 #FFD70088, 0 2px 8px 0 #0002; }
-          .glow-gold-soft { box-shadow: 0 0 32px 0 #FFD70033; }
-          .ring-gold\/40 { box-shadow: 0 0 0 4px #FFD70066; }
-          .drop-shadow-gold-glow { filter: drop-shadow(0 2px 8px #FFD70088); }
-        `}</style>
       </div>
     </section>
   );

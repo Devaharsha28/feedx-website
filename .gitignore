@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Virtual Environments
+venv/
+.venv/
+
+# Temp files
+proxy_response.html
+*.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

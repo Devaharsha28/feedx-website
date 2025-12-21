@@ -182,7 +182,7 @@ const Resources = () => {
             onClick={() => navigate(-1)}
             className="mb-6"
           >
-            0 Back
+            ← Back
           </Button>
           <div className="flex flex-col items-center text-center gap-6">
             <img src={resourcesIllustration} alt="Resources" className="w-full max-w-md animate-float" />
@@ -232,20 +232,20 @@ const Resources = () => {
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
                       <Badge className="bg-gradient-brand text-white text-xs">
-                    {resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {resource.tags.slice(0, 3).map((tag, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {resource.tags.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{resource.tags.length - 3}
-                          </Badge>
+                        {resource.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {resource.tags.slice(0, 3).map((tag, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {resource.tags.length > 3 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{resource.tags.length - 3}
+                              </Badge>
+                            )}
+                          </div>
                         )}
-                      </div>
-                    )}
                         Resource
                       </Badge>
                     </div>

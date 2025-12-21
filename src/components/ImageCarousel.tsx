@@ -1,168 +1,155 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
-interface CarouselItem {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  alt: string;
+const carouselImages = [
+  '/images/carousel/carousel1.jpg',
+  '/images/carousel/carousel2.jpg',
+  '/images/carousel/carousel3.jpg',
+  '/images/carousel/carousel 4.jpg',
+];
+
+interface ImageCarouselProps {
+  className?: string;
 }
 
-const ImageCarousel = () => {
-  const [carouselItems, setCarouselItems] = useState<CarouselItem[]>([]);
+const ImageCarousel = ({ className = '' }: ImageCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [direction, setDirection] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  useEffect(() => {
-    const fetchCarouselItems = async () => {
-      try {
-        console.log('Fetching carousel data from /data/carousel.json');
-        // For now, load from local JSON file
-        // In production, this could be from an API
-        const response = await fetch('/data/carousel.json');
-        console.log('Carousel fetch response:', response.status);
-        if (!response.ok) throw new Error('Failed to fetch carousel data');
-        const data = await response.json();
-        console.log('Carousel data loaded:', data);
-        setCarouselItems(data);
-      } catch (error) {
-        console.error('Failed to fetch carousel items:', error);
-        // Fallback to empty array
-        setCarouselItems([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCarouselItems();
+  const nextSlide = useCallback(() => {
+    setDirection(1);
+    setCurrentIndex((prev) => (prev + 1) % carouselImages.length);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  const prevSlide = useCallback(() => {
+    setDirection(-1);
+    setCurrentIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  }, []);
 
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1
-    );
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
-
+  // Auto-play functionality
   useEffect(() => {
-    if (carouselItems.length > 0) {
-      const timer = setInterval(() => {
-        nextSlide();
-      }, 5000); // Auto-advance every 5 seconds
+    if (!isAutoPlaying) return;
+    const timer = setInterval(nextSlide, 4000);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying, nextSlide]);
 
-      return () => clearInterval(timer);
-    }
-  }, [carouselItems.length]);
+  // Touch/swipe handling
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  if (isLoading) {
-    return (
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="h-96 bg-muted animate-pulse rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">Loading carousel...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const minSwipeDistance = 50;
 
-  if (carouselItems.length === 0) {
-    return (
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="h-96 bg-muted rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">No carousel images available</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsAutoPlaying(false);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) nextSlide();
+    if (isRightSwipe) prevSlide();
+
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.9,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.9,
+    }),
+  };
 
   return (
-    <section className="py-12 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-lg shadow-2xl">
-          {/* Main carousel container */}
-          <div
-            className="flex transition-transform duration-500 ease-in-out h-96"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {carouselItems.map((item) => (
-              <div key={item.id} className="w-full flex-shrink-0 relative">
-                <img
-                  src={item.image}
-                  alt={item.alt}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/images/placeholder.jpg'; // Fallback image
-                  }}
-                />
-                {/* Overlay content */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-center justify-center">
-                  <div className="text-center text-white max-w-2xl px-6">
-                    <h2 className="text-4xl sm:text-5xl font-bold mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-                      {item.title}
-                    </h2>
-                    <p className="text-xl sm:text-2xl opacity-95" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+    <div className={`relative w-full ${className}`}>
+      {/* Carousel Container */}
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-xl bg-white/50 backdrop-blur-sm border border-white/20"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onMouseEnter={() => setIsAutoPlaying(false)}
+        onMouseLeave={() => setIsAutoPlaying(true)}
+      >
+        <div className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-[3/1]">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={carouselImages[currentIndex]}
+              alt={`Carousel image ${currentIndex + 1}`}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: 'spring', stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
 
-          {/* Navigation buttons */}
-          {carouselItems.length > 1 && (
-            <>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-0"
-                onClick={prevSlide}
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </Button>
-
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-0"
-                onClick={nextSlide}
-              >
-                <ChevronRight className="h-6 w-6" />
-              </Button>
-
-              {/* Indicators */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {carouselItems.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      index === currentIndex
-                        ? 'bg-white'
-                        : 'bg-white/50 hover:bg-white/75'
-                    }`}
-                    onClick={() => goToSlide(index)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+          {/* Gradient overlay for better visibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
         </div>
+
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-300 hover:scale-110 z-10"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-300 hover:scale-110 z-10"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800" />
+        </button>
       </div>
-    </section>
+
+      {/* Dots Indicator */}
+      <div className="flex justify-center gap-2 mt-4">
+        {carouselImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setDirection(index > currentIndex ? 1 : -1);
+              setCurrentIndex(index);
+            }}
+            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${index === currentIndex
+                ? 'bg-primary w-6 sm:w-8'
+                : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 

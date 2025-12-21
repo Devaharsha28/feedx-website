@@ -22,7 +22,7 @@ const TestimonialsSection = () => {
   }, []);
 
   const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
-    <Card className="w-56 bg-card/80 backdrop-blur-sm border-white/10">
+    <Card className="w-56 bg-card/80 backdrop-blur-sm border-border">
       <CardContent className="p-4">
         <div className="flex items-center gap-2.5">
           <Avatar className="size-9">

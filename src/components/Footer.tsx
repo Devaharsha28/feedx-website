@@ -1,5 +1,6 @@
 import feedxLogo from '@/assets/feedx-logo.png';
 import { SOCIAL_LINKS } from '@/lib/socialLinks';
+import { MessageCircle, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -57,48 +58,30 @@ const Footer = () => {
               href={SOCIAL_LINKS.whatsappChannel}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 bg-card hover:bg-muted transition-smooth hover:text-green-600"
               aria-label="WhatsApp Channel"
             >
-              <img
-                src="https://cdn.simpleicons.org/whatsapp/25D366"
-                alt="WhatsApp"
-                className="w-5 h-5"
-                loading="lazy"
-                decoding="async"
-              />
+              <MessageCircle className="w-5 h-5" />
               <span className="hidden sm:inline">WhatsApp</span>
             </a>
             <a
               href={SOCIAL_LINKS.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 bg-card hover:bg-muted transition-smooth hover:text-pink-600"
               aria-label="Instagram"
             >
-              <img
-                src="https://cdn.simpleicons.org/instagram/E4405F"
-                alt="Instagram"
-                className="w-5 h-5"
-                loading="lazy"
-                decoding="async"
-              />
+              <Instagram className="w-5 h-5" />
               <span className="hidden sm:inline">Instagram</span>
             </a>
             <a
               href={SOCIAL_LINKS.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border px-3 py-2 bg-card hover:bg-muted transition-smooth"
+              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 bg-card hover:bg-muted transition-smooth hover:text-red-600"
               aria-label="YouTube"
             >
-              <img
-                src="https://cdn.simpleicons.org/youtube/FF0000"
-                alt="YouTube"
-                className="w-5 h-5"
-                loading="lazy"
-                decoding="async"
-              />
+              <Youtube className="w-5 h-5" />
               <span className="hidden sm:inline">YouTube</span>
             </a>
           </div>

@@ -11,9 +11,9 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#080d1a]/80 backdrop-blur-xl shadow-[0_18px_60px_-28px_rgba(0,0,0,0.85)]">
+    <nav className="fixed top-0 left-0 right-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center py-5">
+        <div className="flex items-center py-3">
           {/* Logo - Left */}
           <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
             <img src={feedxLogo} alt="FEEDX Logo" className="h-10 w-10 sm:h-12 sm:w-12" />
@@ -56,7 +56,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-3 flex-shrink-0 ml-auto">
             {/* FX Bot Button - Desktop only */}
             <Link to="/fxbot" className="hidden lg:block">
-              <Button size="sm" variant="outline" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-smooth border-white/10 text-foreground">
+              <Button size="sm" variant="outline" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground transition-smooth border-border text-foreground">
                 <img src={fxbotIcon} alt="FX Bot" className="w-4 h-4" />
                 FX Bot
               </Button>
@@ -98,69 +98,69 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-white/10 bg-[#0b1224]/80 backdrop-blur-xl">
+          <div className="lg:hidden py-4 border-t border-border bg-background/95 backdrop-blur-xl">
             <div className="flex flex-col space-y-3">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
-              <Link 
-                to="/about" 
+              <Link
+                to="/about"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 About
               </Link>
-              <Link 
-                to="/updates" 
+              <Link
+                to="/updates"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Updates
               </Link>
-              <Link 
-                to="/projects" 
+              <Link
+                to="/projects"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Projects
               </Link>
-              <Link 
-                to="/resources" 
+              <Link
+                to="/resources"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Resources
               </Link>
-              <Link 
-                to="/institute-profile" 
+              <Link
+                to="/institute-profile"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Institute Profile
               </Link>
-              <Link 
-                to="/student-analytics" 
+              <Link
+                to="/student-analytics"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Student Analytics
               </Link>
-              <Link 
-                to="/spotlight" 
+              <Link
+                to="/spotlight"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Spotlight
               </Link>
               {/* Removed Join and Jobs from mobile menu */}
-              
+
               {/* Mobile FX Bot */}
-              <Link 
-                to="/fxbot" 
+              <Link
+                to="/fxbot"
                 className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10 flex items-center gap-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -174,9 +174,9 @@ const Navbar = () => {
                   <div className="px-3 py-2 text-sm text-muted-foreground">
                     Welcome, {user?.name || user?.email}
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
+                  <Button
+                    size="sm"
+                    variant="ghost"
                     onClick={() => {
                       logout();
                       setMobileMenuOpen(false);

@@ -115,10 +115,10 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, X-Access-Token');
 
-  // Set a tight but functional Content Security Policy to avoid default-src 'none'
+  // Set a permissive Content Security Policy for development and Heyzine embedding
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com;"
   );
 
   // Handle preflight requests
@@ -466,9 +466,9 @@ app.get('/api/results', async (req, res) => {
 
   } catch (error) {
     console.error('Error fetching results data:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      error: 'Internal server error while fetching results data' 
+      error: 'Internal server error while fetching results data'
     });
   }
 });
@@ -494,7 +494,7 @@ const writeLoginLogs = (logs) => {
 // Verify JWT token
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  
+
   if (!token) {
     return res.status(401).json({ error: 'No token provided' });
   }
@@ -593,7 +593,7 @@ app.post('/api/auth/register', verifyToken, async (req, res) => {
     }
 
     const users = readUsers();
-    
+
     const existingUser = users.find(u => u.email === email || u.name === username);
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
@@ -1019,7 +1019,7 @@ app.post('/api/admin/institutes', (req, res) => {
 
     const institutes = readDataFile('institutes.json');
     const existingIndex = institutes.findIndex(i => i.code.toUpperCase() === data.code.toUpperCase());
-    
+
     const instituteData = {
       ...data,
       code: data.code.toUpperCase(),

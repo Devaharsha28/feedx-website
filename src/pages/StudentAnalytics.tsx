@@ -226,7 +226,7 @@ const parseResultsJson = (payload: ResultsApiPayload, fallbackPin: string): Stud
 };
 
 const StudentAnalytics = () => {
-  const FEATURE_SOON = true;
+  const FEATURE_SOON = false;
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -259,6 +259,7 @@ const StudentAnalytics = () => {
     setAttendance(null);
 
     const API_BASE = import.meta.env.VITE_API_URL || '';
+    console.log(`[DEBUG] Fetching analytics for PIN: ${trimmed}`);
 
     try {
       const [resultsResp, attendanceResp] = await Promise.allSettled([
@@ -271,28 +272,37 @@ const StudentAnalytics = () => {
 
       if (resultsResp.status === 'fulfilled') {
         const resRes = resultsResp.value;
+        console.log(`[DEBUG] Results Response Status: ${resRes.status}`);
         if (!resRes.ok) {
           const maybe = await resRes.json().catch(() => null);
+          console.warn('[DEBUG] Results API Error:', maybe);
           resultsError = maybe?.error || 'Failed to fetch results';
         } else {
           const resJson = await resRes.json();
+          console.log('[DEBUG] Results JSON:', resJson);
           if (!resJson?.success || !resJson?.data) {
             resultsError = resJson?.error || 'Invalid results response';
           } else {
-            setResults(parseResultsJson(resJson.data as ResultsApiPayload, trimmed));
+            const parsed = parseResultsJson(resJson.data as ResultsApiPayload, trimmed);
+            console.log('[DEBUG] Parsed Results:', parsed);
+            setResults(parsed);
           }
         }
       } else {
+        console.error('[DEBUG] Results Fetch Failed:', resultsResp.reason);
         resultsError = resultsResp.reason?.message || 'Failed to fetch results';
       }
 
       if (attendanceResp.status === 'fulfilled') {
         const attRes = attendanceResp.value;
+        console.log(`[DEBUG] Attendance Response Status: ${attRes.status}`);
         if (!attRes.ok) {
           const maybe = await attRes.json().catch(() => null);
+          console.warn('[DEBUG] Attendance API Error:', maybe);
           attendanceError = maybe?.error || maybe?.message || 'Failed to fetch attendance';
         } else {
           const attJson = await attRes.json();
+          console.log('[DEBUG] Attendance JSON:', attJson);
           if (!attJson?.success) {
             attendanceError = attJson?.error || 'Invalid attendance response';
           } else {
@@ -300,6 +310,7 @@ const StudentAnalytics = () => {
           }
         }
       } else {
+        console.error('[DEBUG] Attendance Fetch Failed:', attendanceResp.reason);
         attendanceError = attendanceResp.reason?.message || 'Failed to fetch attendance';
       }
 
@@ -310,6 +321,7 @@ const StudentAnalytics = () => {
         setError(`Attendance unavailable: ${attendanceError}`);
       }
     } catch (e: any) {
+      console.error('[DEBUG] Access Error:', e);
       setError(e?.message || 'Failed to fetch analytics. Please try again.');
     } finally {
       setIsLoading(false);
@@ -337,13 +349,6 @@ const StudentAnalytics = () => {
             <p className="text-lg text-muted-foreground max-w-2xl">
               Enter your PIN to fetch attendance and academic performance details.
             </p>
-            {FEATURE_SOON && (
-              <div className="mt-4">
-                <Alert>
-                  <AlertDescription>Student analytics feature will be available soon. We're working to restore reliable attendance and results fetch.</AlertDescription>
-                </Alert>
-              </div>
-            )}
           </div>
           <img src={analyticsIllustration} alt="Student analytics" className="w-full max-w-sm animate-float" />
         </div>
@@ -482,8 +487,8 @@ const StudentAnalytics = () => {
 
           {/* Recommended Resources */}
           {results && results.weakSubjects.length > 0 && (
-            <RecommendedResources 
-              weakSubjects={results.weakSubjects} 
+            <RecommendedResources
+              weakSubjects={results.weakSubjects}
               topSubjects={results.topSubjects}
             />
           )}

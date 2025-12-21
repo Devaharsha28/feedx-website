@@ -87,7 +87,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com;"
   );
   next();
 });
@@ -104,28 +104,28 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // Check if this is a resource upload (has resourceName in body)
     const resourceName = req.body.resourceName;
-    
+
     if (resourceName) {
       // Create folder for this resource
       const sanitizedName = resourceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       const resourcePath = path.join(uploadsDir, 'resources', sanitizedName);
-      
+
       if (!fs.existsSync(resourcePath)) {
         fs.mkdirSync(resourcePath, { recursive: true });
       }
-      
+
       cb(null, resourcePath);
     } else {
       // Determine folder based on file type
       let uploadPath = path.join(uploadsDir, 'others');
-      
+
       if (file.mimetype.startsWith('image/')) {
         uploadPath = path.join(uploadsDir, 'images');
       } else if (file.mimetype.startsWith('video/')) {
         uploadPath = path.join(uploadsDir, 'videos');
       } else if (
-        file.mimetype.includes('pdf') || 
-        file.mimetype.includes('document') || 
+        file.mimetype.includes('pdf') ||
+        file.mimetype.includes('document') ||
         file.mimetype.includes('text') ||
         file.mimetype.includes('word') ||
         file.mimetype.includes('excel') ||
@@ -135,14 +135,14 @@ const storage = multer.diskStorage({
       ) {
         uploadPath = path.join(uploadsDir, 'documents');
       }
-      
+
       cb(null, uploadPath);
     }
   },
   filename: (req, file, cb) => {
     const resourceName = req.body.resourceName;
     const fileCounter = req.body.fileCounter || Date.now();
-    
+
     if (resourceName) {
       // For resources, use resourceName-counter.extension format
       const sanitizedName = resourceName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -222,9 +222,9 @@ app.post('/api/upload', verifyToken, (req, res) => {
     // Get relative path from uploads dir (e.g., "images/123456.jpg")
     const relativePath = path.relative(uploadsDir, req.file.path).replace(/\\/g, '/');
     const fileUrl = `/uploads/${relativePath}`;
-    
+
     console.log('✅ File uploaded:', req.file.filename, '→', fileUrl);
-    
+
     res.json({
       success: true,
       url: fileUrl,
@@ -248,11 +248,11 @@ app.use((error, req, res, next) => {
     }
     return res.status(400).json({ error: `Upload error: ${error.message}` });
   }
-  
+
   if (error.message && error.message.includes('File type not allowed')) {
     return res.status(400).json({ error: error.message });
   }
-  
+
   console.error('Server error:', error);
   res.status(500).json({ error: 'Internal server error' });
 });
@@ -262,7 +262,7 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     console.log('Login attempt:', { username, passwordProvided: !!password });
-    
+
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
@@ -270,19 +270,19 @@ app.post('/api/auth/login', async (req, res) => {
     const users = readJsonFile('users.json');
     console.log('Users loaded:', users.length, 'users found');
     console.log('Looking for user:', username);
-    
+
     const user = users.find(u => u.username === username || u.email === username);
 
     if (!user) {
       console.log('User not found');
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     console.log('User found:', user.username);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     console.log('Password match:', passwordMatch);
-    
+
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -309,7 +309,7 @@ app.post('/api/auth/register', verifyToken, async (req, res) => {
     }
 
     const users = readJsonFile('users.json');
-    
+
     // Check if username or email already exists
     if (users.find(u => u.username === username)) {
       return res.status(400).json({ error: 'Username already exists' });
@@ -335,7 +335,7 @@ app.post('/api/auth/register', verifyToken, async (req, res) => {
     users.push(newUser);
     writeJsonFile('users.json', users);
 
-    res.json({ 
+    res.json({
       message: 'User created successfully',
       user: { id: newUser.id, username: newUser.username, name: newUser.name, email: newUser.email }
     });
@@ -364,19 +364,19 @@ app.get('/api/auth/users', verifyToken, (req, res) => {
 app.delete('/api/auth/users/:id', verifyToken, (req, res) => {
   let users = readJsonFile('users.json');
   const userToDelete = users.find(u => u.id === req.params.id || u.id === parseInt(req.params.id));
-  
+
   if (!userToDelete) {
     return res.status(404).json({ error: 'User not found' });
   }
-  
+
   // Prevent deleting the last admin
   if (users.length === 1) {
     return res.status(400).json({ error: 'Cannot delete the last user' });
   }
-  
+
   users = users.filter(u => u.id !== req.params.id && u.id !== parseInt(req.params.id));
   writeJsonFile('users.json', users);
-  
+
   res.json({ message: 'User deleted successfully' });
 });
 
@@ -480,23 +480,23 @@ app.post('/api/admin/institutes', verifyToken, (req, res) => {
     if (!data.code || !data.name) {
       return res.status(400).json({ error: 'Code and name are required' });
     }
-    
+
     const institutes = readJsonFile('institutes.json');
     const existingIndex = institutes.findIndex(i => i.code.toUpperCase() === data.code.toUpperCase());
-    
+
     const instituteData = {
       ...data,
       code: data.code.toUpperCase(),
       updatedAt: new Date().toISOString()
     };
-    
+
     if (existingIndex >= 0) {
       institutes[existingIndex] = instituteData;
     } else {
       instituteData.createdAt = new Date().toISOString();
       institutes.push(instituteData);
     }
-    
+
     writeJsonFile('institutes.json', institutes);
     res.json(instituteData);
   } catch (error) {
@@ -556,8 +556,8 @@ const pickNumberByKey = (obj, patterns) => {
 
 // Compute attendance summary
 const computeAttendanceSummary = (studentInfo, records) => {
-  const source = (studentInfo && Object.keys(studentInfo).length > 0) 
-    ? studentInfo 
+  const source = (studentInfo && Object.keys(studentInfo).length > 0)
+    ? studentInfo
     : (records && records.length > 0 ? records[0] : {});
 
   // Debug log to see actual keys
@@ -590,8 +590,8 @@ const computeAttendanceSummary = (studentInfo, records) => {
 
   const totalDaysN = asInt(totalDays);
   const presentDaysN = asInt(presentDays);
-  const absentDaysN = (totalDaysN !== null && presentDaysN !== null) 
-    ? asInt(totalDaysN - presentDaysN) 
+  const absentDaysN = (totalDaysN !== null && presentDaysN !== null)
+    ? asInt(totalDaysN - presentDaysN)
     : null;
 
   return {
@@ -657,15 +657,27 @@ const fetchAttendance = async (pin) => {
   let lastError = null;
   for (const url of urls) {
     try {
+      console.log(`[DEBUG] Fetching Attendance from: ${url}`);
       const response = await fetch(url, { headers: sbtetHeaders, timeout: 15000 });
+      console.log(`[DEBUG] Attendance API Status: ${response.status}`);
+
       if (!response.ok) {
         lastError = new Error(`HTTP ${response.status}`);
         continue;
       }
       let data = await response.json();
-      if (typeof data === 'string') data = JSON.parse(data);
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          console.error('[DEBUG] Failed to parse double-encoded JSON for attendance', e);
+        }
+      }
+
+      console.log(`[DEBUG] Attendance Data Received:`, data ? 'Valid' : 'Null');
       return data;
     } catch (err) {
+      console.error(`[DEBUG] Error fetching attendance from ${url}:`, err.message);
       lastError = err;
     }
   }
@@ -683,70 +695,160 @@ const fetchResultsJson = async (pin) => {
   try {
     const html = await fetchResultsHtml(pin);
 
-    // Basic parsing to extract tables of results and SGPA
-    const sgpaMatch = html.match(/(SGPA|CGPA|GPA)[:\s]*([0-9]+(?:\.[0-9]+)?)/i);
-    const sgpa = sgpaMatch ? parseFloat(sgpaMatch[2]) : null;
-
-    const studentNameMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i) || html.match(/Student\s*Name[:\s]*([^<\n\r]+)/i);
-    const studentName = studentNameMatch ? studentNameMatch[1].trim() : null;
-
-    // Extract rows from any tables as arrays
-    const tables = [];
-    const tableRegex = /<table[^>]*>([\s\S]*?)<\/table>/gi;
-    let t;
-    while ((t = tableRegex.exec(html)) !== null) {
-      const tableHtml = t[1];
-      const rows = [];
-      const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
-      let tr;
-      while ((tr = trRegex.exec(tableHtml)) !== null) {
-        const cols = [...tr[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(m => m[1].replace(/<[^>]+>/g,'').trim());
-        if (cols.length) rows.push(cols);
+    // PARSING LOGIC: Extract data from Proxy HTML and map to SBTET Schema
+    // 1. Extract SGPA Data from script tag
+    // Format: const sgpaData = [{"credits": 20.0, "sem_id": 1, "semester": "1SEM", "sgpa": 7.88, "total_grade_points": 157.5}, ...];
+    const sgpaScriptMatch = html.match(/const sgpaData\s*=\s*(\[.*?\]);/s);
+    let table3 = []; // SGPA History
+    if (sgpaScriptMatch && sgpaScriptMatch[1]) {
+      try {
+        const sgpaRaw = JSON.parse(sgpaScriptMatch[1]);
+        table3 = sgpaRaw.map(s => ({
+          Semester: s.semester,
+          Credits: s.credits,
+          TotalGradePoints: s.total_grade_points,
+          SGPA: s.sgpa,
+          SemId: s.sem_id
+        }));
+        console.log(`[DEBUG] Parsed ${table3.length} SGPA records`);
+      } catch (e) {
+        console.error('[DEBUG] Failed to parse SGPA script JSON', e);
       }
-      if (rows.length) tables.push(rows);
     }
 
-    const data = {
-      student: { name: studentName, pin },
-      sgpa,
-      tables,
-      rawHtml: html
+    // 2. Extract Student Details (Name, Pin, Branch, Center)
+    // HTML Structure:
+    // <strong>Name:</strong> DAMPANABOYINA DEVA HARSHA<br>
+    // <strong>PIN:</strong> 24054-CPS-015<br>
+    // <strong>Branch:</strong> CPS (C24)
+    // ...
+    // <strong>Center:</strong> GOVT INSTITUTE OF ELECTRONICS...<br>
+
+    // Improved regex to capture text following the strong tag labels
+    const extractStrong = (label) => {
+      const regex = new RegExp(`<strong>${label}:</strong>\\s*(.*?)(?:<br>|</div>|<\\/div>)`, 'i');
+      const match = html.match(regex);
+      return match ? match[1].trim() : '';
     };
 
-    // If parsing produced useful data, cache and return it
-    if (studentName || sgpa !== null || tables.length) {
+    const studentName = extractStrong('Name');
+    const studentPin = extractStrong('PIN') || pin;
+    const branch = extractStrong('Branch');
+    const center = extractStrong('Center');
+
+    console.log(`[DEBUG] Extracted Student: Name="${studentName}", Branch="${branch}"`);
+
+    // 3. Extract All Subjects from the "All Subjects" table
+    // Table Headers: Semester, Subject, Code, Type, Marks, Grade, Grade Point, Credits
+    let table2 = []; // Subjects
+    const tableRegex = /<table[^>]*class="data-table"[^>]*>([\s\S]*?)<\/table>/gi;
+    let match;
+    while ((match = tableRegex.exec(html)) !== null) {
+      const tableContent = match[1];
+      // Check if this is the "All Subjects" table by looking for header
+      if (tableContent.includes('<th>Subject</th>') && tableContent.includes('<th>Code</th>')) {
+        const trRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+        let trMatch;
+        // Skip header row usually, but our regex captures all trs.
+        // We filter by checking if it has <td>
+        while ((trMatch = trRegex.exec(tableContent)) !== null) {
+          const rowHtml = trMatch[1];
+          const cols = [...rowHtml.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1].replace(/<[^>]+>/g, '').trim());
+
+          // Expecting 8 columns
+          if (cols.length >= 8) {
+            table2.push({
+              Semester: cols[0],
+              SubjectName: cols[1],
+              Subject_Code: cols[2],
+              // Type: cols[3], // Not in standard schema but useful
+              SubjectTotal: cols[4] !== '—' ? cols[4] : null, // Marks
+              HybridGrade: cols[5], // Grade
+              GradePoint: cols[6],
+              MaxCredits: cols[7]
+            });
+          }
+        }
+      }
+    }
+    console.log(`[DEBUG] Parsed ${table2.length} Subject records`);
+
+    // 4. Calculate Summary (Table1)
+    // CGPA, TotalMaxCredits, CreditsGained
+    // Extract directly from HTML if available
+    const cgpaRaw = extractStrong('CGPA');
+    const creditsRaw = extractStrong('Credits'); // e.g., "40.0/40.0"
+
+    let calculatedCgpa = cgpaRaw && !isNaN(parseFloat(cgpaRaw)) ? parseFloat(cgpaRaw) : null;
+    let totalCredits = 0;
+    let gainedCredits = 0;
+
+    if (creditsRaw && creditsRaw.includes('/')) {
+      const [gained, total] = creditsRaw.split('/').map(s => parseFloat(s));
+      if (!isNaN(gained)) gainedCredits = gained;
+      if (!isNaN(total)) totalCredits = total;
+    } else {
+      // Fallback calculation
+      if (table3.length > 0) {
+        table3.forEach(rec => {
+          if (rec.Credits) {
+            const cred = parseFloat(rec.Credits);
+            totalCredits += cred;
+            gainedCredits += cred; // Approx 
+          }
+        });
+      } else {
+        table2.forEach(sub => {
+          const cred = parseFloat(sub.MaxCredits || 0);
+          totalCredits += cred;
+          if (sub.HybridGrade !== 'F' && sub.HybridGrade !== 'AB') {
+            gainedCredits += cred;
+          }
+        });
+      }
+
+      if (calculatedCgpa === null && table3.length > 0) {
+        let sum = 0;
+        let count = 0;
+        table3.forEach(rec => {
+          if (rec.SGPA) {
+            sum += parseFloat(rec.SGPA);
+            count++;
+          }
+        });
+        if (count > 0) calculatedCgpa = (sum / count).toFixed(2);
+      }
+    }
+
+    // 5. Construct Final Payload
+    const data = {
+      Table: [{
+        StudentName: studentName,
+        Pin: studentPin,
+        BranchName: branch, // Mapping to BranchName might be needed or just Branch
+        BranchCode: branch, // Frontend uses BranchCode/Scheme or just displays Branch
+        CenterName: center
+      }],
+      Table1: [{
+        TotalMaxCredits: totalCredits,
+        CreditsGained: gainedCredits,
+        CGPA: calculatedCgpa
+      }],
+      Table2: table2,
+      Table3: table3
+    };
+
+    if (studentName || table2.length > 0 || table3.length > 0) {
       resultsJsonCache.set(pinKey, { timestamp: Date.now(), data });
       return data;
     }
   } catch (err) {
-    console.warn('Proxy HTML parsing failed, falling back to official SBTET endpoints:', err.message);
+    console.warn('[DEBUG] Proxy HTML parsing failed:', err.message);
+    throw err; // Propagate error since we removed fallback
   }
 
-  // Fallback: try official SBTET results JSON endpoints
-  const urls = [
-    `https://www.sbtet.telangana.gov.in/api/api/Results/GetConsolidatedResults?Pin=${pin}`,
-    `https://www.sbtet.telangana.gov.in/api/Results/GetConsolidatedResults?Pin=${pin}`,
-  ];
-
-  let lastError = null;
-  for (const url of urls) {
-    try {
-      const response = await fetch(url, { headers: sbtetHeaders, timeout: 20000 });
-      if (!response.ok) {
-        lastError = new Error(`HTTP ${response.status}`);
-        continue;
-      }
-      let data = await response.json();
-      if (typeof data === 'string') data = JSON.parse(data);
-      if (!data) throw new Error('Empty response');
-
-      resultsJsonCache.set(pinKey, { timestamp: Date.now(), data });
-      return data;
-    } catch (err) {
-      lastError = err;
-    }
-  }
-  throw lastError || new Error('Failed to fetch results');
+  // Fallback removed as requested
+  throw new Error('Failed to fetch results from Proxy');
 };
 
 // Fetch results HTML from proxy
@@ -754,32 +856,44 @@ const fetchResultsHtml = async (pin) => {
   const pinKey = pin.toLowerCase();
   const cached = resultsCache.get(pinKey);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log('[DEBUG] Returning Cached HTML');
     return cached.html;
   }
 
   const url = `http://18.61.7.125/result/${pin}`;
-  const response = await fetch(url, {
-    headers: {
-      'User-Agent': sbtetHeaders['User-Agent'],
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    },
-    timeout: 20000,
-  });
+  console.log(`[DEBUG] Fetching Proxy HTML from: ${url}`);
 
-  if (response.status === 404) {
-    throw new Error('Student not found');
-  }
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': sbtetHeaders['User-Agent'],
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      },
+      timeout: 20000,
+    });
 
-  const html = await response.text();
-  if (html.length < 200) {
-    throw new Error('Empty HTML response');
-  }
+    console.log(`[DEBUG] Proxy HTML Status: ${response.status}`);
 
-  resultsCache.set(pinKey, { timestamp: Date.now(), html });
-  return html;
+    if (response.status === 404) {
+      throw new Error('Student not found');
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const html = await response.text();
+    console.log(`[DEBUG] Proxy HTML Length: ${html.length}`);
+
+    if (html.length < 200) {
+      throw new Error('Empty HTML response');
+    }
+
+    resultsCache.set(pinKey, { timestamp: Date.now(), html });
+    return html;
+  } catch (e) {
+    console.error(`[DEBUG] Proxy Fetch Failed: ${e.message}`);
+    throw e;
+  }
 };
 
 // GET /api/attendance - Fetch attendance by PIN
@@ -905,7 +1019,7 @@ app.get('/api/health', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '..', 'dist');
   app.use(express.static(distPath));
-  
+
   // Handle client-side routing - return index.html for all non-API, non-upload routes
   app.get('*', (req, res, next) => {
     // Don't intercept API or upload requests
@@ -914,7 +1028,7 @@ if (process.env.NODE_ENV === 'production') {
     }
     res.sendFile(path.join(distPath, 'index.html'));
   });
-  
+
   console.log('📦 Serving frontend from:', distPath);
 }
 

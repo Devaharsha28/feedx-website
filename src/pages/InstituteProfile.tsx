@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Input } from '@/components/ui/input';
@@ -241,16 +242,11 @@ const InstituteProfile = () => {
                       <td className="py-3 px-3 text-foreground">{index + 1}</td>
                       <td className="py-3 px-3 font-semibold">
                         {inst.code === 'IOES' ? (
-                          <a
-                            href="https://gioescbd.dte.telangana.gov.in/"
-                            className="text-primary hover:underline cursor-pointer"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <Link to="/ioes" className="text-primary hover:underline cursor-pointer font-bold">
                             {inst.code}
-                          </a>
+                          </Link>
                         ) : (
-                          <a href={`/institute/${inst.code}`} className="text-primary hover:underline cursor-pointer">{inst.code}</a>
+                          <Link to={`/institute/${inst.code}`} className="text-primary hover:underline cursor-pointer">{inst.code}</Link>
                         )}
                       </td>
                       <td className="py-3 px-3 text-foreground">{inst.name}</td>
