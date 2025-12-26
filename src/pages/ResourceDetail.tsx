@@ -86,13 +86,37 @@ export default function ResourceDetail() {
 
   const isImageUrl = (url: string) => /(\.(png|jpe?g|gif|webp|bmp|svg)$)/i.test(url);
   const isPdfUrl = (url: string) => /\.pdf($|\?)/i.test(url);
-  const isGoogleDrive = (url: string) => /drive\.google\.com\//i.test(url);
+  const isGoogleDrive = (url: string) => /(drive|docs)\.google\.com\//i.test(url);
+  const isGoogleFolder = (url: string) => /\/drive\/(?:u\/\d+\/)?folders\//i.test(url);
+
   const getDrivePreview = (url: string) => {
-    // Converts drive links to preview: /file/d/<id>/view -> /file/d/<id>/preview
-    const idMatch = url.match(/\/d\/([\w-]+)/);
-    if (idMatch?.[1]) return `https://drive.google.com/file/d/${idMatch[1]}/preview`;
-    // Fallback to Google Docs viewer
-    return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`;
+    // Folders cannot be embedded reliably
+    if (isGoogleFolder(url)) return null;
+
+    // Extract ID
+    const idMatch = url.match(/\/(?:d|file\/d|document\/d|spreadsheets\/d|presentation\/d|forms\/d)\/([\w-]+)/);
+    if (idMatch?.[1]) {
+      const id = idMatch[1];
+
+      // Forms use a specific embedded URL
+      if (url.includes('/forms/')) {
+        return `https://docs.google.com/forms/d/${id}/viewform?embedded=true`;
+      }
+
+      // Determine the type for better routing
+      let type = 'file';
+      if (url.includes('/document/')) type = 'document';
+      else if (url.includes('/spreadsheets/')) type = 'spreadsheets';
+      else if (url.includes('/presentation/')) type = 'presentation';
+
+      return `https://docs.google.com/${type}/d/${id}/preview`;
+    }
+
+    // If it's a google doc but doesn't match ID pattern, return as is
+    if (isGoogleDrive(url)) return url;
+
+    // Fallback for other files using Google's public viewer
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
   };
 
   const renderMedia = (url: string, key: number) => {
@@ -110,11 +134,23 @@ export default function ResourceDetail() {
         </div>
       );
     }
+
+    // Don't try to embed folders, they fall through to the download/view list
+    if (isGoogleFolder(url)) return null;
+
     if (isGoogleDrive(url) || isPdfUrl(url)) {
-      const embedUrl = isGoogleDrive(url) ? getDrivePreview(url) : `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`;
+      const embedUrl = isGoogleDrive(url) ? getDrivePreview(url) : `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
+      if (!embedUrl) return null;
+
       return (
         <div key={key} className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-border bg-card">
-          <iframe src={embedUrl} className="w-full h-full" title="Document viewer" />
+          <iframe
+            src={embedUrl}
+            className="w-full h-full"
+            title="Document viewer"
+            allow="autoplay"
+          />
         </div>
       );
     }
@@ -150,7 +186,7 @@ export default function ResourceDetail() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">{resource.title}</h1>
-            
+
             {resource.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
                 {resource.tags.map((tag) => (
@@ -216,7 +252,7 @@ export default function ResourceDetail() {
             <CardContent className="pt-6">
               <h2 className="text-xl font-semibold mb-4">Details</h2>
               <div className="prose prose-sm max-w-none dark:prose-invert">
-                <MarkdownRenderer 
+                <MarkdownRenderer
                   content={resource.longDescription || '*No additional details available.*'}
                   className="text-muted-foreground"
                 />
@@ -239,12 +275,12 @@ export default function ResourceDetail() {
                     // Extract filename from URL - handle both / and \ separators
                     const urlParts = file.replace(/\\/g, '/').split('/');
                     const fileName = urlParts[urlParts.length - 1] || `File-${idx + 1}`;
-                    const fileExt = fileName.includes('.') 
-                      ? fileName.split('.').pop()?.toUpperCase() 
+                    const fileExt = fileName.includes('.')
+                      ? fileName.split('.').pop()?.toUpperCase()
                       : 'FILE';
                     const previewable = !!renderMedia(file, -1);
                     if (previewable) return null;
-                    
+
                     return (
                       <div
                         key={idx}

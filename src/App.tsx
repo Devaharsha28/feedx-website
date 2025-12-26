@@ -42,6 +42,9 @@ import InstituteDetail from "./pages/InstituteDetail";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import LoginLogs from "./pages/LoginLogs";
+import ECETSyllabus from "./pages/ecet/Syllabus";
+import ECETTests from "./pages/ecet/Tests";
+import ECETPapers from "./pages/ecet/Papers";
 // ProtectedRoute removed - using simple localStorage check in components
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -89,6 +92,9 @@ const App = () => (
               <Route path="/spotlight" element={<Spotlight />} />
               <Route path="/celebrations" element={<Celebrations />} />
               <Route path="/ioes" element={<IOESPage />} />
+              <Route path="/syllabus" element={<ECETSyllabus />} />
+              <Route path="/tests" element={<ECETTests />} />
+              <Route path="/papers" element={<ECETPapers />} />
               <Route path="/join" element={<Join />} />
               <Route path="/fxbot" element={<FXBot />} />
               <Route path="/subscribe" element={<Subscribe />} />

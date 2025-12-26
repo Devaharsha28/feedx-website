@@ -55,11 +55,18 @@ echo ""
 
 # Check logs
 echo -e "${BLUE}Recent Logs:${NC}"
-if [ -f "logs/backend.log" ]; then
-    echo -e "${YELLOW}Backend (last 5 lines):${NC}"
-    tail -n 5 logs/backend.log | sed 's/^/   /'
-else
-    echo "   No backend logs found"
+if [ -f "node_server.log" ]; then
+    echo -e "${YELLOW}Node Server (last 5 lines):${NC}"
+    tail -n 5 node_server.log | sed 's/^/   /'
+fi
+
+if [ -f "python_api.log" ]; then
+    echo -e "${YELLOW}Python API (last 5 lines):${NC}"
+    tail -n 5 python_api.log | sed 's/^/   /'
+fi
+
+if [ ! -f "node_server.log" ] && [ ! -f "python_api.log" ] && [ ! -f "logs/backend.log" ]; then
+    echo "   No server logs found"
 fi
 echo ""
 

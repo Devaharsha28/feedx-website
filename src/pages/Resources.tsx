@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ExternalLink, Search, BookOpen, Award, Users, Briefcase, FileText, GraduationCap, ClipboardList } from 'lucide-react';
+import { ExternalLink, Search, BookOpen, Award, Users, Briefcase, FileText, GraduationCap, ClipboardList, ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { noDataIllustration, resourcesIllustration } from '@/lib/illustrations';
@@ -27,8 +27,38 @@ const Resources = () => {
     fetchAdminResources();
   }, []);
 
-  const resources = useMemo(
+  const internalResources = useMemo(
     () => [
+      {
+        id: 'ecet-syllabus',
+        title: 'ECET Syllabus',
+        description: 'Interactive breakdown of topics for ECET aspirants.',
+        category: 'Exams',
+        type: 'Interactive',
+        href: '/syllabus',
+        icon: <BookOpen className="w-5 h-5" />,
+        isInternal: true,
+      },
+      {
+        id: 'ecet-tests',
+        title: 'Subject-wise Tests',
+        description: 'Practice quizzes with real-time scoring and answer reveal.',
+        category: 'Exams',
+        type: 'Interactive',
+        href: '/tests',
+        icon: <ClipboardList className="w-5 h-5" />,
+        isInternal: true,
+      },
+      {
+        id: 'ecet-papers',
+        title: 'Previous Papers',
+        description: 'Download and practice with official previous year question papers.',
+        category: 'Exams',
+        type: 'Interactive',
+        href: '/papers',
+        icon: <FileText className="w-5 h-5" />,
+        isInternal: true,
+      },
       {
         id: 'gioe-qps',
         title: 'GIOE — Question Papers',
@@ -57,42 +87,6 @@ const Resources = () => {
         icon: <GraduationCap className="w-5 h-5" />,
       },
       {
-        id: 'gioe-jobs',
-        title: 'GIOE — Job Openings',
-        description: 'Job openings and career opportunities.',
-        category: 'Career',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/job-openings',
-        icon: <Briefcase className="w-5 h-5" />,
-      },
-      {
-        id: 'gioe-interview',
-        title: 'GIOE — Interview Preparation',
-        description: 'Interview prep resources for placements and internships.',
-        category: 'Career',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/interview-prep',
-        icon: <Award className="w-5 h-5" />,
-      },
-      {
-        id: 'gioe-studybuddy',
-        title: 'StudyBuddy AI (GIOE)',
-        description: 'AI-powered study buddy experience from the GIOE portal.',
-        category: 'Information',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/studybuddy',
-        icon: <Users className="w-5 h-5" />,
-      },
-      {
-        id: 'ecetrix',
-        title: 'ECETRIX',
-        description: 'External portal for ECET resources and related tools.',
-        category: 'Exams',
-        type: 'Website',
-        href: 'https://ecetrix.netlify.app',
-        icon: <ClipboardList className="w-5 h-5" />,
-      },
-      {
         id: 'cvgen',
         title: 'CV Generator',
         description: 'Generate a clean CV/resume quickly.',
@@ -101,52 +95,18 @@ const Resources = () => {
         href: 'https://cv-generator-v1.netlify.app/',
         icon: <FileText className="w-5 h-5" />,
       },
-      {
-        id: 'student-analytics-demo',
-        title: 'Student Analytics (Demo)',
-        description: 'Demo build of Student Analytics UI for review and testing.',
-        category: 'Projects',
-        type: 'Website',
-        href: 'https://ideal-meme-69wvggpj5x993r565-8080.app.github.dev/student-analytics',
-        icon: <ExternalLink className="w-5 h-5" />,
-      },
-      {
-        id: 'gioe-home',
-        title: 'GIOE Portal (Home)',
-        description: 'Government Institute of Electronics portal — papers, notes, courses, jobs.',
-        category: 'Official',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/',
-        icon: <ExternalLink className="w-5 h-5" />,
-      },
     ],
     []
   );
 
-  const quickLinks = useMemo(
-    () => [
-      {
-        title: 'GIOE Portal',
-        description: 'Papers, notes, courses, and job openings.',
-        href: 'https://gioe.netlify.app/',
-      },
-      {
-        title: 'Student Analytics (Demo)',
-        description: 'Preview the analytics UI.',
-        href: 'https://ideal-meme-69wvggpj5x993r565-8080.app.github.dev/student-analytics',
-      },
-    ],
-    []
-  );
-
-  const filteredResources = useMemo(() => {
+  const filteredInternalResources = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return resources;
-    return resources.filter((r) => {
+    if (!q) return internalResources;
+    return internalResources.filter((r) => {
       const hay = `${r.title} ${r.description} ${r.category} ${r.type}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [query, resources]);
+  }, [query, internalResources]);
 
   const filteredAdminResources = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -213,59 +173,90 @@ const Resources = () => {
         </div>
 
         {/* Resources Grid */}
-        {filteredAdminResources.length === 0 && adminResources.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center text-center text-muted-foreground space-y-4 py-12">
-            <img src={noDataIllustration} alt="No resources" className="w-full max-w-md" />
-            <p>No resources added yet. Go to Admin Panel to create resources.</p>
-          </div>
-        ) : filteredAdminResources.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center text-center text-muted-foreground space-y-4 py-12">
-            <img src={noDataIllustration} alt="No results" className="w-full max-w-md" />
-            <p>No resources found matching "{query}"</p>
-          </div>
-        ) : (
-          <div>
-            <h2 className="text-2xl font-bold mb-8">Resources {query && `(${filteredAdminResources.length} found)`}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              {filteredAdminResources.map((resource, index) => (
-                <Card key={resource.id} className="border border-border transition-all duration-300 animate-fade-in hover:shadow-md cursor-pointer" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => navigate(`/resources/${resource.id}`)}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge className="bg-gradient-brand text-white text-xs">
-                        {resource.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {resource.tags.slice(0, 3).map((tag, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                            {resource.tags.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{resource.tags.length - 3}
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-                        Resource
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg">{resource.title}</CardTitle>
-                    <CardDescription>{resource.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button className="w-full bg-gradient-brand hover:opacity-90 transition-smooth">
-                      View Details
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+        <div className="space-y-16">
+          {/* Internal / Interactive Resources */}
+          {filteredInternalResources.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-8">ECET Interactive Portal</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredInternalResources.map((resource, index) => (
+                  <Card
+                    key={resource.id}
+                    className="border border-border transition-all duration-300 animate-fade-in hover:shadow-md cursor-pointer group"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => {
+                      if ('isInternal' in resource && resource.isInternal) {
+                        navigate(resource.href);
+                      } else {
+                        window.open(resource.href, '_blank');
+                      }
+                    }}
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge className="bg-gradient-brand text-white text-xs px-3">
+                          {'type' in resource ? resource.type : 'Resource'}
+                        </Badge>
+                        <div className="text-primary opacity-50 group-hover:opacity-100 transition-opacity">
+                          {'icon' in resource ? resource.icon : <FileText className="w-5 h-5" />}
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg">{resource.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{resource.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button className="w-full bg-gradient-brand hover:opacity-90 transition-smooth">
+                        {'isInternal' in resource && resource.isInternal ? "Open Interactive" : "Visit Link"}
+                        {'isInternal' in resource && resource.isInternal ? <ChevronRight className="w-4 h-4 ml-2" /> : <ExternalLink className="w-4 h-4 ml-2" />}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Admin Resources */}
+          {filteredAdminResources.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold mb-8">Subject-wise Materials</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredAdminResources.map((resource, index) => (
+                  <Card key={resource.id} className="border border-border transition-all duration-300 animate-fade-in hover:shadow-md cursor-pointer group" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => navigate(`/resources/${resource.id}`)}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge variant="secondary" className="text-xs px-3">
+                          {resource.tags[0] || 'Resource'}
+                        </Badge>
+                        <div className="text-primary opacity-50 group-hover:opacity-100 transition-opacity">
+                          <BookOpen className="w-5 h-5" />
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg">{resource.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{resource.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button variant="outline" className="w-full hover:bg-primary hover:text-primary-foreground transition-smooth">
+                        View Details
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {filteredAdminResources.length === 0 && filteredInternalResources.length === 0 && (
+            <div className="col-span-full flex flex-col items-center text-center text-muted-foreground space-y-4 py-12">
+              <img src={noDataIllustration} alt="No results" className="w-full max-w-md" />
+              <p>No resources found matching "{query}"</p>
+            </div>
+          )}
+        </div>
 
         {/* Call to Action */}
-        {filteredResources.length > 0 && (
+        {(filteredAdminResources.length > 0 || filteredInternalResources.length > 0) && (
           <div className="text-center">
             <Card className="max-w-2xl mx-auto glass-card border-primary/20">
               <CardContent className="p-8">

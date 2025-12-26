@@ -87,7 +87,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com https://drive.google.com https://docs.google.com;"
   );
   next();
 });
@@ -457,6 +457,22 @@ createCrudRoutes('resources');
 createCrudRoutes('events');
 createCrudRoutes('spotlight');
 createCrudRoutes('testimonials');
+
+// ================== ECET DATA ROUTES ==================
+app.get('/api/ecet/syllabus', (req, res) => {
+  const data = readJsonFile('ecet-syllabus.json');
+  res.json(data);
+});
+
+app.get('/api/ecet/tests', (req, res) => {
+  const data = readJsonFile('ecet-tests.json');
+  res.json(data);
+});
+
+app.get('/api/ecet/papers', (req, res) => {
+  const data = readJsonFile('ecet-papers.json');
+  res.json(data);
+});
 
 // INSTITUTES - Custom routes for institute management
 app.get('/api/admin/institutes', (req, res) => {

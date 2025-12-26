@@ -35,7 +35,7 @@ const AUTH_BASE = `${API_HOST}/auth`;
 // Helper function for authenticated requests
 const authenticatedFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const token = localStorage.getItem('adminToken');
-  
+
   // For FormData, don't set Content-Type (let browser set it with boundary)
   if (options.body instanceof FormData) {
     const headers: HeadersInit = {
@@ -121,6 +121,34 @@ export interface Testimonial {
   timestamp: string;
 }
 
+export interface EcetTopic {
+  title: string;
+  summary: string;
+  details: string[];
+}
+
+export interface EcetSubject {
+  subject: string;
+  questions: number;
+  icon: string;
+  topics: EcetTopic[];
+}
+
+export interface EcetQuestion {
+  q: string;
+  options: string[];
+  ans: string;
+}
+
+export interface EcetPaper {
+  year: string;
+  season: string;
+  questions: number;
+  duration: string;
+  difficulty: string;
+  downloadUrl: string;
+}
+
 // Notifications API
 export const notificationsAPI = {
   getAll: async (): Promise<Notification[]> => {
@@ -128,7 +156,7 @@ export const notificationsAPI = {
     if (!response.ok) throw new Error('Failed to fetch notifications');
     return response.json();
   },
-  
+
   create: async (data: Omit<Notification, 'id' | 'timestamp'>): Promise<Notification> => {
     const response = await authenticatedFetch(`${API_BASE}/notifications`, {
       method: 'POST',
@@ -137,7 +165,7 @@ export const notificationsAPI = {
     if (!response.ok) throw new Error('Failed to create notification');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/notifications/${id}`, {
       method: 'DELETE',
@@ -153,7 +181,7 @@ export const updatesAPI = {
     if (!response.ok) throw new Error('Failed to fetch updates');
     return response.json();
   },
-  
+
   create: async (data: Omit<Update, 'id' | 'timestamp'>): Promise<Update> => {
     const response = await authenticatedFetch(`${API_BASE}/updates`, {
       method: 'POST',
@@ -162,7 +190,7 @@ export const updatesAPI = {
     if (!response.ok) throw new Error('Failed to create update');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/updates/${id}`, {
       method: 'DELETE',
@@ -178,13 +206,13 @@ export const resourcesAPI = {
     if (!response.ok) throw new Error('Failed to fetch resources');
     return response.json();
   },
-  
+
   getById: async (id: string): Promise<Resource> => {
     const response = await authenticatedFetch(`${API_BASE}/resources/${id}`);
     if (!response.ok) throw new Error('Failed to fetch resource');
     return response.json();
   },
-  
+
   create: async (data: Omit<Resource, 'id' | 'timestamp'>): Promise<Resource> => {
     const response = await authenticatedFetch(`${API_BASE}/resources`, {
       method: 'POST',
@@ -193,7 +221,7 @@ export const resourcesAPI = {
     if (!response.ok) throw new Error('Failed to create resource');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/resources/${id}`, {
       method: 'DELETE',
@@ -209,7 +237,7 @@ export const eventsAPI = {
     if (!response.ok) throw new Error('Failed to fetch events');
     return response.json();
   },
-  
+
   create: async (data: Omit<Event, 'id' | 'timestamp'>): Promise<Event> => {
     const response = await authenticatedFetch(`${API_BASE}/events`, {
       method: 'POST',
@@ -218,7 +246,7 @@ export const eventsAPI = {
     if (!response.ok) throw new Error('Failed to create event');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/events/${id}`, {
       method: 'DELETE',
@@ -234,7 +262,7 @@ export const spotlightAPI = {
     if (!response.ok) throw new Error('Failed to fetch spotlight');
     return response.json();
   },
-  
+
   create: async (data: Omit<Spotlight, 'id' | 'timestamp'>): Promise<Spotlight> => {
     const response = await authenticatedFetch(`${API_BASE}/spotlight`, {
       method: 'POST',
@@ -243,7 +271,7 @@ export const spotlightAPI = {
     if (!response.ok) throw new Error('Failed to create spotlight');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/spotlight/${id}`, {
       method: 'DELETE',
@@ -259,7 +287,7 @@ export const testimonialsAPI = {
     if (!response.ok) throw new Error('Failed to fetch testimonials');
     return response.json();
   },
-  
+
   create: async (data: Omit<Testimonial, 'id' | 'timestamp'>): Promise<Testimonial> => {
     const response = await authenticatedFetch(`${API_BASE}/testimonials`, {
       method: 'POST',
@@ -268,7 +296,7 @@ export const testimonialsAPI = {
     if (!response.ok) throw new Error('Failed to create testimonial');
     return response.json();
   },
-  
+
   delete: async (id: string): Promise<void> => {
     const response = await authenticatedFetch(`${API_BASE}/testimonials/${id}`, {
       method: 'DELETE',
@@ -300,7 +328,7 @@ export const authAPI = {
 // Image upload helper - uploads to server and returns URL (WhatsApp style)
 export const uploadImage = async (file: File): Promise<string> => {
   console.log('uploadImage called with:', file.name, file.type, file.size);
-  
+
   // Validate file size (max 10MB for images)
   if (file.size > 10 * 1024 * 1024) {
     throw new Error('Image file size must be less than 10MB');
@@ -322,7 +350,7 @@ export const uploadImage = async (file: File): Promise<string> => {
   });
 
   console.log('Upload response status:', response.status);
-  
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Upload failed' }));
     console.error('Upload error response:', error);
@@ -337,7 +365,7 @@ export const uploadImage = async (file: File): Promise<string> => {
 // File upload helper - uploads to server and returns URL (WhatsApp style)
 export const uploadFile = async (file: File, resourceName?: string, fileCounter?: number): Promise<string> => {
   console.log('uploadFile called with:', file.name, file.type, file.size, 'resourceName:', resourceName);
-  
+
   // Validate file size (max 100MB for files)
   const maxSize = 100 * 1024 * 1024; // 100MB
   if (file.size > maxSize) {
@@ -363,7 +391,7 @@ export const uploadFile = async (file: File, resourceName?: string, fileCounter?
     'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'
   ];
 
-  const isAllowedType = allowedTypes.includes(file.type) || 
+  const isAllowedType = allowedTypes.includes(file.type) ||
     file.name.match(/\.(pdf|mp4|avi|mov|wmv|flv|webm|mkv|doc|docx|xls|xlsx|ppt|pptx|txt|zip|rar|jpg|jpeg|png|gif|webp|bmp|svg|mp3|wav|ogg|csv|html|css|js|json)$/i);
 
   if (!isAllowedType) {
@@ -373,7 +401,7 @@ export const uploadFile = async (file: File, resourceName?: string, fileCounter?
   // Upload to server
   const formData = new FormData();
   formData.append('file', file);
-  
+
   // Add resource metadata if provided
   if (resourceName) {
     formData.append('resourceName', resourceName);
@@ -397,6 +425,24 @@ export const uploadFile = async (file: File, resourceName?: string, fileCounter?
   }
 
   const data = await response.json();
-  console.log('Upload success:', data);
   return data.url;
+};
+
+// ECET API
+export const ecetAPI = {
+  getSyllabus: async (): Promise<EcetSubject[]> => {
+    const response = await fetch(`${API_HOST}/ecet/syllabus`);
+    if (!response.ok) throw new Error('Failed to fetch syllabus');
+    return response.json();
+  },
+  getTests: async (): Promise<Record<string, EcetQuestion[]>> => {
+    const response = await fetch(`${API_HOST}/ecet/tests`);
+    if (!response.ok) throw new Error('Failed to fetch tests');
+    return response.json();
+  },
+  getPapers: async (): Promise<EcetPaper[]> => {
+    const response = await fetch(`${API_HOST}/ecet/papers`);
+    if (!response.ok) throw new Error('Failed to fetch papers');
+    return response.json();
+  }
 };

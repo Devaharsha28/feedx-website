@@ -118,7 +118,7 @@ app.use((req, res, next) => {
   // Set a permissive Content Security Policy for development and Heyzine embedding
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self' https://heyzine.com https://drive.google.com https://docs.google.com;"
   );
 
   // Handle preflight requests
@@ -728,6 +728,22 @@ app.listen(PORT, () => {
 // Test endpoint
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Server is running', timestamp: new Date().toISOString() });
+});
+
+// ================== ECET DATA ROUTES ==================
+app.get('/api/ecet/syllabus', (req, res) => {
+  const data = readDataFile('ecet-syllabus.json');
+  res.json(data);
+});
+
+app.get('/api/ecet/tests', (req, res) => {
+  const data = readDataFile('ecet-tests.json');
+  res.json(data);
+});
+
+app.get('/api/ecet/papers', (req, res) => {
+  const data = readDataFile('ecet-papers.json');
+  res.json(data);
 });
 
 // ============ ADMIN PANEL APIs ============
