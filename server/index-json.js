@@ -822,16 +822,12 @@ const fetchResultsJson = async (pin) => {
     }
 
     // 2. Extract Student Details (Name, Pin, Branch, Center)
-    // HTML Structure:
-    // <strong>Name:</strong> DAMPANABOYINA DEVA HARSHA<br>
-    // <strong>PIN:</strong> 24054-CPS-015<br>
-    // <strong>Branch:</strong> CPS (C24)
-    // ...
-    // <strong>Center:</strong> GOVT INSTITUTE OF ELECTRONICS...<br>
+    console.log(`[DEBUG] Proxy HTML Sample: ${html.substring(0, 500).replace(/\n/g, ' ')}`);
 
-    // Improved regex to capture text following the strong tag labels
+    // Improved regex to capture text following the strong tag labels, handling variability in colon placement and newlines.
     const extractStrong = (label) => {
-      const regex = new RegExp(`<strong>${label}:</strong>\\s*(.*?)(?:<br>|</div>|<\\/div>)`, 'i');
+      // Use [\s\S]*? to match across newlines and handle boundaries more flexibly
+      const regex = new RegExp(`<strong>\\s*${label}\\s*[:\\s]*<\\/strong>\\s*[:\\s]*([\\s\\S]*?)(?:<br>|</div>|<\\/div>|$)`, 'i');
       const match = html.match(regex);
       return match ? match[1].trim() : '';
     };
@@ -841,7 +837,10 @@ const fetchResultsJson = async (pin) => {
     const branch = extractStrong('Branch');
     const center = extractStrong('Center');
 
-    console.log(`[DEBUG] Extracted Student: Name="${studentName}", Branch="${branch}"`);
+    console.log(`[DEBUG] Extracted Student Result: Name="${studentName}", PIN="${studentPin}", Branch="${branch}", Center="${center}"`);
+    if (!branch) {
+      console.warn(`[DEBUG] BRANCH EXTRACTION FAILED for PIN ${pin}. Searching for "Branch" in HTML... Found index: ${html.indexOf('Branch')}`);
+    }
 
     // 3. Extract All Subjects from the "All Subjects" table
     // Table Headers: Semester, Subject, Code, Type, Marks, Grade, Grade Point, Credits
@@ -930,8 +929,9 @@ const fetchResultsJson = async (pin) => {
       Table: [{
         StudentName: studentName,
         Pin: studentPin,
-        BranchName: branch, // Mapping to BranchName might be needed or just Branch
-        BranchCode: branch, // Frontend uses BranchCode/Scheme or just displays Branch
+        Branch: branch,
+        BranchName: branch,
+        BranchCode: branch,
         CenterName: center
       }],
       Table1: [{
@@ -1050,6 +1050,17 @@ app.get('/api/attendance', async (req, res) => {
       response.studentInfo,
       response.attendanceRecords
     );
+
+    // If attendance is not found, default to 0% as requested
+    if (!response.attendanceSummary.attendancePercentage && response.attendanceSummary.attendancePercentage !== 0) {
+      response.attendanceSummary = {
+        attendancePercentage: 0,
+        totalDays: 0,
+        presentDays: 0,
+        absentDays: 0,
+        isFallback: true
+      };
+    }
 
     if (!response.studentInfo || Object.keys(response.studentInfo).length === 0) {
       return res.status(404).json({

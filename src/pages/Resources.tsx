@@ -185,7 +185,7 @@ const Resources = () => {
             <div>
               <h2 className="text-2xl font-bold mb-8">Subject-wise Materials</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAdminResources.map((resource, index) => (
+                {(query.trim() ? filteredAdminResources : filteredAdminResources.slice(0, 9)).map((resource, index) => (
                   <Card key={resource.id} className="border border-border transition-all duration-300 animate-fade-in hover:shadow-md cursor-pointer group" style={{ animationDelay: `${index * 0.1}s` }} onClick={() => navigate(`/resources/${resource.id}`)}>
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
@@ -229,12 +229,17 @@ const Resources = () => {
                   Can't find what you're looking for? Let us know what resources you need,
                   and we'll help you find the right materials for your branch and semester.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" className="bg-gradient-brand hover:opacity-90 transition-smooth glow-primary">
+                <div className="flex justify-center">
+                  <Button
+                    size="lg"
+                    className="bg-gradient-brand hover:opacity-90 transition-smooth glow-primary"
+                    onClick={() => {
+                      import('sonner').then(({ toast }) => {
+                        toast.info("Please contact feedxhub@gmail.com for resource requests.");
+                      });
+                    }}
+                  >
                     Request Resource
-                  </Button>
-                  <Button size="lg" variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-smooth">
-                    Contact Support
                   </Button>
                 </div>
               </CardContent>

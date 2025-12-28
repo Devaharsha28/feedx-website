@@ -100,6 +100,7 @@ export interface Event {
   time: string;
   location: string;
   registerLink: string;
+  status: 'upcoming' | 'conducted';
   files: string[];
   timestamp: string;
 }

@@ -26,6 +26,7 @@ export default function AddEvent() {
     location: "",
     registerLink: "",
     image: "",
+    status: "upcoming" as "upcoming" | "conducted",
     files: [] as string[],
   });
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -113,6 +114,7 @@ export default function AddEvent() {
         location: formData.location,
         registerLink: formData.registerLink || "#",
         image: formData.image,
+        status: formData.status,
         files: formData.files,
       });
 
@@ -129,6 +131,7 @@ export default function AddEvent() {
         location: "",
         registerLink: "",
         image: "",
+        status: "upcoming",
         files: [],
       });
       fetchEvents();
@@ -275,6 +278,28 @@ export default function AddEvent() {
                   </div>
 
                   <div>
+                    <Label>Event Status</Label>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        type="button"
+                        variant={formData.status === 'upcoming' ? 'default' : 'outline'}
+                        className="flex-1"
+                        onClick={() => setFormData(prev => ({ ...prev, status: 'upcoming' }))}
+                      >
+                        Upcoming
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={formData.status === 'conducted' ? 'default' : 'outline'}
+                        className="flex-1"
+                        onClick={() => setFormData(prev => ({ ...prev, status: 'conducted' }))}
+                      >
+                        Conducted
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
                     <Label>Event Image</Label>
                     <div className="mt-2">
                       <input
@@ -399,7 +424,15 @@ export default function AddEvent() {
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
-                          <h3 className="font-semibold mb-1">{event.title}</h3>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold">{event.title}</h3>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase ${event.status === 'upcoming'
+                                ? 'bg-green-100 text-green-700 border border-green-200'
+                                : 'bg-blue-100 text-blue-700 border border-blue-200'
+                              }`}>
+                              {event.status || 'upcoming'}
+                            </span>
+                          </div>
                           <p className="text-sm text-muted-foreground mb-2">
                             {event.description}
                           </p>

@@ -66,8 +66,8 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <AnniversaryPopup />
           <BrowserRouter>
+            <AnniversaryPopup />
             {/* Global background accents */}
             <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
               <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />

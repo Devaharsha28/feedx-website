@@ -182,13 +182,13 @@ const InstituteProfile = () => {
               <Card className="glass-card border-white/10">
                 <CardContent className="p-4">
                   <p className="text-sm text-muted-foreground">Government</p>
-                  <p className="text-2xl font-bold text-secondary">{stats.government}</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.government}</p>
                 </CardContent>
               </Card>
               <Card className="glass-card border-white/10">
                 <CardContent className="p-4">
                   <p className="text-sm text-muted-foreground">Women-focused</p>
-                  <p className="text-2xl font-bold text-accent">{stats.women}</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.women}</p>
                 </CardContent>
               </Card>
             </div>

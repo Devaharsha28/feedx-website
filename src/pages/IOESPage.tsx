@@ -196,29 +196,6 @@ const IOESPage = () => {
                                         </CardContent>
                                     </Card>
                                 </div>
-
-                                {/* Principal Message */}
-                                <Card>
-                                    <CardHeader>
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <CardTitle>About Principal</CardTitle>
-                                                <CardDescription className="mt-1 font-semibold text-primary">Sri. B. Ram Mohan Reddy, M.Tech., MISTE.</CardDescription>
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
-                                        <p>
-                                            Sri B. Ram Mohan Reddy is a dedicated academician and seasoned administrator with more than three decades of rich experience in technical education. He completed his Bachelor of Engineering (ECE) in 1989, laying a strong foundation for a lifelong career in teaching and institutional development. He joined the Department of Technical Education as a Lecturer on 06-08-1992, marking the beginning of his long and committed service in government polytechnic education.
-                                        </p>
-                                        <p>
-                                            With a deep passion for advanced learning and academic excellence, he pursued and successfully completed his M.Tech in Digital Systems & Computer Electronics from JNTU in 1999. His consistent academic growth and commitment to teaching led to his promotion as Senior Lecturer in 2014. Recognizing his leadership qualities and administrative capabilities, he was promoted as Head of the Department in 2017.
-                                        </p>
-                                        <p>
-                                            In recognition of his vast experience, integrity, and leadership, Sri B. Ram Mohan Reddy assumed charge as Principal (FAC) in December 2025 at the Government Institute of Electronics, Secunderabad.
-                                        </p>
-                                    </CardContent>
-                                </Card>
                             </div>
 
                             {/* Right Sidebar */}

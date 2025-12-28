@@ -113,9 +113,9 @@ const parseResultsJson = (payload: ResultsApiPayload, fallbackPin: string): Stud
 
   const studentName = (student.StudentName || '').trim() || undefined;
   const studentPin = normalizePin(student.Pin || fallbackPin) || undefined;
-  const branchCode = (student.BranchCode || '').trim();
+  const branchFromApi = (student.Branch || student.BranchName || student.BranchCode || '').trim();
   const scheme = (student.Scheme || '').trim();
-  const branch = branchCode ? `${branchCode}${scheme ? ` (${scheme})` : ''}` : undefined;
+  const branch = branchFromApi ? `${branchFromApi}${scheme ? ` (${scheme})` : ''}` : undefined;
 
   const centerName = (student.CenterName || '').trim();
   const centerCode = (student.CenterCode || '').trim();
@@ -421,21 +421,21 @@ const StudentAnalytics = () => {
                 </div>
 
                 {/* Attendance (summary only) */}
-                {attendance && (
+                {(attendance || results) && (
                   <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Attendance %</Label>
                       <div className="text-2xl font-semibold text-primary">
-                        {attendance.attendancePercentage == null ? '—' : `${attendance.attendancePercentage.toFixed(1)}%`}
+                        {attendance?.attendancePercentage == null ? '0.0%' : `${attendance.attendancePercentage.toFixed(1)}%`}
                       </div>
                     </div>
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Total days</Label>
-                      <div className="text-2xl font-semibold">{attendance.totalDays ?? '—'}</div>
+                      <div className="text-2xl font-semibold">{attendance?.totalDays ?? '0'}</div>
                     </div>
                     <div className="rounded-xl border border-border bg-card p-4">
                       <Label className="text-sm text-muted-foreground">Present days</Label>
-                      <div className="text-2xl font-semibold">{attendance.presentDays ?? '—'}</div>
+                      <div className="text-2xl font-semibold">{attendance?.presentDays ?? '0'}</div>
                     </div>
                   </div>
                 )}
