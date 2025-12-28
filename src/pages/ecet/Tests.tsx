@@ -79,7 +79,7 @@ export default function Tests() {
         return (
             <div className="min-h-screen flex flex-col bg-background">
                 <Navbar />
-                <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
+                <main className="flex-1 container mx-auto px-4 pt-24 pb-12 flex items-center justify-center">
                     <p className="text-muted-foreground animate-pulse">Loading amazing tests...</p>
                 </main>
                 <Footer />
@@ -90,7 +90,7 @@ export default function Tests() {
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-12">
+            <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
                 <div className="max-w-3xl mx-auto">
                     {quizState === "selection" && (
                         <div className="space-y-8 animate-in fade-in duration-500">

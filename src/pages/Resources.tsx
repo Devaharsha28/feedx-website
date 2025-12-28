@@ -59,42 +59,6 @@ const Resources = () => {
         icon: <FileText className="w-5 h-5" />,
         isInternal: true,
       },
-      {
-        id: 'gioe-qps',
-        title: 'GIOE — Question Papers',
-        description: 'Previous question papers and exam-focused materials.',
-        category: 'Exams',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/question-papers',
-        icon: <FileText className="w-5 h-5" />,
-      },
-      {
-        id: 'gioe-notes',
-        title: 'GIOE — Lecture Notes',
-        description: 'Notes and subject-wise learning materials.',
-        category: 'Training',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/notes',
-        icon: <BookOpen className="w-5 h-5" />,
-      },
-      {
-        id: 'gioe-courses',
-        title: 'GIOE — Free Courses',
-        description: 'Free courses and curated learning paths.',
-        category: 'Training',
-        type: 'Website',
-        href: 'https://gioe.netlify.app/free-courses',
-        icon: <GraduationCap className="w-5 h-5" />,
-      },
-      {
-        id: 'cvgen',
-        title: 'CV Generator',
-        description: 'Generate a clean CV/resume quickly.',
-        category: 'Career',
-        type: 'Website',
-        href: 'https://cv-generator-v1.netlify.app/',
-        icon: <FileText className="w-5 h-5" />,
-      },
     ],
     []
   );
@@ -134,7 +98,7 @@ const Resources = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header */}
-      <div className="relative border-b border-border bg-background pt-24 pb-10 overflow-hidden">
+      <div className="relative border-b border-border bg-background pt-32 pb-10 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 opacity-80 blur-2xl" />
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
           <Button

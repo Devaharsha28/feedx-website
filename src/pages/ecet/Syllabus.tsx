@@ -33,7 +33,7 @@ export default function Syllabus() {
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-12">
+            <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
                 <div className="max-w-4xl mx-auto">
                     <header className="mb-12 text-center">
                         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">

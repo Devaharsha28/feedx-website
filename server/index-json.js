@@ -451,12 +451,72 @@ const createCrudRoutes = (resourceName) => {
 };
 
 // Create CRUD routes for all resources
-createCrudRoutes('notifications');
-createCrudRoutes('updates');
-createCrudRoutes('resources');
-createCrudRoutes('events');
-createCrudRoutes('spotlight');
-createCrudRoutes('testimonials');
+const createAdminCrudRoutes = (resourceName) => {
+  const filename = `${resourceName}.json`;
+
+  // GET all (protected)
+  app.get(`/api/admin/${resourceName}`, verifyToken, (req, res) => {
+    const data = readJsonFile(filename);
+    res.json(data);
+  });
+
+  // GET by ID (protected)
+  app.get(`/api/admin/${resourceName}/:id`, verifyToken, (req, res) => {
+    const data = readJsonFile(filename);
+    const item = data.find(d => d.id === req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: `${resourceName} not found` });
+    }
+    res.json(item);
+  });
+
+  // POST create (protected)
+  app.post(`/api/admin/${resourceName}`, verifyToken, (req, res) => {
+    const data = readJsonFile(filename);
+    const newItem = {
+      id: generateId(),
+      ...req.body,
+      timestamp: new Date().toISOString()
+    };
+    data.unshift(newItem);
+    writeJsonFile(filename, data);
+    console.log(`✅ Created ${resourceName}:`, newItem.id);
+    res.status(201).json(newItem);
+  });
+
+  // PUT update (protected)
+  app.put(`/api/admin/${resourceName}/:id`, verifyToken, (req, res) => {
+    const data = readJsonFile(filename);
+    const index = data.findIndex(d => d.id === req.params.id);
+    if (index === -1) {
+      return res.status(404).json({ error: `${resourceName} not found` });
+    }
+    data[index] = { ...data[index], ...req.body, updatedAt: new Date().toISOString() };
+    writeJsonFile(filename, data);
+    res.json(data[index]);
+  });
+
+  // DELETE (protected)
+  app.delete(`/api/admin/${resourceName}/:id`, verifyToken, (req, res) => {
+    let data = readJsonFile(filename);
+    const index = data.findIndex(d => d.id === req.params.id);
+    if (index === -1) {
+      return res.status(404).json({ error: `${resourceName} not found` });
+    }
+    data.splice(index, 1);
+    writeJsonFile(filename, data);
+    console.log(`✅ Deleted ${resourceName}:`, req.params.id);
+    res.json({ success: true });
+  });
+};
+
+// Create CRUD routes for all resources
+createAdminCrudRoutes('notifications');
+createAdminCrudRoutes('updates');
+createAdminCrudRoutes('resources');
+createAdminCrudRoutes('events');
+createAdminCrudRoutes('spotlight');
+createAdminCrudRoutes('testimonials');
 
 // ================== ECET DATA ROUTES ==================
 app.get('/api/ecet/syllabus', (req, res) => {
@@ -475,12 +535,12 @@ app.get('/api/ecet/papers', (req, res) => {
 });
 
 // INSTITUTES - Custom routes for institute management
-app.get('/api/admin/institutes', (req, res) => {
+app.get('/api/admin/institutes', verifyToken, (req, res) => {
   const institutes = readJsonFile('institutes.json');
   res.json(institutes);
 });
 
-app.get('/api/admin/institutes/:code', (req, res) => {
+app.get('/api/admin/institutes/:code', verifyToken, (req, res) => {
   const institutes = readJsonFile('institutes.json');
   const institute = institutes.find(i => i.code.toUpperCase() === req.params.code.toUpperCase());
   if (institute) {
@@ -1049,8 +1109,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 Server running on http://0.0.0.0:${PORT}`);
   console.log(`📁 Uploads directory: ${uploadsDir}`);
   console.log(`💾 Data directory: ${dataDir}`);
   console.log(`\n📋 Available endpoints:`);
