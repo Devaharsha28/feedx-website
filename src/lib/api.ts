@@ -149,12 +149,33 @@ export interface EcetPaper {
   downloadUrl: string;
 }
 
+// Fallback notifications for when server is not available
+const fallbackNotifications: Notification[] = [
+  {
+    id: '1',
+    title: 'Welcome to FEEDX Portal',
+    description: 'Explore institutes, resources, and stay updated with the latest announcements.',
+    timestamp: new Date().toISOString()
+  },
+  {
+    id: '2',
+    title: 'New ECET Resources Available',
+    description: 'Check out the latest syllabus and test papers for ECET preparation.',
+    timestamp: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
 // Notifications API
 export const notificationsAPI = {
   getAll: async (): Promise<Notification[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/notifications`);
-    if (!response.ok) throw new Error('Failed to fetch notifications');
-    return response.json();
+    try {
+      const response = await fetch(`${API_HOST}/notifications`);
+      if (!response.ok) throw new Error('Failed to fetch notifications');
+      return response.json();
+    } catch (error) {
+      console.warn('Server not available, using fallback notifications:', error.message);
+      return fallbackNotifications;
+    }
   },
 
   create: async (data: Omit<Notification, 'id' | 'timestamp'>): Promise<Notification> => {
@@ -177,7 +198,7 @@ export const notificationsAPI = {
 // Updates API
 export const updatesAPI = {
   getAll: async (): Promise<Update[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/updates`);
+    const response = await fetch(`${API_HOST}/updates`);
     if (!response.ok) throw new Error('Failed to fetch updates');
     return response.json();
   },
@@ -202,13 +223,13 @@ export const updatesAPI = {
 // Resources API
 export const resourcesAPI = {
   getAll: async (): Promise<Resource[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/resources`);
+    const response = await fetch(`${API_HOST}/resources`);
     if (!response.ok) throw new Error('Failed to fetch resources');
     return response.json();
   },
 
   getById: async (id: string): Promise<Resource> => {
-    const response = await authenticatedFetch(`${API_BASE}/resources/${id}`);
+    const response = await fetch(`${API_HOST}/resources/${id}`);
     if (!response.ok) throw new Error('Failed to fetch resource');
     return response.json();
   },
@@ -230,12 +251,33 @@ export const resourcesAPI = {
   }
 };
 
+// Fallback events
+const fallbackEvents: Event[] = [
+  {
+    id: '1',
+    title: 'Orientation Program',
+    description: 'Welcome new students to the campus with an orientation program covering academic policies, facilities, and student services.',
+    image: '/images/placeholder.jpg',
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    time: '10:00 AM',
+    location: 'Auditorium',
+    registerLink: '#',
+    files: [],
+    timestamp: new Date().toISOString()
+  }
+];
+
 // Events API
 export const eventsAPI = {
   getAll: async (): Promise<Event[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/events`);
-    if (!response.ok) throw new Error('Failed to fetch events');
-    return response.json();
+    try {
+      const response = await fetch(`${API_HOST}/events`);
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    } catch (error) {
+      console.warn('Server not available, using fallback events:', error.message);
+      return fallbackEvents;
+    }
   },
 
   create: async (data: Omit<Event, 'id' | 'timestamp'>): Promise<Event> => {
@@ -258,7 +300,7 @@ export const eventsAPI = {
 // Spotlight API
 export const spotlightAPI = {
   getAll: async (): Promise<Spotlight[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/spotlight`);
+    const response = await fetch(`${API_HOST}/spotlight`);
     if (!response.ok) throw new Error('Failed to fetch spotlight');
     return response.json();
   },
@@ -280,12 +322,37 @@ export const spotlightAPI = {
   }
 };
 
+// Fallback testimonials
+const fallbackTestimonials: Testimonial[] = [
+  {
+    id: '1',
+    name: 'Student A',
+    title: 'Diploma Student',
+    content: 'FeedX has been incredibly helpful for my studies. The resources and information are well-organized and easy to access.',
+    image: '',
+    timestamp: new Date().toISOString()
+  },
+  {
+    id: '2',
+    name: 'Student B',
+    title: 'ECET Aspirant',
+    content: 'The ECET preparation materials on FeedX are comprehensive and up-to-date. Highly recommended for exam preparation.',
+    image: '',
+    timestamp: new Date().toISOString()
+  }
+];
+
 // Testimonials API
 export const testimonialsAPI = {
   getAll: async (): Promise<Testimonial[]> => {
-    const response = await authenticatedFetch(`${API_BASE}/testimonials`);
-    if (!response.ok) throw new Error('Failed to fetch testimonials');
-    return response.json();
+    try {
+      const response = await fetch(`${API_HOST}/testimonials`);
+      if (!response.ok) throw new Error('Failed to fetch testimonials');
+      return response.json();
+    } catch (error) {
+      console.warn('Server not available, using fallback testimonials:', error.message);
+      return fallbackTestimonials;
+    }
   },
 
   create: async (data: Omit<Testimonial, 'id' | 'timestamp'>): Promise<Testimonial> => {

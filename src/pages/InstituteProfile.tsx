@@ -198,8 +198,8 @@ const InstituteProfile = () => {
               <div className="w-24 h-24 bg-blue-600/20 rounded-full flex items-center justify-center mb-4">
                 <Building2 className="w-12 h-12 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Institute Directory</h3>
-              <p className="text-white/60 text-center text-sm">Browse {stats.total}+ polytechnic institutes across Telangana</p>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Institute Directory</h3>
+              <p className="text-muted-foreground text-center text-sm">Browse {stats.total}+ polytechnic institutes across Telangana</p>
             </div>
           </div>
         </div>

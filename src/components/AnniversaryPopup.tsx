@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import CelebrationEffects from './CelebrationEffects';
 
 const AnniversaryPopup = () => {
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // show on first load per session
@@ -77,7 +79,10 @@ const AnniversaryPopup = () => {
               </div>
 
               <button
-                onClick={() => setShow(false)}
+                onClick={() => {
+                  setShow(false);
+                  navigate('/celebrations');
+                }}
                 className="w-full sm:w-auto px-8 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-medium shadow-md transition-all transform hover:scale-105"
               >
                 Join the Celebration

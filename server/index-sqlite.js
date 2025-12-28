@@ -504,6 +504,96 @@ app.get('/api/admin/testimonials', verifyToken, (req, res) => {
   }
 });
 
+// ================== PUBLIC ROUTES (No Auth Required) ==================
+app.get('/api/notifications', (req, res) => {
+  try {
+    const notifications = db.prepare('SELECT * FROM notifications ORDER BY timestamp DESC').all();
+    res.json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch notifications' });
+  }
+});
+
+app.get('/api/updates', (req, res) => {
+  try {
+    const updates = db.prepare('SELECT * FROM updates ORDER BY timestamp DESC').all();
+    res.json(updates.map(u => ({
+      ...u,
+      images: u.images ? JSON.parse(u.images) : []
+    })));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch updates' });
+  }
+});
+
+app.get('/api/events', (req, res) => {
+  try {
+    const events = db.prepare('SELECT * FROM events ORDER BY timestamp DESC').all();
+    res.json(events.map(e => ({
+      ...e,
+      registerLink: e.register_link,
+      files: e.files ? JSON.parse(e.files) : []
+    })));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
+
+app.get('/api/testimonials', (req, res) => {
+  try {
+    const testimonials = db.prepare('SELECT * FROM testimonials ORDER BY timestamp DESC').all();
+    res.json(testimonials);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch testimonials' });
+  }
+});
+
+app.get('/api/resources', (req, res) => {
+  try {
+    const resources = db.prepare('SELECT * FROM resources ORDER BY timestamp DESC').all();
+    res.json(resources.map(r => ({
+      ...r,
+      tags: r.tags ? JSON.parse(r.tags) : [],
+      files: r.files ? JSON.parse(r.files) : [],
+      images: r.images ? JSON.parse(r.images) : [],
+      longDescription: r.long_description
+    })));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch resources' });
+  }
+});
+
+app.get('/api/resources/:id', (req, res) => {
+  try {
+    const resource = db.prepare('SELECT * FROM resources WHERE id = ?').get(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+    res.json({
+      ...resource,
+      tags: resource.tags ? JSON.parse(resource.tags) : [],
+      files: resource.files ? JSON.parse(resource.files) : [],
+      images: resource.images ? JSON.parse(resource.images) : [],
+      longDescription: resource.long_description
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch resource' });
+  }
+});
+
+app.get('/api/spotlight', (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const spotlight = db.prepare('SELECT * FROM spotlight ORDER BY timestamp DESC LIMIT ?').all(limit);
+    res.json(spotlight.map(s => ({
+      ...s,
+      images: s.images ? JSON.parse(s.images) : []
+    })));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch spotlight' });
+  }
+});
+
 app.post('/api/admin/testimonials', verifyToken, (req, res) => {
   try {
     const { name, title, content, image } = req.body;

@@ -35,7 +35,7 @@ const formatRelativeTime = (timestamp: string) => {
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  
+
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays} days ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
@@ -73,7 +73,7 @@ const Notifications = () => {
     loadNotifications();
   }, []);
 
-  const filteredNotifications = notifications.filter(n => 
+  const filteredNotifications = notifications.filter(n =>
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     n.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -95,24 +95,24 @@ const Notifications = () => {
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
-        
+
         <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-8">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate(-1)} 
-                className="gap-2 text-white/70 hover:text-white hover:bg-white/10 rounded-xl"
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="gap-2 text-foreground/70 hover:text-foreground hover:bg-foreground/10 rounded-xl"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
               </Button>
-              <span className="text-white/30">/</span>
-              <span className="text-white/70">Notifications</span>
+              <span className="text-foreground/30">/</span>
+              <span className="text-foreground/70">Notifications</span>
             </div>
-            
+
             {/* Hero content */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex items-start gap-5">
@@ -123,20 +123,20 @@ const Notifications = () => {
                   <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-pulse" />
                 </div>
                 <div>
-                  <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
+                  <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Notifications
                   </h1>
-                  <p className="text-white/60 mt-3 max-w-xl text-lg">
+                  <p className="text-foreground/60 mt-3 max-w-xl text-lg">
                     Stay informed with the latest updates, announcements, and important news from your institute.
                   </p>
                 </div>
               </div>
-              
+
               {/* Stats card */}
               <div className="flex gap-4">
-                <div className="glass-card border-white/10 px-6 py-4 rounded-2xl">
-                  <div className="text-3xl font-bold text-cyan-400">{notifications.length}</div>
-                  <div className="text-sm text-white/60">Total Updates</div>
+                <div className="glass-card border-border/30 px-6 py-4 rounded-2xl bg-card/80">
+                  <div className="text-3xl font-bold text-cyan-600">{notifications.length}</div>
+                  <div className="text-sm text-muted-foreground">Total Updates</div>
                 </div>
               </div>
             </div>
@@ -146,39 +146,39 @@ const Notifications = () => {
 
       {/* Main content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16 -mt-4">
-        <Card className="glass-card border-white/10 shadow-2xl overflow-hidden">
+        <Card className="glass-card border-border/30 shadow-2xl overflow-hidden bg-card/90">
           {/* Search and filter header */}
-          <CardHeader className="bg-gradient-to-r from-white/5 to-transparent border-b border-white/10 p-6">
+          <CardHeader className="bg-gradient-to-r from-muted/50 to-transparent border-b border-border/30 p-6">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
+                <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
                   All Notifications
-                  <span className="text-sm font-normal text-white/50 bg-white/10 px-3 py-1 rounded-full">
+                  <span className="text-sm font-normal text-muted-foreground bg-muted px-3 py-1 rounded-full">
                     {loading ? "..." : filteredNotifications.length}
                   </span>
                 </CardTitle>
-                <CardDescription className="text-white/50 mt-1">
+                <CardDescription className="text-muted-foreground mt-1">
                   Click on any notification to view full details with markdown formatting
                 </CardDescription>
               </div>
-              
+
               <div className="flex items-center gap-3">
                 {/* Search input */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search notifications..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 w-64 bg-white/5 border-white/10 rounded-xl focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                    className="pl-10 w-64 bg-background border-border rounded-xl focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
                 </div>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={loadNotifications} 
-                  className="border-white/10 hover:bg-white/10 rounded-xl h-10 px-4"
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadNotifications}
+                  className="border-border hover:bg-muted rounded-xl h-10 px-4"
                 >
                   <RefreshCcw className="w-4 h-4 mr-2" />
                   Refresh
@@ -186,16 +186,16 @@ const Notifications = () => {
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent className="p-0">
             <ScrollArea className="max-h-[70vh]">
               {filteredNotifications.length === 0 && !loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center mb-6">
-                    <Bell className="w-10 h-10 text-cyan-400/50" />
+                    <Bell className="w-10 h-10 text-cyan-600/50" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white/80 mb-2">No notifications found</h3>
-                  <p className="text-white/50 max-w-md">
+                  <h3 className="text-xl font-semibold text-foreground/80 mb-2">No notifications found</h3>
+                  <p className="text-muted-foreground max-w-md">
                     {searchQuery ? `No results for "${searchQuery}"` : "New notifications will appear here when available."}
                   </p>
                 </div>
@@ -204,46 +204,46 @@ const Notifications = () => {
                   {filteredNotifications.map((notification, index) => {
                     const style = getCategoryStyle(index);
                     const IconComponent = style.icon;
-                    
+
                     return (
-                      <div 
-                        key={notification.id} 
+                      <div
+                        key={notification.id}
                         onClick={() => handleNotificationClick(notification)}
-                        className="group relative p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-transparent hover:border-white/10 
+                        className="group relative p-5 rounded-2xl bg-muted/30 hover:bg-muted/50 border border-transparent hover:border-border/50 
                           transition-all duration-300 cursor-pointer hover:shadow-xl hover:shadow-cyan-500/5"
                       >
                         {/* Left accent */}
                         <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-full bg-gradient-to-b ${style.color}`} />
-                        
+
                         <div className="flex gap-4 pl-4">
                           {/* Icon */}
                           <div className={`p-3 rounded-xl ${style.bg} shrink-0`}>
                             <IconComponent className={`w-5 h-5 ${style.text}`} />
                           </div>
-                          
+
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-4 mb-2">
                               <div className="flex items-center gap-3">
-                                <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors line-clamp-1">
+                                <h3 className="text-lg font-semibold text-foreground group-hover:text-cyan-600 transition-colors line-clamp-1">
                                   {notification.title}
                                 </h3>
                                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${style.bg} ${style.text}`}>
                                   {style.label}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-white/40 whitespace-nowrap">
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
                                 <Calendar className="w-4 h-4" />
                                 {formatRelativeTime(notification.timestamp)}
                               </div>
                             </div>
-                            
-                            <p className="text-white/60 text-sm leading-relaxed line-clamp-2">
+
+                            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
                               {notification.description.replace(/[#*`_~\[\]]/g, '').substring(0, 200)}...
                             </p>
-                            
+
                             {/* Read more indicator */}
-                            <div className="mt-3 flex items-center gap-1 text-cyan-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="mt-3 flex items-center gap-1 text-cyan-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                               <span>Read full notification</span>
                               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </div>
@@ -252,10 +252,10 @@ const Notifications = () => {
                       </div>
                     );
                   })}
-                  
+
                   {loading && (
                     <div className="p-8 text-center">
-                      <div className="inline-flex items-center gap-3 text-white/50">
+                      <div className="inline-flex items-center gap-3 text-muted-foreground">
                         <RefreshCcw className="w-5 h-5 animate-spin" />
                         Loading notifications...
                       </div>
@@ -270,20 +270,20 @@ const Notifications = () => {
 
       {/* Notification detail dialog with Markdown */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden glass-card border-white/10 p-0">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden bg-card border-border p-0">
           {/* Header */}
-          <div className="bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-purple-600/20 p-6 border-b border-white/10">
+          <div className="bg-gradient-to-r from-cyan-600/10 via-blue-600/10 to-purple-600/10 p-6 border-b border-border">
             <DialogHeader>
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/25">
                   <Bell className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <DialogTitle className="text-2xl font-bold text-white leading-tight">
+                  <DialogTitle className="text-2xl font-bold text-foreground leading-tight">
                     {selectedNotification?.title}
                   </DialogTitle>
                   <DialogDescription className="flex items-center gap-3 mt-3">
-                    <span className="flex items-center gap-2 text-white/60">
+                    <span className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       {selectedNotification ? new Date(selectedNotification.timestamp).toLocaleString('en-IN', {
                         weekday: 'long',
@@ -299,30 +299,30 @@ const Notifications = () => {
               </div>
             </DialogHeader>
           </div>
-          
+
           {/* Content with Markdown rendering */}
           <ScrollArea className="max-h-[55vh]">
             <div className="p-6">
               {selectedNotification && (
-                <MarkdownRenderer 
+                <MarkdownRenderer
                   content={selectedNotification.description}
-                  className="text-white/80"
+                  className="text-foreground/80"
                 />
               )}
             </div>
           </ScrollArea>
-          
+
           {/* Footer */}
-          <div className="p-5 border-t border-white/10 bg-white/5 flex gap-3">
-            <Button 
+          <div className="p-5 border-t border-border bg-muted/30 flex gap-3">
+            <Button
               className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl h-12"
             >
               Learn More
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className="border-white/20 hover:bg-white/10 rounded-xl h-12 px-8"
+              className="border-border hover:bg-muted rounded-xl h-12 px-8"
             >
               Close
             </Button>

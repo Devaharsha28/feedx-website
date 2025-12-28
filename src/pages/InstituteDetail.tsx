@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  ArrowLeft, MapPin, Building2, Star, MessageSquare, 
+import {
+  ArrowLeft, MapPin, Building2, Star, MessageSquare,
   Bookmark, GitCompare, Download, ChevronRight, ChevronDown, ChevronUp,
   Phone, Mail, Globe, ExternalLink, TrendingUp, Image as ImageIcon
 } from "lucide-react";
@@ -99,21 +99,22 @@ const allInstitutes: InstituteData[] = [
   { code: 'MASB', name: 'GOVT POLYTECHNIC', place: 'MASAB TANK', dist: 'HYD', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
   { code: 'NZBD', name: 'GOVT POLYTECHNIC', place: 'NIZAMABAD', dist: 'NZB', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
   { code: 'NALG', name: 'GOVT POLYTECHNIC', place: 'NALGONDA', dist: 'NLG', region: 'OU', type: 'GOV', minority: 'NA', mode: 'COED' },
-  { 
-    code: 'IOES', 
-    name: 'GOVT INSTITUTE OF ELECTRONICS', 
-    place: 'SECUNDERABAD', 
-    dist: 'HYD', 
-    region: 'OU', 
-    type: 'GOV', 
-    minority: 'NA', 
-    mode: 'COED', 
+  {
+    code: 'IOES',
+    name: 'GOVT INSTITUTE OF ELECTRONICS',
+    place: 'SECUNDERABAD',
+    dist: 'HYD',
+    region: 'OU',
+    type: 'GOV',
+    minority: 'NA',
+    mode: 'COED',
     established: '1981',
     description: 'Government Institute of Electronics (GIOE) is a premier government polytechnic established in 1981, offering diploma courses in cutting-edge technology fields including AI/ML, Cloud Computing, Cyber Security, and traditional Electronics branches.',
     address: 'EAST MARRED PALLY, SECUNDERABAD, 500026',
     phone: '4027730000',
     email: 'principalgioe@gmail.com',
     website: 'https://gioescbd.dte.telangana.gov.in/',
+    principal: 'Sri. B. Ram Mohan Reddy, M.Tech., MISTE.',
     hostel: 'Both Boys and Girls',
     affiliation: 'SBTET',
     facilities: ['Computer Labs', 'Electronics Labs', 'Library', 'Auditorium', 'Sports Ground', 'Canteen', 'WiFi Campus'],
@@ -378,7 +379,7 @@ export default function InstituteDetail() {
               <div className="w-full h-full bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-            
+
             {/* Photo count badge */}
             {institute.images && institute.images.length > 0 && (
               <div className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-2">
@@ -410,7 +411,7 @@ export default function InstituteDetail() {
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground leading-tight mb-2">
                     {institute.name}
                   </h1>
-                  
+
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground mb-3">
                     <span className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
@@ -468,11 +469,10 @@ export default function InstituteDetail() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab.toLowerCase().replace(/[^a-z]/g, ''))}
-                      className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                        activeTab === tab.toLowerCase().replace(/[^a-z]/g, '')
-                          ? 'border-primary text-primary'
-                          : 'border-transparent text-muted-foreground hover:text-foreground'
-                      }`}
+                      className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.toLowerCase().replace(/[^a-z]/g, '')
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                        }`}
                     >
                       {tab}
                     </button>
@@ -485,7 +485,7 @@ export default function InstituteDetail() {
 
         {/* Main Content - Tab Based */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          
+
           {/* College Info Tab */}
           {activeTab === 'collegeinfo' && (
             <div className="grid lg:grid-cols-[1fr_360px] gap-8">
@@ -500,13 +500,13 @@ export default function InstituteDetail() {
                     <h2 className="text-lg font-semibold text-foreground">{institute.name} Overview</h2>
                     {expandedSections.highlights ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
                   </button>
-                  
+
                   {expandedSections.highlights && (
                     <CardContent className="px-6 pb-6 pt-0">
                       {institute.description && (
                         <p className="text-muted-foreground mb-6">{institute.description}</p>
                       )}
-                      
+
                       {/* Quick Info Table */}
                       <div className="border border-white/10 rounded-lg overflow-hidden">
                         <table className="w-full text-sm">
@@ -630,7 +630,7 @@ export default function InstituteDetail() {
                   <Badge className="bg-primary/20 text-primary border-0">{institute.departments.length} Departments</Badge>
                 )}
               </div>
-              
+
               {institute.departments && institute.departments.length > 0 ? (
                 <div className="grid md:grid-cols-2 gap-6">
                   {institute.departments.map((dept) => (
@@ -648,11 +648,11 @@ export default function InstituteDetail() {
                             </div>
                           )}
                         </div>
-                        
+
                         {dept.description && (
                           <p className="text-muted-foreground text-sm mb-4">{dept.description}</p>
                         )}
-                        
+
                         {dept.hod && (
                           <div className="border-t border-white/10 pt-4">
                             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Head of Department</p>
@@ -671,7 +671,7 @@ export default function InstituteDetail() {
                             </div>
                           </div>
                         )}
-                        
+
                         {dept.labs && dept.labs.length > 0 && (
                           <div className="mt-4">
                             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Labs & Facilities</p>
@@ -703,21 +703,6 @@ export default function InstituteDetail() {
           {/* Faculty Tab */}
           {activeTab === 'faculty' && (
             <div className="space-y-8">
-              {/* Principal Section */}
-              <Card className="glass-card border-white/10">
-                <CardContent className="flex flex-col md:flex-row items-center gap-8 p-8">
-                  <Avatar className="w-32 h-32 shadow-lg">
-                    <AvatarImage src={institute.logoImage || institute.images?.[0] || '/uploads/images/1765994989752-986544424.jpeg'} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-4xl">BR</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">Sri. B. Ram Mohan Reddy, M.Tech., MISTE.</h2>
-                    <p className="text-primary font-semibold mb-2">Principal (FAC)</p>
-                    <h3 className="text-lg font-semibold mb-2">About Principal</h3>
-                    <p className="text-muted-foreground text-sm mb-2">Sri B. Ram Mohan Reddy is a dedicated academician and seasoned administrator with more than three decades of rich experience in technical education. He completed his Bachelor of Engineering (ECE) in 1989, laying a strong foundation for a lifelong career in teaching and institutional development. He joined the Department of Technical Education as a Lecturer on 06-08-1992, marking the beginning of his long and committed service in government polytechnic education.<br/><br/>With a deep passion for advanced learning and academic excellence, he pursued and successfully completed his M.Tech in Digital Systems & Computer Electronics from JNTU in 1999. His consistent academic growth and commitment to teaching led to his promotion as Senior Lecturer in 2014. Recognizing his leadership qualities and administrative capabilities, he was promoted as Head of the Department in 2017, where he played a vital role in academic planning, laboratory modernization, faculty coordination, student mentoring, and accreditation activities.<br/><br/>In recognition of his vast experience, integrity, and leadership, Sri B. Ram Mohan Reddy assumed charge as Principal (FAC) in December 2025 at the Government Institute of Electronics, Secunderabad. As Principal (FAC), he is committed to strengthening academic discipline, enhancing student skill development, improving institutional performance, promoting industry interaction, and ensuring the holistic growth of students through quality technical education.<br/><br/>Throughout his career, he has been known for his student-centric approach, strong ethical values, academic discipline, and a clear vision for continuous institutional improvement. His leadership philosophy is grounded in the principles of quality education, innovation, accountability, and social responsibility.</p>
-                  </div>
-                </CardContent>
-              </Card>
 
               {/* Vision & Mission */}
               <div className="grid md:grid-cols-2 gap-8">
@@ -749,7 +734,7 @@ export default function InstituteDetail() {
           {activeTab === 'courses' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Courses Offered</h2>
-              
+
               {institute.courses && institute.courses.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {institute.courses.map((course, idx) => (
@@ -782,7 +767,7 @@ export default function InstituteDetail() {
           {activeTab === 'placements' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Placement Records</h2>
-              
+
               {institute.placements && institute.placements.length > 0 ? (
                 <>
                   <div className="grid md:grid-cols-3 gap-6">
@@ -809,7 +794,7 @@ export default function InstituteDetail() {
                       </Card>
                     )}
                   </div>
-                  
+
                   {institute.placements[0].topRecruiters && institute.placements[0].topRecruiters.length > 0 && (
                     <Card className="glass-card border-white/10">
                       <CardContent className="p-6">
@@ -843,7 +828,7 @@ export default function InstituteDetail() {
           {activeTab === 'gallery' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Campus Gallery</h2>
-              
+
               {galleryImages && galleryImages.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {galleryImages.map((img, idx) => (
@@ -919,7 +904,7 @@ export default function InstituteDetail() {
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-foreground">Student Reviews</h2>
               </div>
-              
+
               {institute.rating ? (
                 <div className="grid md:grid-cols-[300px_1fr] gap-8">
                   {/* Rating Summary */}
@@ -934,7 +919,7 @@ export default function InstituteDetail() {
                       <p className="text-muted-foreground">{institute.reviews || 0} Reviews</p>
                     </CardContent>
                   </Card>
-                  
+
                   {/* Reviews List - Empty state */}
                   <Card className="glass-card border-white/10">
                     <CardContent className="p-8 text-center">
@@ -960,7 +945,7 @@ export default function InstituteDetail() {
           {activeTab === 'qa' && (
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground">Questions & Answers</h2>
-              
+
               <Card className="glass-card border-white/10">
                 <CardContent className="p-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">

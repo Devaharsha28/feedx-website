@@ -117,8 +117,8 @@ export default function AddNotification() {
               <Bell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Manage Notifications</h1>
-              <p className="text-white/60 mt-1">
+              <h1 className="text-3xl font-bold text-foreground">Manage Notifications</h1>
+              <p className="text-muted-foreground mt-1">
                 Create and manage notifications with Markdown support
               </p>
             </div>
@@ -128,20 +128,20 @@ export default function AddNotification() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Form Section */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="glass-card border-white/10">
-              <CardHeader className="border-b border-white/10">
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <FileText className="w-5 h-5 text-cyan-400" />
+            <Card className="glass-card border-border/30 bg-card/90">
+              <CardHeader className="border-b border-border/30">
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <FileText className="w-5 h-5 text-cyan-600" />
                   Add Notification
                 </CardTitle>
-                <CardDescription className="text-white/60">
+                <CardDescription className="text-muted-foreground">
                   Use Markdown formatting for rich content
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="title" className="text-white/80">Title</Label>
+                    <Label htmlFor="title" className="text-foreground/80">Title</Label>
                     <Input
                       id="title"
                       name="title"
@@ -149,27 +149,27 @@ export default function AddNotification() {
                       value={formData.title}
                       onChange={handleInputChange}
                       required
-                      className="bg-white/5 border-white/10 focus:border-cyan-500/50"
+                      className="bg-background border-border focus:border-cyan-500/50"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="description" className="text-white/80">Description (Markdown)</Label>
+                      <Label htmlFor="description" className="text-foreground/80">Description (Markdown)</Label>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowPreview(!showPreview)}
-                        className="h-8 text-cyan-400 hover:text-cyan-300 hover:bg-white/10"
+                        className="h-8 text-cyan-600 hover:text-cyan-500 hover:bg-muted"
                       >
                         {showPreview ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
                         {showPreview ? 'Edit' : 'Preview'}
                       </Button>
                     </div>
-                    
+
                     {showPreview ? (
-                      <div className="min-h-[200px] p-4 rounded-lg bg-white/5 border border-white/10">
+                      <div className="min-h-[200px] p-4 rounded-lg bg-muted/30 border border-border">
                         <MarkdownRenderer content={formData.description || '*Start typing to preview...*'} />
                       </div>
                     ) : (
@@ -181,14 +181,14 @@ export default function AddNotification() {
                         onChange={handleInputChange}
                         required
                         rows={10}
-                        className="bg-white/5 border-white/10 focus:border-cyan-500/50 font-mono text-sm"
+                        className="bg-background border-border focus:border-cyan-500/50 font-mono text-sm"
                       />
                     )}
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl h-11" 
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl h-11"
                     disabled={isLoading}
                   >
                     {isLoading ? "Creating..." : "Create Notification"}
@@ -198,24 +198,24 @@ export default function AddNotification() {
             </Card>
 
             {/* Markdown Guide */}
-            <Card className="glass-card border-white/10">
+            <Card className="glass-card border-border/30 bg-card/90">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm text-white/80">
-                  <Info className="w-4 h-4 text-cyan-400" />
+                <CardTitle className="flex items-center gap-2 text-sm text-foreground/80">
+                  <Info className="w-4 h-4 text-cyan-600" />
                   Markdown Quick Guide
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-white/60 space-y-2">
+              <CardContent className="text-sm text-muted-foreground space-y-2">
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-white/5 p-2 rounded"><code># Heading 1</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>## Heading 2</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>**bold**</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>*italic*</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>- list item</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>1. numbered</code></div>
-                  <div className="bg-white/5 p-2 rounded col-span-2"><code>[link](https://url.com)</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>`code`</code></div>
-                  <div className="bg-white/5 p-2 rounded"><code>&gt; quote</code></div>
+                  <div className="bg-muted p-2 rounded"><code># Heading 1</code></div>
+                  <div className="bg-muted p-2 rounded"><code>## Heading 2</code></div>
+                  <div className="bg-muted p-2 rounded"><code>**bold**</code></div>
+                  <div className="bg-muted p-2 rounded"><code>*italic*</code></div>
+                  <div className="bg-muted p-2 rounded"><code>- list item</code></div>
+                  <div className="bg-muted p-2 rounded"><code>1. numbered</code></div>
+                  <div className="bg-muted p-2 rounded col-span-2"><code>[link](https://url.com)</code></div>
+                  <div className="bg-muted p-2 rounded"><code>`code`</code></div>
+                  <div className="bg-muted p-2 rounded"><code>&gt; quote</code></div>
                 </div>
               </CardContent>
             </Card>
@@ -223,18 +223,18 @@ export default function AddNotification() {
 
           {/* List Section */}
           <div className="lg:col-span-2">
-            <Card className="glass-card border-white/10">
-              <CardHeader className="border-b border-white/10">
+            <Card className="glass-card border-border/30 bg-card/90">
+              <CardHeader className="border-b border-border/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2 text-white">
-                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                    <CardTitle className="flex items-center gap-2 text-foreground">
+                      <Sparkles className="w-5 h-5 text-cyan-600" />
                       All Notifications
-                      <span className="text-sm font-normal text-white/50 bg-white/10 px-2 py-0.5 rounded-full ml-2">
+                      <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full ml-2">
                         {notifications.length}
                       </span>
                     </CardTitle>
-                    <CardDescription className="text-white/60 mt-1">
+                    <CardDescription className="text-muted-foreground mt-1">
                       Click on a notification to view its markdown rendering
                     </CardDescription>
                   </div>
@@ -242,7 +242,7 @@ export default function AddNotification() {
                     variant="outline"
                     size="sm"
                     onClick={fetchNotifications}
-                    className="border-white/10 hover:bg-white/10"
+                    className="border-border hover:bg-muted"
                   >
                     <RefreshCcw className="w-4 h-4 mr-2" />
                     Refresh
@@ -253,7 +253,7 @@ export default function AddNotification() {
                 <ScrollArea className="h-[600px]">
                   <div className="p-4 space-y-3">
                     {notifications.length === 0 ? (
-                      <div className="text-center py-12 text-white/50">
+                      <div className="text-center py-12 text-muted-foreground">
                         <Bell className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No notifications yet</p>
                         <p className="text-sm mt-1">Create your first notification above</p>
@@ -262,12 +262,12 @@ export default function AddNotification() {
                       notifications.map((notification) => (
                         <div
                           key={notification.id}
-                          className="group p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                          className="group p-5 rounded-xl bg-muted/30 hover:bg-muted/50 border border-border/50 transition-all"
                         >
                           <div className="flex justify-between items-start gap-4 mb-3">
                             <div className="flex-1">
-                              <h3 className="font-semibold text-white text-lg">{notification.title}</h3>
-                              <p className="text-xs text-white/40 mt-1">
+                              <h3 className="font-semibold text-foreground text-lg">{notification.title}</h3>
+                              <p className="text-xs text-muted-foreground mt-1">
                                 {new Date(notification.timestamp).toLocaleString('en-IN', {
                                   dateStyle: 'medium',
                                   timeStyle: 'short'
@@ -283,16 +283,16 @@ export default function AddNotification() {
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
-                          
+
                           {/* Rendered Markdown Preview */}
-                          <div className="mt-3 pt-3 border-t border-white/10">
-                            <p className="text-xs text-white/40 mb-2">Preview:</p>
-                            <div className="bg-white/5 rounded-lg p-3">
-                              <MarkdownRenderer 
-                                content={notification.description.length > 300 
-                                  ? notification.description.substring(0, 300) + '...' 
+                          <div className="mt-3 pt-3 border-t border-border/50">
+                            <p className="text-xs text-muted-foreground mb-2">Preview:</p>
+                            <div className="bg-muted/30 rounded-lg p-3">
+                              <MarkdownRenderer
+                                content={notification.description.length > 300
+                                  ? notification.description.substring(0, 300) + '...'
                                   : notification.description
-                                } 
+                                }
                                 className="text-sm"
                               />
                             </div>

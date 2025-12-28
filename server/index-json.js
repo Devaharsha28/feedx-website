@@ -518,6 +518,35 @@ createAdminCrudRoutes('events');
 createAdminCrudRoutes('spotlight');
 createAdminCrudRoutes('testimonials');
 
+// ================== PUBLIC ROUTES (No Auth Required for Reading) ==================
+const createPublicReadRoutes = (resourceName) => {
+  const filename = `${resourceName}.json`;
+
+  // GET all (public)
+  app.get(`/api/${resourceName}`, (req, res) => {
+    const data = readJsonFile(filename);
+    res.json(data);
+  });
+
+  // GET by ID (public)
+  app.get(`/api/${resourceName}/:id`, (req, res) => {
+    const data = readJsonFile(filename);
+    const item = data.find(d => d.id === req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: `${resourceName} not found` });
+    }
+    res.json(item);
+  });
+};
+
+// Create public read routes for all resources
+createPublicReadRoutes('notifications');
+createPublicReadRoutes('updates');
+createPublicReadRoutes('resources');
+createPublicReadRoutes('events');
+createPublicReadRoutes('spotlight');
+createPublicReadRoutes('testimonials');
+
 // ================== ECET DATA ROUTES ==================
 app.get('/api/ecet/syllabus', (req, res) => {
   const data = readJsonFile('ecet-syllabus.json');
