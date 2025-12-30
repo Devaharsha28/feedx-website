@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Trash2, AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import FacultyIssuesList from "@/components/faculty/FacultyIssuesList";
 
 import {
@@ -19,6 +21,7 @@ const FacultyDashboard = () => {
     const navigate = useNavigate();
     const [profile, setProfile] = useState<any>(null);
     const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -93,7 +96,68 @@ const FacultyDashboard = () => {
             </header>
 
             <main className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 pb-10">
-                <FacultyIssuesList />
+                <Tabs defaultValue="issues" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6 glass p-1 h-auto">
+                        <TabsTrigger value="issues" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">Issues</TabsTrigger>
+                        <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">Settings</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="issues">
+                        <FacultyIssuesList />
+                    </TabsContent>
+
+                    <TabsContent value="settings">
+                        <Card className="glass border-none">
+                            <CardContent className="pt-6">
+                                <h3 className="text-lg font-bold text-primary mb-2">Account Settings</h3>
+                                <p className="text-sm text-muted-foreground mb-6">Manage your account preferences.</p>
+
+                                <div className="p-4 rounded-lg bg-red-50 border border-red-100 space-y-4">
+                                    <div>
+                                        <h4 className="font-semibold text-red-700 flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4" /> Danger Zone
+                                        </h4>
+                                        <p className="text-xs text-red-600/80 mt-1">
+                                            Deleting your account is permanent. All your data will be removed.
+                                        </p>
+                                    </div>
+
+                                    <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button variant="destructive" className="w-full sm:w-auto gap-2">
+                                                <Trash2 className="w-4 h-4" /> Delete My Account
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-red-600 flex items-center gap-2">
+                                                    <AlertCircle className="w-5 h-5" /> Confirm Deletion
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Are you absolutely sure you want to delete your account? This action cannot be undone.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <DialogFooter className="flex gap-2 sm:justify-end">
+                                                <Button type="button" variant="ghost" onClick={() => setDeleteDialogOpen(false)}>
+                                                    Cancel
+                                                </Button>
+                                                <Button type="button" variant="destructive" onClick={async () => {
+                                                    if (profile) {
+                                                        await supabase.from('profiles').delete().eq('id', profile.id);
+                                                    }
+                                                    await supabase.auth.signOut();
+                                                    navigate('/');
+                                                }}>
+                                                    Permanently Delete
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </main>
         </div>
     );

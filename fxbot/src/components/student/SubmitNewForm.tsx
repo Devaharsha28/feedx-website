@@ -68,7 +68,7 @@ const SubmitNewForm = ({ userId, onSuccess }: SubmitNewFormProps) => {
         setSelectedFiles(prev => prev.filter((_, i) => i !== index));
     };
 
-    const uploadFiles = async (userId: string) => {
+    const uploadFiles = async () => {
         const uploadedUrls: string[] = [];
 
         for (const file of selectedFiles) {
@@ -126,7 +126,7 @@ const SubmitNewForm = ({ userId, onSuccess }: SubmitNewFormProps) => {
         try {
             let proofUrls: string[] = [];
             if (type === 'issue' && selectedFiles.length > 0) {
-                proofUrls = await uploadFiles(userId);
+                proofUrls = await uploadFiles();
             }
 
             const { error } = await supabase.from('issues').insert({
