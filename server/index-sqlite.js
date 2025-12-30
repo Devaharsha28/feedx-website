@@ -96,7 +96,7 @@ const upload = multer({
       'image/gif',
       'image/webp'
     ];
-    
+
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -137,10 +137,10 @@ app.post('/api/upload', verifyToken, (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    
+
     console.log('File uploaded successfully:', req.file.filename);
     const fileUrl = `/uploads/${req.file.filename}`;
-    res.json({ 
+    res.json({
       url: fileUrl,
       filename: req.file.originalname,
       size: req.file.size,
@@ -160,7 +160,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const user = db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(username, username);
-    
+
     if (!user) {
       db.prepare('INSERT INTO login_logs (username, ip_address, success) VALUES (?, ?, ?)').run(username, req.ip, 0);
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -271,10 +271,10 @@ app.post('/api/admin/notifications', verifyToken, (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
-    
+
     const id = `notification-${Date.now()}`;
     db.prepare('INSERT INTO notifications (id, title, description) VALUES (?, ?, ?)').run(id, title, description);
-    
+
     const notification = db.prepare('SELECT * FROM notifications WHERE id = ?').get(id);
     res.status(201).json(notification);
   } catch (error) {
@@ -310,11 +310,11 @@ app.post('/api/admin/updates', verifyToken, (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
-    
+
     const id = `update-${Date.now()}`;
     const imagesJson = JSON.stringify(images || []);
     db.prepare('INSERT INTO updates (id, title, description, images, priority) VALUES (?, ?, ?, ?, ?)').run(id, title, description, imagesJson, priority || 'medium');
-    
+
     const update = db.prepare('SELECT * FROM updates WHERE id = ?').get(id);
     res.status(201).json({
       ...update,
@@ -374,14 +374,14 @@ app.post('/api/admin/resources', verifyToken, (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
-    
+
     const id = `resource-${Date.now()}`;
     const tagsJson = JSON.stringify(tags || []);
     const filesJson = JSON.stringify(files || []);
     const imagesJson = JSON.stringify(images || []);
-    
+
     db.prepare('INSERT INTO resources (id, title, description, long_description, tags, files, images) VALUES (?, ?, ?, ?, ?, ?, ?)').run(id, title, description, longDescription || '', tagsJson, filesJson, imagesJson);
-    
+
     const resource = db.prepare('SELECT * FROM resources WHERE id = ?').get(id);
     res.status(201).json({
       ...resource,
@@ -424,11 +424,11 @@ app.post('/api/admin/events', verifyToken, (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
-    
+
     const id = `event-${Date.now()}`;
     const filesJson = JSON.stringify(files || []);
     db.prepare('INSERT INTO events (id, title, description, image, date, time, location, register_link, files) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(id, title, description, image || '', date || '', time || '', location || '', registerLink || '', filesJson);
-    
+
     const event = db.prepare('SELECT * FROM events WHERE id = ?').get(id);
     res.status(201).json({
       ...event,
@@ -470,11 +470,11 @@ app.post('/api/admin/spotlight', verifyToken, (req, res) => {
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
     }
-    
+
     const id = `spotlight-${Date.now()}`;
     const imagesJson = JSON.stringify(images || []);
     db.prepare('INSERT INTO spotlight (id, title, description, images) VALUES (?, ?, ?, ?)').run(id, title, description, imagesJson);
-    
+
     const item = db.prepare('SELECT * FROM spotlight WHERE id = ?').get(id);
     res.status(201).json({
       ...item,
@@ -600,10 +600,10 @@ app.post('/api/admin/testimonials', verifyToken, (req, res) => {
     if (!name || !title || !content) {
       return res.status(400).json({ error: 'Name, title, and content are required' });
     }
-    
+
     const id = `testimonial-${Date.now()}`;
     db.prepare('INSERT INTO testimonials (id, name, title, content, image) VALUES (?, ?, ?, ?, ?)').run(id, name, title, content, image || '');
-    
+
     const testimonial = db.prepare('SELECT * FROM testimonials WHERE id = ?').get(id);
     res.status(201).json(testimonial);
   } catch (error) {
@@ -649,7 +649,7 @@ app.get('/api/crawler/gioe', verifyToken, async (req, res) => {
 app.post('/api/attendance', async (req, res) => {
   try {
     const { htno, dob, current_semester, branch_code } = req.body;
-    
+
     if (!htno || !dob || !current_semester || !branch_code) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -669,7 +669,7 @@ app.post('/api/attendance', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
   console.log(`✅ SQLite database ready`);
   console.log(`✅ Default admin: username=admin, password=admin123`);
 });

@@ -2,7 +2,7 @@
 
 # Test script for SBTET Attendance API
 
-API_URL="http://localhost:5001"
+API_URL="http://0.0.0.0:5001"
 TEST_PIN="24054-cps-024"
 
 echo "🧪 Testing SBTET Attendance API"

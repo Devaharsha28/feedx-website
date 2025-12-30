@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -51,11 +51,16 @@ const Notifications = () => {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       setLoading(true);
       const data = await notificationsAPI.getAll();
       setNotifications(data || []);
+
+      // Mark as read when page is visited
+      if (data && data.length > 0) {
+        localStorage.setItem('lastSeenNotification', data[0].timestamp);
+      }
     } catch (error) {
       console.error("Failed to fetch notifications", error);
       setNotifications([]);
@@ -67,11 +72,11 @@ const Notifications = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadNotifications();
-  }, []);
+  }, [loadNotifications]);
 
   const filteredNotifications = notifications.filter(n =>
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -228,9 +233,6 @@ const Notifications = () => {
                                 <h3 className="text-lg font-semibold text-foreground group-hover:text-cyan-600 transition-colors line-clamp-1">
                                   {notification.title}
                                 </h3>
-                                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${style.bg} ${style.text}`}>
-                                  {style.label}
-                                </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
                                 <Calendar className="w-4 h-4" />
@@ -239,7 +241,10 @@ const Notifications = () => {
                             </div>
 
                             <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-                              {notification.description.replace(/[#*`_~\[\]]/g, '').substring(0, 200)}...
+                              {notification.description
+                                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1') // Remove links but keep text
+                                .replace(/[#*`~_[]]/g, '') // Remove other markdown
+                                .substring(0, 200)}...
                             </p>
 
                             {/* Read more indicator */}
@@ -313,16 +318,11 @@ const Notifications = () => {
           </ScrollArea>
 
           {/* Footer */}
-          <div className="p-5 border-t border-border bg-muted/30 flex gap-3">
-            <Button
-              className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl h-12"
-            >
-              Learn More
-            </Button>
+          <div className="p-5 border-t border-border bg-muted/30">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className="border-border hover:bg-muted rounded-xl h-12 px-8"
+              className="w-full border-border hover:bg-muted rounded-xl h-12"
             >
               Close
             </Button>

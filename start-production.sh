@@ -48,7 +48,7 @@ fi
 
 # Start the backend server (which will also serve the frontend)
 echo -e "${BLUE}🚀 Starting production server...${NC}"
-echo -e "${YELLOW}Server will be available at: http://localhost:3001${NC}"
+echo -e "${YELLOW}Server will be available at: http://0.0.0.0:3001${NC}"
 echo ""
 
 # Set production environment

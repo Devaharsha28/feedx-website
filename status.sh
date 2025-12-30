@@ -26,7 +26,7 @@ echo -e "${BLUE}Frontend (Port 8080):${NC}"
 if check_port 8080; then
     PID=$(get_pid 8080)
     echo -e "   ${GREEN}✓ Running (PID: $PID)${NC}"
-    echo "   URL: http://localhost:8080"
+    echo "   URL: http://0.0.0.0:8080"
 else
     echo -e "   ${RED}✗ Not running${NC}"
 fi
@@ -37,11 +37,11 @@ echo -e "${BLUE}Backend API (Port 5001):${NC}"
 if check_port 5001; then
     PID=$(get_pid 5001)
     echo -e "   ${GREEN}✓ Running (PID: $PID)${NC}"
-    echo "   URL: http://localhost:5001"
+    echo "   URL: http://0.0.0.0:5001"
     
     # Try to hit health endpoint
     if command -v curl &> /dev/null; then
-        HEALTH=$(curl -s http://localhost:5001/health 2>/dev/null)
+        HEALTH=$(curl -s http://0.0.0.0:5001/health 2>/dev/null)
         if [ $? -eq 0 ]; then
             echo -e "   ${GREEN}✓ Health check passed${NC}"
         else

@@ -17,9 +17,8 @@ const Index = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Campus Gallery
+              Gallery
             </h2>
-            <p className="text-muted-foreground mt-2">Glimpses of our vibrant campus life and events</p>
           </div>
           <ImageCarousel className="max-w-5xl mx-auto" />
         </div>

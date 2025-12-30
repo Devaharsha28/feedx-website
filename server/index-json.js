@@ -54,7 +54,9 @@ const generateId = () => Date.now().toString(36) + Math.random().toString(36).su
 // Initialize default admin user
 const initializeAdmin = async () => {
   let users = readJsonFile('users.json');
-  if (users.length === 0) {
+  const adminExists = users.some(u => u.username === 'admin');
+
+  if (!adminExists) {
     const hashedPassword = await bcrypt.hash('admin123', 10);
     users.push({
       id: generateId(),
@@ -68,6 +70,8 @@ const initializeAdmin = async () => {
     });
     writeJsonFile('users.json', users);
     console.log('✅ Default admin user created (username: admin, password: admin123)');
+  } else {
+    console.log('ℹ️ Admin user already exists');
   }
 };
 

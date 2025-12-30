@@ -1,31 +1,20 @@
-// Resolve API host dynamically so it works in localhost and forwarded URLs (e.g., Codespaces)
 const resolveApiHost = () => {
-  // Highest priority: explicit env override
   if (import.meta.env?.VITE_API_URL) return import.meta.env.VITE_API_URL;
 
   if (typeof window !== 'undefined') {
     const origin = window.location.origin;
-    console.log('Current origin:', origin);
 
-    // Handle common dev setups: replace frontend port with backend port
     if (origin.includes(':8080')) {
-      const apiUrl = origin.replace(':8080', ':3001');
-      console.log('Resolved API URL:', apiUrl);
-      return apiUrl;
+      return origin.replace(':8080', ':3001');
     }
     if (origin.includes('-8080.')) {
-      const apiUrl = origin.replace('-8080.', '-3001.');
-      console.log('Resolved API URL:', apiUrl);
-      return apiUrl;
+      return origin.replace('-8080.', '-3001.');
     }
 
-    // Fallback to same origin
-    console.log('Using same origin for API:', origin);
     return origin;
   }
 
-  // Static fallback for non-browser contexts
-  return 'http://localhost:3001';
+  return 'http://0.0.0.0:3001';
 };
 
 const API_HOST = '/api';
@@ -263,6 +252,7 @@ const fallbackEvents: Event[] = [
     time: '10:00 AM',
     location: 'Auditorium',
     registerLink: '#',
+    status: 'upcoming',
     files: [],
     timestamp: new Date().toISOString()
   }

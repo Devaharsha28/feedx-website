@@ -722,7 +722,7 @@ app.get('/api/crawler/gioe', verifyToken, async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Test endpoint: http://localhost:${PORT}/api/test`);
+  console.log(`Test endpoint: http://0.0.0.0:${PORT}/api/test`);
 });
 
 // Test endpoint

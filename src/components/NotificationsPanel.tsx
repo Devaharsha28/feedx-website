@@ -54,6 +54,7 @@ export function NotificationsPanel() {
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState<NotificationLocal | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +62,16 @@ export function NotificationsPanel() {
       try {
         const data = await notificationsAPI.getAll();
         setNotifications(data);
+
+        // Calculate unread count
+        const lastSeen = localStorage.getItem('lastSeenNotification');
+        if (!lastSeen) {
+          setUnreadCount(data.length);
+        } else {
+          const lastSeenDate = new Date(lastSeen);
+          const unread = data.filter(n => new Date(n.timestamp) > lastSeenDate).length;
+          setUnreadCount(unread);
+        }
       } catch (error) {
         console.error('Failed to load notifications:', error);
         setNotifications([]);
@@ -71,6 +82,14 @@ export function NotificationsPanel() {
 
     loadNotifications();
   }, []);
+
+  const markAsRead = () => {
+    if (notifications.length > 0) {
+      const latestTimestamp = notifications[0].timestamp;
+      localStorage.setItem('lastSeenNotification', latestTimestamp);
+      setUnreadCount(0);
+    }
+  };
 
   const handleNotificationClick = (notification: NotificationLocal) => {
     setSelectedNotification(notification);
@@ -88,9 +107,9 @@ export function NotificationsPanel() {
                 <div className="p-2.5 bg-primary/10 rounded-xl">
                   <Bell className="h-5 w-5 text-primary" />
                 </div>
-                {notifications.length > 0 && (
+                {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive rounded-full text-[10px] font-bold text-destructive-foreground flex items-center justify-center shadow-sm animate-pulse">
-                    {notifications.length > 9 ? '9+' : notifications.length}
+                    {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
               </div>
@@ -152,7 +171,10 @@ export function NotificationsPanel() {
                             </span>
                           </div>
                           <p className="text-xs text-muted-foreground/80 mt-1.5 line-clamp-2 leading-relaxed">
-                            {notification.description.replace(/[#*`_~\[\]]/g, '').substring(0, 100)}...
+                            {notification.description
+                              .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1') // Remove links but keep text
+                              .replace(/[#*`~_[]]/g, '') // Remove other markdown
+                              .substring(0, 100)}...
                           </p>
                         </div>
 
@@ -171,7 +193,10 @@ export function NotificationsPanel() {
               <Button
                 variant="ghost"
                 className="w-full hover:bg-muted text-primary hover:text-primary/80 font-semibold rounded-xl border border-transparent hover:border-border transition-all duration-300 h-11"
-                onClick={() => navigate('/notifications')}
+                onClick={() => {
+                  markAsRead();
+                  navigate('/notifications');
+                }}
               >
                 <span className="flex items-center gap-2">
                   View All Notifications
@@ -228,16 +253,11 @@ export function NotificationsPanel() {
           </ScrollArea>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border bg-muted/10 flex gap-3">
-            <Button
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl h-11"
-            >
-              Learn More
-            </Button>
+          <div className="p-4 border-t border-border bg-muted/10">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className="border-border hover:bg-muted rounded-xl h-11 px-6"
+              className="w-full border-border hover:bg-muted rounded-xl h-11"
             >
               Close
             </Button>
