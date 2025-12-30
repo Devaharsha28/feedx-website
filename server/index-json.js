@@ -45,8 +45,36 @@ const readJsonFile = (filename) => {
 };
 
 const writeJsonFile = (filename, data) => {
-  const filepath = path.join(dataDir, filename);
-  fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
+  const filePath = path.join(dataDir, filename);
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    // console.log(`✅ Saved ${filename}`);
+  } catch (error) {
+    console.error(`Error writing ${filename}:`, error);
+  }
+};
+
+const readLoginLogs = () => {
+  const filePath = path.join(dataDir, 'login-logs.json');
+  try {
+    if (!fs.existsSync(filePath)) {
+      return [];
+    }
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading login logs:', error);
+    return [];
+  }
+};
+
+const writeLoginLogs = (logs) => {
+  const filePath = path.join(dataDir, 'login-logs.json');
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(logs.slice(-500), null, 2)); // Keep last 500 logs
+  } catch (error) {
+    console.error('Error writing login logs:', error);
+  }
 };
 
 const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -293,13 +321,49 @@ app.post('/api/auth/login', async (req, res) => {
 
     const token = jwt.sign({ id: user.id, username: user.username, name: user.name }, JWT_SECRET, { expiresIn: '24h' });
 
+    // Log successful login
+    const logs = readLoginLogs();
+    logs.push({
+      id: generateId(),
+      username: user.username,
+      ip_address: req.ip || req.headers['x-forwarded-for'],
+      userAgent: req.headers['user-agent'],
+      login_time: new Date().toISOString(),
+      success: true
+    });
+    writeLoginLogs(logs);
+
     res.json({
       token,
       user: { id: user.id, username: user.username, name: user.name, email: user.email }
     });
   } catch (error) {
     console.error('Login error:', error);
+    // Log failed attempt if username was provided
+    if (req.body.username) {
+      const logs = readLoginLogs();
+      logs.push({
+        id: generateId(),
+        username: req.body.username,
+        ip_address: req.ip || req.headers['x-forwarded-for'],
+        userAgent: req.headers['user-agent'],
+        login_time: new Date().toISOString(),
+        success: false,
+        reason: error.message
+      });
+      writeLoginLogs(logs);
+    }
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get login logs (admin only)
+app.get('/api/auth/login-logs', verifyToken, (req, res) => {
+  try {
+    const logs = readLoginLogs();
+    res.json(logs.reverse()); // Newest first
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch logs' });
   }
 });
 

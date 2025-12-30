@@ -7,10 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { spotlightAPI, Spotlight as SpotlightItem } from '@/lib/api';
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Spotlight = () => {
   const [spotlights, setSpotlights] = useState<SpotlightItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedSpotlight, setSelectedSpotlight] = useState<SpotlightItem | null>(null);
 
   useEffect(() => {
     const fetchSpotlights = async () => {
@@ -74,22 +83,13 @@ const Spotlight = () => {
                       <CardTitle className="text-lg">{spotlight.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-sm text-muted-foreground mb-4">
+                      <div className="text-sm text-muted-foreground mb-4 line-clamp-3">
                         <MarkdownRenderer content={spotlight.description || '*No description available.*'} />
                       </div>
-                      {spotlight.images.length > 1 && (
-                        <div className="flex gap-2 flex-wrap">
-                          {spotlight.images.slice(1).map((img, idx) => (
-                            <img
-                              key={idx}
-                              src={img}
-                              alt={`Spotlight ${idx}`}
-                              className="h-16 w-16 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform"
-                            />
-                          ))}
-                        </div>
-                      )}
-                      <Button className="w-full mt-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-smooth">
+                      <Button
+                        className="w-full mt-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-smooth"
+                        onClick={() => setSelectedSpotlight(spotlight)}
+                      >
                         View More
                       </Button>
                     </CardContent>
@@ -127,6 +127,47 @@ const Spotlight = () => {
         </div>
       </div>
       <Footer />
+
+      {/* Spotlight Detail Dialog */}
+      <Dialog open={!!selectedSpotlight} onOpenChange={(open) => !open && setSelectedSpotlight(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none">
+          {selectedSpotlight && (
+            <ScrollArea className="h-full max-h-[90vh]">
+              <div className="p-6">
+                <DialogHeader className="mb-6">
+                  <DialogTitle className="text-2xl font-bold text-gradient">{selectedSpotlight.title}</DialogTitle>
+                  <DialogDescription className="text-muted-foreground">
+                    Spotlight Moment
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-6">
+                  {/* Image Gallery */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedSpotlight.images.map((img, idx) => (
+                      <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-border group cursor-zoom-in">
+                        <img
+                          src={img}
+                          alt={`${selectedSpotlight.title} ${idx + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          onClick={() => window.open(img, '_blank')}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Description */}
+                  <div className="bg-muted/30 p-6 rounded-2xl border border-border/50">
+                    <div className="prose prose-invert max-w-none">
+                      <MarkdownRenderer content={selectedSpotlight.description || '*No description available.*'} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ScrollArea>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

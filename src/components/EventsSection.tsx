@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, FileText, Image as ImageIcon, Download } from 'lucide-react';
 import { noDataIllustration } from '@/lib/illustrations';
 import { eventsAPI, Event } from '@/lib/api';
 
@@ -130,19 +130,73 @@ const EventCard = ({ event }: { event: Event }) => (
     <CardContent className="space-y-4">
       {/* Event Details */}
       <div className="space-y-2">
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Calendar className="w-4 h-4 mr-2" />
-          {event.date}
+        <div className="flex items-center text-sm font-medium">
+          <Calendar className="w-4 h-4 mr-2 text-primary" />
+          {event.date === "Coming Soon" ? (
+            <span className="text-primary animate-pulse">Coming Soon</span>
+          ) : (
+            <span className="text-muted-foreground">{event.date}</span>
+          )}
         </div>
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Clock className="w-4 h-4 mr-2" />
-          {event.time}
+        <div className="flex items-center text-sm font-medium">
+          <Clock className="w-4 h-4 mr-2 text-primary" />
+          {event.time === "TBA" ? (
+            <span className="text-primary italic">To be announced</span>
+          ) : (
+            <span className="text-muted-foreground">{event.time}</span>
+          )}
         </div>
-        <div className="flex items-center text-sm text-muted-foreground">
-          <MapPin className="w-4 h-4 mr-2" />
+        <div className="flex items-center text-sm font-medium text-muted-foreground">
+          <MapPin className="w-4 h-4 mr-2 text-primary" />
           {event.location}
         </div>
       </div>
+
+      {/* Event Files / Gallery */}
+      {event.files && event.files.length > 0 && (
+        <div className="space-y-3 pt-2">
+          {/* Images Gallery */}
+          {event.files.filter(f => /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(f)).length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                <ImageIcon className="w-3 h-3" />
+                Event Gallery
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {event.files.filter(f => /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(f)).map((file, idx) => (
+                  <div key={idx} className="aspect-square rounded-md overflow-hidden border border-border cursor-pointer hover:opacity-80 transition-opacity" onClick={() => window.open(file, '_blank')}>
+                    <img src={file} alt={`Event ${idx + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Other Files */}
+          {event.files.filter(f => !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(f)).length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                <FileText className="w-3 h-3" />
+                Resources
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {event.files.filter(f => !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(f)).map((file, idx) => (
+                  <Button
+                    key={idx}
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-[10px] bg-secondary/50 hover:bg-secondary"
+                    onClick={() => window.open(file, '_blank')}
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    {file.split('/').pop()?.substring(0, 15)}...
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Action Button */}
       {event.registerLink && event.registerLink !== '#' && event.status === 'upcoming' && (

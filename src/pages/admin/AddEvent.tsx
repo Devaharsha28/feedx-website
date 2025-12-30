@@ -27,6 +27,7 @@ export default function AddEvent() {
     registerLink: "",
     image: "",
     status: "upcoming" as "upcoming" | "conducted",
+    isComingSoon: false,
     files: [] as string[],
   });
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -109,8 +110,8 @@ export default function AddEvent() {
       await eventsAPI.create({
         title: formData.title,
         description: formData.description,
-        date: formData.date,
-        time: formData.time,
+        date: formData.isComingSoon ? "Coming Soon" : formData.date,
+        time: formData.isComingSoon ? "TBA" : formData.time,
         location: formData.location,
         registerLink: formData.registerLink || "#",
         image: formData.image,
@@ -132,6 +133,7 @@ export default function AddEvent() {
         registerLink: "",
         image: "",
         status: "upcoming",
+        isComingSoon: false,
         files: [],
       });
       fetchEvents();
@@ -229,29 +231,46 @@ export default function AddEvent() {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="date">Date</Label>
-                    <Input
-                      id="date"
-                      name="date"
-                      type="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      required
+                  <div className="flex items-center space-x-2 py-2">
+                    <input
+                      type="checkbox"
+                      id="isComingSoon"
+                      checked={formData.isComingSoon}
+                      onChange={(e) => setFormData(prev => ({ ...prev, isComingSoon: e.target.checked }))}
+                      className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
+                    <Label htmlFor="isComingSoon" className="cursor-pointer font-semibold text-primary">
+                      ✨ Mark as "Coming Soon"
+                    </Label>
                   </div>
 
-                  <div>
-                    <Label htmlFor="time">Time</Label>
-                    <Input
-                      id="time"
-                      name="time"
-                      type="time"
-                      value={formData.time}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
+                  {!formData.isComingSoon && (
+                    <>
+                      <div>
+                        <Label htmlFor="date">Date</Label>
+                        <Input
+                          id="date"
+                          name="date"
+                          type="date"
+                          value={formData.date}
+                          onChange={handleInputChange}
+                          required={!formData.isComingSoon}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="time">Time</Label>
+                        <Input
+                          id="time"
+                          name="time"
+                          type="time"
+                          value={formData.time}
+                          onChange={handleInputChange}
+                          required={!formData.isComingSoon}
+                        />
+                      </div>
+                    </>
+                  )}
 
                   <div>
                     <Label htmlFor="location">Location</Label>
@@ -356,7 +375,7 @@ export default function AddEvent() {
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
-                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,image/*"
                         multiple
                         className="hidden"
                       />
@@ -382,15 +401,22 @@ export default function AddEvent() {
                     </div>
                     {formData.files.length > 0 && (
                       <div className="mt-2 space-y-2">
-                        {formData.files.map((file, index) => (
-                          <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded">
-                            <FileText className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm flex-1 truncate">{file.split('/').pop()}</span>
-                            <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-destructive">
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        ))}
+                        {formData.files.map((file, index) => {
+                          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file);
+                          return (
+                            <div key={index} className="flex items-center gap-2 p-2 bg-secondary/50 rounded group">
+                              {isImage ? (
+                                <img src={file} alt="Preview" className="w-8 h-8 object-cover rounded" />
+                              ) : (
+                                <FileText className="w-4 h-4 text-blue-500" />
+                              )}
+                              <span className="text-sm flex-1 truncate">{file.split('/').pop()}</span>
+                              <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-destructive opacity-0 group-hover:opacity-100 transition-opacity">
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -427,8 +453,8 @@ export default function AddEvent() {
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-semibold">{event.title}</h3>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase ${event.status === 'upcoming'
-                                ? 'bg-green-100 text-green-700 border border-green-200'
-                                : 'bg-blue-100 text-blue-700 border border-blue-200'
+                              ? 'bg-green-100 text-green-700 border border-green-200'
+                              : 'bg-blue-100 text-blue-700 border border-blue-200'
                               }`}>
                               {event.status || 'upcoming'}
                             </span>
@@ -436,10 +462,14 @@ export default function AddEvent() {
                           <p className="text-sm text-muted-foreground mb-2">
                             {event.description}
                           </p>
-                          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mb-2">
-                            <div>📅 {event.date}</div>
-                            <div>⏰ {event.time}</div>
-                            <div className="col-span-2">📍 {event.location}</div>
+                          <div className="grid grid-cols-2 gap-2 text-xs font-medium mb-2">
+                            <div className={event.date === "Coming Soon" ? "text-primary animate-pulse" : "text-muted-foreground"}>
+                              📅 {event.date}
+                            </div>
+                            <div className={event.time === "TBA" ? "text-primary italic" : "text-muted-foreground"}>
+                              ⏰ {event.time}
+                            </div>
+                            <div className="col-span-2 text-muted-foreground">📍 {event.location}</div>
                           </div>
                           {event.image && (
                             <img
