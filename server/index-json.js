@@ -128,6 +128,13 @@ app.use((req, res, next) => {
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
+// Serve Main App built files
+const mainDistPath = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(mainDistPath)) {
+  console.log('🚀 Serving Main App from:', mainDistPath);
+  app.use(express.static(mainDistPath));
+}
+
 // Serve uploaded files statically
 app.use('/uploads', express.static(uploadsDir));
 
@@ -1212,11 +1219,22 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(distPath));
 
   // Handle client-side routing - return index.html for all non-API, non-upload routes
+  // Handle client-side routing - return index.html for all non-API, non-upload routes
   app.get('*', (req, res, next) => {
     // Don't intercept API or upload requests
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
       return next();
     }
+
+    // Serve FXBot index.html for /fxbot-app routes
+    if (req.path.startsWith('/fxbot-app')) {
+      const fxbotDistPath = path.join(__dirname, '..', 'fxbot', 'dist');
+      if (fs.existsSync(fxbotDistPath)) {
+        return res.sendFile(path.join(fxbotDistPath, 'index.html'));
+      }
+    }
+
+    // Default to Main App index.html
     res.sendFile(path.join(distPath, 'index.html'));
   });
 
