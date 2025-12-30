@@ -92,7 +92,7 @@ const FacultyDashboard = () => {
                 </div>
             </header>
 
-            <main className="container mx-auto p-4 md:p-8 pt-24 pb-10">
+            <main className="container mx-auto p-4 md:p-8 pt-24 md:pt-32 pb-10">
                 <FacultyIssuesList />
             </main>
         </div>

@@ -147,7 +147,7 @@ const StudentMenu = () => {
                 </div>
             </header>
 
-            <main className="container mx-auto p-4 space-y-8 pt-24 pb-20">
+            <main className="container mx-auto p-4 space-y-8 pt-24 md:pt-32 pb-20">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-4">
                     <Card className="glass border-none hover:shadow-lg transition-shadow">
