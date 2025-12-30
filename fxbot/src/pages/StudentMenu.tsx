@@ -84,42 +84,6 @@ const StudentMenu = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="ghost" size="icon" className="hover:bg-red-50 hover:text-red-500 text-muted-foreground">
-                                    <Trash2 className="w-5 h-5" />
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-md">
-                                <DialogHeader>
-                                    <DialogTitle className="text-red-600 flex items-center gap-2">
-                                        <AlertCircle className="w-5 h-5" /> Delete Account
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        Are you sure you want to delete your account? This action cannot be undone and all your data will be lost.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter className="flex gap-2 sm:justify-end">
-                                    <Button type="button" variant="ghost" onClick={() => setDeleteDialogOpen(false)}>
-                                        Cancel
-                                    </Button>
-                                    <Button type="button" variant="destructive" onClick={async () => {
-                                        // Since client-side user deletion is restricted, we'll just sign out for now
-                                        // In a real app, this would call an Edge Function or Admin API
-                                        // For this demo, we can assume "contact admin" or soft delete if supported.
-                                        // Let's try to delete profile first (if RLS allows)
-                                        if (user) {
-                                            await supabase.from('profiles').delete().eq('id', user.id);
-                                        }
-                                        await supabase.auth.signOut();
-                                        navigate('/');
-                                    }}>
-                                        Delete Account
-                                    </Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-
                         <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button variant="ghost" size="icon" className="hover:bg-red-50 hover:text-red-500">
@@ -181,10 +145,11 @@ const StudentMenu = () => {
 
                 {/* Main Content Tabs */}
                 <Tabs defaultValue="submit" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-6 glass p-1 h-auto">
+                    <TabsList className="grid w-full grid-cols-4 mb-6 glass p-1 h-auto">
                         <TabsTrigger value="submit" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">Submit New</TabsTrigger>
                         <TabsTrigger value="track" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">Track</TabsTrigger>
                         <TabsTrigger value="resolved" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">History</TabsTrigger>
+                        <TabsTrigger value="settings" className="data-[state=active]:bg-primary data-[state=active]:text-white py-2.5">Settings</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="submit" className="space-y-4">
@@ -201,6 +166,58 @@ const StudentMenu = () => {
 
                     <TabsContent value="resolved">
                         <ResolvedIssues userId={user.id} />
+                    </TabsContent>
+
+                    <TabsContent value="settings">
+                        <Card className="glass border-none">
+                            <CardContent className="pt-6">
+                                <h3 className="text-lg font-bold text-primary mb-2">Account Settings</h3>
+                                <p className="text-sm text-muted-foreground mb-6">Manage your account preferences and data.</p>
+
+                                <div className="p-4 rounded-lg bg-red-50 border border-red-100 space-y-4">
+                                    <div>
+                                        <h4 className="font-semibold text-red-700 flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4" /> Danger Zone
+                                        </h4>
+                                        <p className="text-xs text-red-600/80 mt-1">
+                                            Deleting your account is permanent. All your data will be removed.
+                                        </p>
+                                    </div>
+
+                                    <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button variant="destructive" className="w-full sm:w-auto gap-2">
+                                                <Trash2 className="w-4 h-4" /> Delete My Account
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-md">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-red-600 flex items-center gap-2">
+                                                    <AlertCircle className="w-5 h-5" /> Confirm Deletion
+                                                </DialogTitle>
+                                                <DialogDescription>
+                                                    Are you absolutely sure you want to delete your account? This action cannot be undone.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <DialogFooter className="flex gap-2 sm:justify-end">
+                                                <Button type="button" variant="ghost" onClick={() => setDeleteDialogOpen(false)}>
+                                                    Cancel
+                                                </Button>
+                                                <Button type="button" variant="destructive" onClick={async () => {
+                                                    if (user) {
+                                                        await supabase.from('profiles').delete().eq('id', user.id);
+                                                    }
+                                                    await supabase.auth.signOut();
+                                                    navigate('/');
+                                                }}>
+                                                    Permanently Delete
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </TabsContent>
                 </Tabs>
             </main>
