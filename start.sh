@@ -13,8 +13,23 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # Build frontend
-echo "🔨 Building frontend..."
+echo "🔨 Building main frontend..."
 npm run build
+
+# Build FXBot
+echo "🤖 Building FXBot..."
+if [ -d "fxbot" ]; then
+    cd fxbot
+    if [ ! -d "node_modules" ]; then
+        echo "📦 Installing FXBot dependencies..."
+        npm install
+    fi
+    echo "🏗️ Running FXBot build..."
+    npm run build
+    cd ..
+else
+    echo "⚠️ fxbot directory not found, skipping..."
+fi
 
 # Start server (uses PORT from environment, defaults to 3001)
 echo "🌐 Starting server on port ${PORT:-3001}..."

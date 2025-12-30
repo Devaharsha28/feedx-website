@@ -131,6 +131,13 @@ app.use(express.static(publicDir));
 // Serve uploaded files statically
 app.use('/uploads', express.static(uploadsDir));
 
+// Serve FXBot built files statically
+const fxbotDistPath = path.join(__dirname, '..', 'fxbot', 'dist');
+if (fs.existsSync(fxbotDistPath)) {
+  app.use('/fxbot-app', express.static(fxbotDistPath));
+  console.log('🤖 Serving FXBot from:', fxbotDistPath);
+}
+
 // Configure multer for file uploads with organized storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

@@ -104,7 +104,10 @@ const Spotlight = () => {
             <p className="text-muted-foreground mb-6">
               Stay updated with our latest activities, achievements, and community posts.
             </p>
-            <Button className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-smooth">
+            <Button
+              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-smooth"
+              onClick={() => window.open('https://www.instagram.com/feedx_official', '_blank')}
+            >
               <Instagram className="w-4 h-4 mr-2" />
               Follow @feedx_official
             </Button>
@@ -128,43 +131,49 @@ const Spotlight = () => {
       </div>
       <Footer />
 
-      {/* Spotlight Detail Dialog */}
       <Dialog open={!!selectedSpotlight} onOpenChange={(open) => !open && setSelectedSpotlight(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none">
+        <DialogContent className="max-w-3xl w-[95vw] h-fit max-h-[90vh] flex flex-col p-0 border-none overflow-hidden bg-background/95 backdrop-blur-xl">
           {selectedSpotlight && (
-            <ScrollArea className="h-full max-h-[90vh]">
-              <div className="p-6">
+            <div className="flex flex-col h-full max-h-[90vh] overflow-y-auto custom-scrollbar">
+              <div className="p-6 sm:p-8">
                 <DialogHeader className="mb-6">
-                  <DialogTitle className="text-2xl font-bold text-gradient">{selectedSpotlight.title}</DialogTitle>
-                  <DialogDescription className="text-muted-foreground">
+                  <DialogTitle className="text-2xl sm:text-3xl font-bold text-gradient leading-tight">
+                    {selectedSpotlight.title}
+                  </DialogTitle>
+                  <DialogDescription className="text-muted-foreground flex items-center gap-2 mt-2">
+                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                     Spotlight Moment
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {/* Image Gallery */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {selectedSpotlight.images.map((img, idx) => (
-                      <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-border group cursor-zoom-in">
+                      <div key={idx} className="relative aspect-video rounded-2xl overflow-hidden border border-border/50 group cursor-zoom-in bg-muted/20">
                         <img
                           src={img}
                           alt={`${selectedSpotlight.title} ${idx + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           onClick={() => window.open(img, '_blank')}
                         />
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white text-xs font-medium bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm">Click to Expand</p>
+                        </div>
                       </div>
                     ))}
                   </div>
 
-                  {/* Description */}
-                  <div className="bg-muted/30 p-6 rounded-2xl border border-border/50">
-                    <div className="prose prose-invert max-w-none">
+                  {/* Description Section */}
+                  <div className="relative">
+                    <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/50 to-transparent rounded-full" />
+                    <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
                       <MarkdownRenderer content={selectedSpotlight.description || '*No description available.*'} />
                     </div>
                   </div>
                 </div>
               </div>
-            </ScrollArea>
+            </div>
           )}
         </DialogContent>
       </Dialog>

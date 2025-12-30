@@ -235,7 +235,7 @@ const Resources = () => {
                     className="bg-gradient-brand hover:opacity-90 transition-smooth glow-primary"
                     onClick={() => {
                       import('sonner').then(({ toast }) => {
-                        toast.info("Please contact feedxhub@gmail.com for resource requests.");
+                        toast.info("Please contact feedxhub@gmail.com for resource requests. Please check ur spam folder too.");
                       });
                     }}
                   >

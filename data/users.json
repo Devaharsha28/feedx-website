@@ -18,5 +18,15 @@
     "phone": "0000000000",
     "pin": "0000",
     "createdAt": "2025-12-30T14:12:51.732Z"
+  },
+  {
+    "id": "mjsrowvuflq4lty9964",
+    "username": "feedx",
+    "password": "$2b$10$Sn1G43NMxkBtDsKOltlYl.8TH/S2A0MlJvHPe8IYzX5GLJzb3NPBK",
+    "name": "feedx",
+    "email": "feedxhub@gmail.com",
+    "phone": "0000000000",
+    "pin": "0000000000",
+    "created_at": "2025-12-30T15:53:59.418Z"
   }
 ]
