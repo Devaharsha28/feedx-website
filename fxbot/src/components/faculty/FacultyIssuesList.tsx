@@ -43,29 +43,54 @@ const FacultyIssuesList = () => {
 
     const fetchIssues = async () => {
         setLoading(true);
-        let query = supabase
-            .from('issues')
-            .select(`
+        console.log("Attempting to fetch issues from Supabase...");
+        console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+        console.log("Filter:", filter);
+
+        try {
+            // First, test basic connection
+            const { data: testData, error: testError } = await supabase.from('issues').select('count').limit(1);
+            console.log("Basic query test:", { testData, testError });
+
+            let query = supabase
+                .from('issues')
+                .select(`
         *,
         profiles:user_id (name, department, pin)
       `)
-            .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false });
 
-        if (filter !== "all") {
-            query = query.eq('status', filter);
-        }
+            if (filter !== "all") {
+                query = query.eq('status', filter);
+            }
 
-        const { data, error } = await query;
+            const { data, error } = await query;
+            console.log("Full query result:", { data: data ? data.length : 0, error });
 
-        if (error) {
-            console.error("Error fetching issues:", error);
+            if (error) {
+                console.error("Error fetching issues:", error);
+                console.error("Error details:", {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                });
+                toast({
+                    title: "Error",
+                    description: error.message || "Failed to load issues",
+                    variant: "destructive"
+                });
+            } else {
+                console.log("Successfully fetched", data?.length || 0, "issues");
+                setIssues(data || []);
+            }
+        } catch (err) {
+            console.error("Unexpected error in fetchIssues:", err);
             toast({
                 title: "Error",
-                description: error.message || "Failed to load issues",
+                description: "Unexpected error occurred",
                 variant: "destructive"
             });
-        } else {
-            setIssues(data || []);
         }
         setLoading(false);
     };

@@ -52,9 +52,28 @@ const TestimonialsSection = () => {
                 <iframe
                   src={`https://drive.google.com/file/d/${id}/preview`}
                   className="w-full h-full border-0"
-                  allow="autoplay; encrypted-media"
+                  allow="autoplay; encrypted-media; fullscreen"
                   allowFullScreen
+                  onError={(e) => {
+                    console.warn('Drive video embed failed, falling back to link');
+                    e.currentTarget.style.display = 'none';
+                    const fallback = e.currentTarget.parentElement?.querySelector('.fallback-link') as HTMLElement;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
                 ></iframe>
+                <a
+                  href={`https://drive.google.com/file/d/${id}/view`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="fallback-link w-full h-full items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 transition-colors"
+                  style={{ display: 'none' }}
+                >
+                  <div className="text-center text-white">
+                    <Play className="w-16 h-16 mx-auto mb-4 opacity-80 group-hover:opacity-100 transition-opacity" />
+                    <p className="text-lg font-semibold">Watch Testimonial</p>
+                    <p className="text-sm opacity-75">Opens in Google Drive</p>
+                  </div>
+                </a>
               </div>
             </div>
           ))}
