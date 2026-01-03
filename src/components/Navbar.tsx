@@ -49,6 +49,9 @@ const Navbar = () => {
             <Link to="/spotlight" className="text-xs font-medium text-foreground hover:text-primary transition-smooth">
               Spotlight
             </Link>
+            <div onClick={() => window.open('https://collegeinfo.diplomageeks.com/predictor/telangana-polycet/', '_blank')} className="text-xs font-medium text-foreground hover:text-primary transition-smooth cursor-pointer">
+              TS POLYCET Predictor
+            </div>
             {/* Removed Join and Jobs from menu */}
           </div>
 
@@ -156,6 +159,15 @@ const Navbar = () => {
               >
                 Spotlight
               </Link>
+              <div
+                onClick={() => {
+                  window.open('https://collegeinfo.diplomageeks.com/predictor/telangana-polycet/', '_blank');
+                  setMobileMenuOpen(false);
+                }}
+                className="text-sm font-medium text-foreground hover:text-primary transition-smooth px-3 py-2 rounded-md hover:bg-primary/10 cursor-pointer"
+              >
+                TS POLYCET Predictor
+              </div>
               {/* Removed Join and Jobs from mobile menu */}
 
               {/* Mobile FX Bot */}
